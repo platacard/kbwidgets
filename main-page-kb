@@ -1,0 +1,300 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kb-wrap{
+    font-family:'Poppins', Arial, sans-serif;
+    background:#fff2e6;
+    border:2px solid #ff7a00;
+    border-radius:14px;
+    padding:16px;
+    color:#000;
+    box-sizing:border-box;
+    width:100%;
+  }
+
+  .kb-title{
+    background:#ff7a00;
+    color:#fff;
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:14px;
+  }
+
+  .kb-section-title{
+    background:#ff7a00;
+    color:#fff;
+    font-weight:700;
+    text-align:center;
+    padding:10px 12px;
+    border-radius:10px;
+    margin:16px 0 10px;
+    font-size:17px;
+  }
+
+  .kb-instruction{
+    background:#fffaf5;
+    border:1px solid rgba(255,122,0,0.45);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+    margin-bottom:12px;
+    line-height:1.45;
+  }
+
+  .kb-search{
+    width:100%;
+    padding:12px 14px;
+    border:2px solid #ff7a00;
+    border-radius:10px;
+    font-family:'Poppins', Arial, sans-serif;
+    font-size:16px;
+    box-sizing:border-box;
+    margin-bottom:14px;
+    background:#fff;
+  }
+
+  .kb-filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin-bottom:16px;
+  }
+
+  .kb-filter{
+    border:2px solid #ff7a00;
+    background:#fffaf5;
+    color:#000;
+    border-radius:999px;
+    padding:8px 12px;
+    font-family:'Poppins', Arial, sans-serif;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+
+  .kb-filter.active,
+  .kb-filter:hover{
+    background:#ff7a00;
+    color:#fff;
+  }
+
+  .kb-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:14px;
+  }
+
+  .kb-card{
+    background:#fffaf5;
+    border:2px solid #ff7a00;
+    border-radius:12px;
+    overflow:hidden;
+    box-sizing:border-box;
+    box-shadow:0 2px 0 rgba(255,122,0,0.18);
+  }
+
+.kb-btn{
+  width:100%;
+  border:0;
+  padding:14px;
+  font-family:'Poppins', Arial, sans-serif;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  text-align:center;
+  background:#ffd1a3; /* 👈 naranja pastel */
+  color:#000; /* 👈 mejor contraste */
+}
+
+  .kb-content{
+    display:none;
+    background:#fffaf5;
+    border-top:2px solid #ff7a00;
+    padding:14px;
+    line-height:1.5;
+    text-align:left;
+  }
+
+  .kb-content.open{
+    display:block;
+  }
+
+  .kb-content p{
+    margin:8px 0;
+  }
+
+  .kb-content ul{
+    margin:8px 0 0;
+    padding-left:20px;
+  }
+
+  .kb-content li{
+    margin-bottom:6px;
+  }
+
+  .kb-tag{
+    display:inline-block;
+    background:#ff7a00;
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:999px;
+    margin-bottom:8px;
+  }
+</style>
+
+<div class="kb-wrap">
+  <div class="kb-title">Guía rápida de navegación de la KB</div>
+
+  <div class="kb-section-title">Filtros</div>
+
+  <div class="kb-instruction">
+    Usa el buscador para localizar un tema por palabra clave, producto o proceso. También puedes seleccionar un filtro para ver únicamente los contenidos relacionados con esa categoría.
+  </div>
+
+  <input class="kb-search" type="text" id="kbSearch" onkeyup="filterKB()" placeholder="Buscar por tema, producto o palabra clave...">
+
+  <div class="kb-filters">
+    <button class="kb-filter active" onclick="setFilter('all', this)">Todos</button>
+    <button class="kb-filter" onclick="setFilter('general', this)">General</button>
+    <button class="kb-filter" onclick="setFilter('originacion', this)">Solicitud / Entrega</button>
+    <button class="kb-filter" onclick="setFilter('debito', this)">Débito / Ahorro</button>
+    <button class="kb-filter" onclick="setFilter('credito', this)">Crédito</button>
+    <button class="kb-filter" onclick="setFilter('beneficios', this)">Beneficios</button>
+    <button class="kb-filter" onclick="setFilter('pagos', this)">Pagos</button>
+    <button class="kb-filter" onclick="setFilter('crm', this)">CRM</button>
+    <button class="kb-filter" onclick="setFilter('riesgo', this)">Fraude / Quejas / Cobranza</button>
+    <button class="kb-filter" onclick="setFilter('otros', this)">Otros</button>
+    <button class="kb-filter" onclick="setFilter('interno', this)">Para agentes</button>
+    <button class="kb-filter" onclick="setFilter('social', this)">Social Media</button>
+    <button class="kb-filter" onclick="setFilter('rh', this)">RH</button>
+  </div>
+
+  <div class="kb-section-title">Contenidos</div>
+
+  <div class="kb-grid">
+
+    <div class="kb-card" data-cat="general">
+      <button class="kb-btn" onclick="toggleKB(this)">1. Inicio</button>
+      <div class="kb-content"><span class="kb-tag">General</span><p>Información base sobre Plata, cultura, cobertura y reglas esenciales.</p><ul><li>Base de conocimientos</li><li>Acerca de Plata</li><li>Cultura de Plata</li><li>Ciudades con cobertura</li><li>Cero tolerancia</li></ul></div>
+    </div>
+
+    <div class="kb-card" data-cat="originacion">
+      <button class="kb-btn" onclick="toggleKB(this)">2. Solicitud de la tarjeta</button>
+      <div class="kb-content"><span class="kb-tag">Solicitud / Entrega</span><p>Flujos para solicitar tarjeta desde CRM, simulador, app o web.</p><ul><li>Búsqueda y depuración</li><li>Solicitud en CRM - Simulador</li><li>Solicitud en la app/web</li></ul></div>
+    </div>
+
+    <div class="kb-card" data-cat="originacion">
+      <button class="kb-btn" onclick="toggleKB(this)">3. Entrega de la tarjeta</button>
+      <div class="kb-content"><span class="kb-tag">Solicitud / Entrega</span><p>Procesos y problemas de entrega postal o con embajador.</p><ul><li>Primera tarjeta</li><li>Tarjeta adicional o reemitida</li><li>Problemas con la entrega</li><li>Recompensa para el embajador</li></ul></div>
+    </div>
+
+    <div class="kb-card" data-cat="originacion">
+      <button class="kb-btn" onclick="toggleKB(this)">4. Activación de la tarjeta</button>
+      <div class="kb-content"><span class="kb-tag">Solicitud / Entrega</span><p>Activación con embajador o con entrega postal.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="debito originacion pagos">
+      <button class="kb-btn" onclick="toggleKB(this)">5. Plata Cuenta</button>
+      <div class="kb-content"><span class="kb-tag">Débito / Ahorro</span><p>Cuenta de débito, ahorros, límites, impuestos, depósitos y cierre.</p><ul><li>Plata Cuenta</li><li>Ahorro Flexible</li><li>Ahorro Fijo</li><li>Cuenta básica</li><li>Tarifas</li><li>Límites</li><li>Métodos de depósito</li></ul></div>
+    </div>
+
+    <div class="kb-card" data-cat="credito">
+      <button class="kb-btn" onclick="toggleKB(this)">6. Plata Card</button>
+      <div class="kb-content"><span class="kb-tag">Crédito</span><p>Información sobre cuenta de crédito, tasas, comisiones y estado de cuenta.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="beneficios">
+      <button class="kb-btn" onclick="toggleKB(this)">7. Beneficios</button>
+      <div class="kb-content"><span class="kb-tag">Beneficios</span><p>MSI, cashback, Plata+, seguros y campañas de beneficios.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="pagos">
+      <button class="kb-btn" onclick="toggleKB(this)">8. Pago de cuenta Plata</button>
+      <div class="kb-content"><span class="kb-tag">Pagos</span><p>Métodos de pago y casos especiales para cuentas Plata.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="credito">
+      <button class="kb-btn" onclick="toggleKB(this)">9. Acciones de la cuenta</button>
+      <div class="kb-content"><span class="kb-tag">Crédito</span><p>Tarjeta no aceptada, Apple/Google Pay, NIP, compras, reemplazos y acciones frecuentes.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="crm">
+      <button class="kb-btn" onclick="toggleKB(this)">10. Plata app</button>
+      <div class="kb-content"><span class="kb-tag">App / CRM</span><p>Funciones de la app: perfil, movimientos, MTU, LMO, verificación, pagos y productos.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="crm">
+      <button class="kb-btn" onclick="toggleKB(this)">11. Procedimientos</button>
+      <div class="kb-content"><span class="kb-tag">Procedimientos</span><p>Procesos operativos como cierres, cambios, bloqueos, OTP, QR y actualizaciones.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="credito"><button class="kb-btn" onclick="toggleKB(this)">12. Plata Garantizada</button><div class="kb-content"><span class="kb-tag">Crédito</span><p>Información sobre Plata Garantizada.</p></div></div>
+
+    <div class="kb-card" data-cat="credito"><button class="kb-btn" onclick="toggleKB(this)">13. Plata Préstamo</button><div class="kb-content"><span class="kb-tag">Crédito</span><p>Plata Préstamo en app, CRM y domiciliación de pagos.</p></div></div>
+
+    <div class="kb-card" data-cat="credito"><button class="kb-btn" onclick="toggleKB(this)">14. Plata Difiere</button><div class="kb-content"><span class="kb-tag">Crédito</span><p>Originación, uso en app/CRM, Walmart, Movistar, mora y promociones.</p></div></div>
+
+    <div class="kb-card" data-cat="otros"><button class="kb-btn" onclick="toggleKB(this)">15. Plata Inversiones</button><div class="kb-content"><span class="kb-tag">Otros</span><p>Información sobre Plata Inversiones.</p></div></div>
+
+    <div class="kb-card" data-cat="otros"><button class="kb-btn" onclick="toggleKB(this)">16. Plata Viajes</button><div class="kb-content"><span class="kb-tag">Otros</span><p>Información sobre Plata Viajes.</p></div></div>
+
+    <div class="kb-card" data-cat="otros"><button class="kb-btn" onclick="toggleKB(this)">17. Instituciones microfinancieras</button><div class="kb-content"><span class="kb-tag">Otros</span><p>Información relacionada con instituciones microfinancieras.</p></div></div>
+
+    <div class="kb-card" data-cat="beneficios"><button class="kb-btn" onclick="toggleKB(this)">18. Promociones</button><div class="kb-content"><span class="kb-tag">Beneficios</span><p>Notificaciones, campañas masivas y Televentas.</p></div></div>
+
+    <div class="kb-card" data-cat="crm">
+      <button class="kb-btn" onclick="toggleKB(this)">19. CRM</button>
+      <div class="kb-content"><span class="kb-tag">CRM</span><p>VPN, solicitudes, tickets, errores, HAR Logs, chats, llamadas y tareas transferidas.</p></div>
+    </div>
+
+    <div class="kb-card" data-cat="riesgo crm"><button class="kb-btn" onclick="toggleKB(this)">20. Quejas (Reclamos)</button><div class="kb-content"><span class="kb-tag">Fraude / Quejas / Cobranza</span><p>Gestión de reclamos y quejas formales.</p></div></div>
+
+    <div class="kb-card" data-cat="riesgo"><button class="kb-btn" onclick="toggleKB(this)">21. Mesa de control</button><div class="kb-content"><span class="kb-tag">Fraude / Quejas / Cobranza</span><p>Seguimiento y control de operaciones especiales.</p></div></div>
+
+    <div class="kb-card" data-cat="riesgo"><button class="kb-btn" onclick="toggleKB(this)">22. Fraude y disputas</button><div class="kb-content"><span class="kb-tag">Fraude / Quejas / Cobranza</span><p>Autenticación, disputas, CNR, transacciones reconocidas, Antifraude y AML.</p></div></div>
+
+    <div class="kb-card" data-cat="riesgo"><button class="kb-btn" onclick="toggleKB(this)">23. Cobranza</button><div class="kb-content"><span class="kb-tag">Fraude / Quejas / Cobranza</span><p>Reestructuración, bloqueos por pago vencido y débito directo.</p></div></div>
+
+    <div class="kb-card" data-cat="general interno"><button class="kb-btn" onclick="toggleKB(this)">24. Para agentes</button><div class="kb-content"><span class="kb-tag">Para agentes</span><p>Tono, protocolos, calidad, glosario, contactos, lineamientos y recursos internos.</p></div></div>
+
+    <div class="kb-card" data-cat="social"><button class="kb-btn" onclick="toggleKB(this)">25. Social Media</button><div class="kb-content"><span class="kb-tag">Social Media</span><p>Atención en redes, Hootsuite, App Follow, crisis, copywriting y seguimiento operativo.</p></div></div>
+
+    <div class="kb-card" data-cat="general rh"><button class="kb-btn" onclick="toggleKB(this)">26. Recursos Humanos</button><div class="kb-content"><span class="kb-tag">RH</span><p>Seguros, vacaciones, incapacidades, nómina, denuncias, seguridad y contacto de emergencia.</p></div></div>
+
+  </div>
+</div>
+
+<script>
+let activeCategory = "all";
+
+function toggleKB(button){
+  button.nextElementSibling.classList.toggle("open");
+}
+
+function setFilter(category, btn){
+  activeCategory = category;
+  document.querySelectorAll(".kb-filter").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  filterKB();
+}
+
+function filterKB(){
+  const search = document.getElementById("kbSearch").value.toLowerCase();
+  const cards = document.querySelectorAll(".kb-card");
+
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    const cats = card.getAttribute("data-cat").split(" ");
+    const matchesSearch = text.includes(search);
+    const matchesCategory = activeCategory === "all" || cats.includes(activeCategory);
+    card.style.display = (matchesSearch && matchesCategory) ? "" : "none";
+  });
+}
+</script>
