@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Grid de Calidad: Customer Care</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --qa-orange:#ff5d15;
+      --qa-orange-dark:#e34f0e;
+      --qa-blue:#1a73e8;
+      --qa-blue-dark:#1558b0;
+      --qa-red:#e53935;
+      --qa-red-dark:#c62828;
+      --qa-black:#1d2026;
+      --qa-bg:#f5f6fa;
+      --qa-border:#d6d8de;
+      --qa-text:#10131a;
+      --qa-muted:#6b6f7b;
+      --qa-radius-lg:16px;
+      --qa-radius-pill:999px;
+      --qa-shadow:0 10px 24px rgba(0,0,0,0.08);
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+    html,body{margin:0;padding:0;background:transparent;color:var(--qa-text);overflow-x:hidden;}
+    .qa-app{
+      background:#fff;
+      border-radius:18px;
+      border:1px solid #e3e4eb;
+      padding:18px;
+      max-width:1100px;
+      width:100%;
+      margin:0 auto;
+      box-shadow:var(--qa-shadow);
+      overflow:hidden;
+    }
+    @media (min-width:768px){.qa-app{padding:22px 24px 26px;}}
+    .qa-topbar{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+    @media (min-width:720px){.qa-topbar{flex-direction:row;align-items:flex-start;justify-content:space-between;}}
+    .qa-title{margin:0;font-size:18px;font-weight:900;color:var(--qa-black);line-height:1.25;}
+    .qa-subtitle{margin:6px 0 0 0;font-size:13px;color:var(--qa-muted);line-height:1.35;}
+    .qa-mode-switch{display:inline-flex;gap:8px;padding:6px;background:#f3f4f8;border:1px solid #e6e7ef;border-radius:999px;align-self:flex-start;}
+    .qa-mode-btn{border:none;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--qa-black);transition:transform .1s ease, background .18s ease, color .18s ease, box-shadow .18s ease;white-space:nowrap;}
+    .qa-mode-btn:active{transform:scale(.98);}
+    .qa-mode-btn.is-active{background:#fff;box-shadow:0 6px 16px rgba(0,0,0,0.10);}
+    .qa-mode-dot{
+      width:9px;height:9px;border-radius:999px;background:var(--qa-orange);
+      box-shadow:0 0 0 0 rgba(255,93,21,.45);
+      animation:qaPulse 1.4s infinite;
+      flex:0 0 auto;
+    }
+    .qa-mode-btn.qa-mode-danger .qa-mode-dot{background:var(--qa-red);box-shadow:0 0 0 0 rgba(229,57,53,.35);}
+    @keyframes qaPulse{
+      0%{box-shadow:0 0 0 0 rgba(255,93,21,.45);}
+      70%{box-shadow:0 0 0 10px rgba(255,93,21,0);}
+      100%{box-shadow:0 0 0 0 rgba(255,93,21,0);}
+    }
+    .qa-filter-row{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:18px;}
+    .qa-field-card{
+      border:1px solid var(--qa-border);
+      border-radius:var(--qa-radius-lg);
+      padding:12px 14px;
+      background:#fcfcff;
+      min-width:0;
+    }
+    .qa-field-label{
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--qa-muted);
+      margin-bottom:10px;
+    }
+    .qa-pill-row{display:flex;flex-wrap:wrap;gap:8px;max-width:100%;overflow:hidden;}
+    .qa-pill{
+      border-radius:var(--qa-radius-pill);
+      border:1px solid transparent;
+      padding:8px 12px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:normal;
+      transition:background .18s ease, color .18s ease, transform .1s ease, box-shadow .18s ease, border-color .18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+      max-width:100%;
+      overflow:hidden;
+      word-break:break-word;
+      text-align:left;
+      line-height:1.25;
+    }
+    .qa-pill:active{transform:scale(.98);}
+    .qa-pill-dim{background:#fff3eb;color:var(--qa-orange-dark);border-color:rgba(255,93,21,.20);}
+    .qa-pill-dim.is-active{background:var(--qa-orange);color:#fff;border-color:var(--qa-orange);box-shadow:0 6px 16px rgba(0,0,0,0.10);transform:translateY(-1px);}
+    .qa-pill-inf{background:#ffe7e6;color:var(--qa-red-dark);border-color:rgba(229,57,53,.18);}
+    .qa-pill-inf.is-active{background:var(--qa-red);color:#fff;border-color:var(--qa-red);box-shadow:0 6px 16px rgba(0,0,0,0.10);transform:translateY(-1px);}
+    .qa-section{display:none;animation:qaFadeIn .18s ease-out;}
+    .qa-section.is-visible{display:block;}
+    @keyframes qaFadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+    .qa-definition-card{
+      border-radius:var(--qa-radius-lg);
+      border:1px solid rgba(255,93,21,.30);
+      padding:14px;
+      background:#fff3eb;
+      margin-bottom:16px;
+    }
+    .qa-definition-card.qa-def-red{border-color:rgba(229,57,53,.30);background:#ffe7e6;}
+    .qa-example-card{background:#fffafa;border-color:#ffcdd2;}
+    .qa-card-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 10px;
+      align-items:baseline;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .qa-definition-card h3{margin:0;font-size:15px;font-weight:900;color:var(--qa-black);line-height:1.3;}
+    .qa-chip-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+    .qa-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(255,255,255,.65);
+      color:var(--qa-black);
+      white-space:nowrap;
+    }
+    .qa-chip .dot{width:7px;height:7px;border-radius:999px;background:var(--qa-orange);}
+    .qa-chip.danger{border-color:rgba(229,57,53,.25);background:rgba(255,255,255,.55);}
+    .qa-chip.danger .dot{background:var(--qa-red);}
+    .qa-text{margin:0;font-size:13.5px;line-height:1.48;color:var(--qa-text);white-space:pre-wrap;}
+    .qa-note{
+      margin-top:10px;
+      border:1px dashed rgba(0,0,0,.18);
+      background:rgba(255,255,255,.55);
+      border-radius:12px;
+      padding:10px;
+    }
+    .qa-note-title{
+      display:flex;align-items:center;gap:8px;
+      font-weight:1000;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--qa-black);
+      margin-bottom:6px;
+    }
+    .qa-note-title .icon{width:18px;height:18px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:rgba(0,0,0,.08);font-size:12px;}
+    .qa-score-layout{display:flex;flex-direction:column;gap:14px;margin-top:10px;}
+    @media (min-width:720px){.qa-score-layout{flex-direction:row;align-items:stretch;}}
+    .qa-score-buttons{display:flex;flex-wrap:wrap;gap:10px;}
+    @media (min-width:720px){.qa-score-buttons{flex-direction:column;flex:0 0 230px;}}
+    .qa-score-btn{
+      border-radius:999px;border:none;padding:8px 14px;
+      font-size:12px;font-weight:900;background:var(--qa-black);color:#fff;
+      cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      transition:background .18s ease, transform .08s ease, box-shadow .18s ease;
+      white-space:nowrap;
+    }
+    .qa-score-btn.is-active{background:#000;box-shadow:0 0 0 1px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.3);}
+    .qa-score-btn:active{transform:scale(.98);}
+    .qa-score-detail{
+      flex:1 1 auto;border-radius:var(--qa-radius-lg);
+      border:1px dashed var(--qa-border);
+      padding:12px;background:#fbfbfe;min-height:74px;
+    }
+    .qa-score-detail-sub{
+      display:inline-flex;align-items:center;justify-content:center;
+      border-radius:999px;padding:4px 12px;font-size:11px;font-weight:1000;
+      text-transform:uppercase;letter-spacing:.08em;background:#424242;color:#fff;margin:0 0 8px;
+    }
+    .qa-score-detail-text{margin:0;font-size:15px;line-height:1.5;white-space:pre-wrap;}
+    .qa-aspect-label{font-weight:900;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--qa-orange-dark);margin:14px 0 4px;}
+    .qa-aspect-label:first-child{margin-top:0;}
+    .qa-score-line{margin:8px 0;display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45;}
+    .qa-score-line.is-sub{margin-left:22px;font-size:13px;opacity:.95;}
+    .qa-dot{width:8px;height:8px;border-radius:999px;background:var(--qa-orange);margin-top:6px;flex:0 0 auto;}
+    .qa-dot.sub{width:7px;height:7px;background:transparent;border:2px solid rgba(255,93,21,.55);margin-top:6px;}
+    .qa-dot.red{background:var(--qa-red);}
+    .qa-line-muted{color:var(--qa-muted);}
+    .qa-inline-card{
+      border-radius:var(--qa-radius-lg);
+      border:1px solid var(--qa-border);
+      padding:12px;
+      background:#fbfbfe;
+      margin-top:12px;
+    }
+    .qa-inline-card h4{
+      margin:0 0 8px;
+      font-size:12px;
+      font-weight:1000;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--qa-muted);
+    }
+    /* Nota destacada con contorno rojo (para excepciones importantes) */
+    .qa-red-note{
+      margin-top:12px;
+      border:2px solid var(--qa-red);
+      background:#fff5f5;
+      border-radius:12px;
+      padding:12px 14px;
+      box-shadow:0 0 0 3px rgba(229,57,53,.12);
+    }
+    .qa-red-note p{
+      margin:0;
+      font-size:13.5px;
+      line-height:1.5;
+      font-weight:800;
+      color:var(--qa-red-dark);
+    }
+    @media (max-width:720px){
+      .qa-app{padding:14px;}
+      .qa-mode-switch{border-radius:20px;}
+      .qa-mode-btn{flex:1 1 100%;justify-content:flex-start;}
+      .qa-pill{width:100%;}
+      .qa-score-buttons{flex-direction:row;}
+    }
+  </style>
+</head>
+<body>
+  <div class="qa-app" id="qa-grid-app" data-version="cc-v4-patched">
+    <div class="qa-topbar">
+      <div class="qa-title-wrap">
+        <h2 class="qa-title">Grid de Calidad: Customer Care</h2>
+        <p class="qa-subtitle">Selecciona la <strong>dimensión</strong> o revisa las <strong>infracciones graves</strong>.</p>
+      </div>
+
+      <div class="qa-mode-switch" role="tablist" aria-label="Vista">
+        <button class="qa-mode-btn is-active" id="mode-grid" type="button" role="tab" aria-selected="true">
+          <span class="qa-mode-dot" aria-hidden="true"></span>
+          Grid de calidad
+        </button>
+        <button class="qa-mode-btn qa-mode-danger" id="mode-infra" type="button" role="tab" aria-selected="false">
+          <span class="qa-mode-dot" aria-hidden="true"></span>
+          Infracciones graves
+        </button>
+      </div>
+    </div>
+
+    <div class="qa-filter-row">
+      <div class="qa-field-card">
+        <div class="qa-field-label" id="field-label">Dimensión</div>
+        <div class="qa-pill-row" id="pill-container"></div>
+      </div>
+    </div>
+
+    <div class="qa-main">
+      <section class="qa-section is-visible" id="section-grid">
+        <div class="qa-definition-card">
+          <div class="qa-card-head">
+            <h3 id="dim-title">Dimensión</h3>
+            <div class="qa-chip-row" id="meta-chips"></div>
+          </div>
+          <p class="qa-text" id="dim-definition"></p>
+          <div class="qa-note" id="dim-notes" style="display:none;"></div>
+          <div class="qa-inline-card" id="dim-example-wrap" style="display:none;">
+            <h4>Orientación de control de calidad / Ejemplo de comportamiento</h4>
+            <p class="qa-text" id="dim-example"></p>
+          </div>
+          <p class="qa-text" id="dim-definition-2" style="display:none;margin-top:12px;"></p>
+        </div>
+
+        <div class="qa-score-layout">
+          <div class="qa-score-buttons">
+            <button class="qa-score-btn is-active" data-score="0" type="button">Puntuación 0</button>
+            <button class="qa-score-btn" data-score="1" type="button">Puntuación 1</button>
+            <button class="qa-score-btn" data-score="2" type="button">Puntuación 2</button>
+            <button class="qa-score-btn" data-score="3" type="button">Puntuación 3</button>
+          </div>
+
+          <div class="qa-score-detail">
+            <p class="qa-score-detail-sub" id="score-label">Puntuación 0</p>
+            <div class="qa-score-detail-text" id="score-text"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="qa-section" id="section-infra">
+        <div class="qa-definition-card qa-def-red">
+          <div class="qa-card-head">
+            <h3 id="inf-title">Infracción grave</h3>
+            <div class="qa-chip-row" id="inf-meta-chips"></div>
+          </div>
+          <div class="qa-text" id="inf-descripcion"></div>
+        </div>
+
+        <div class="qa-definition-card qa-example-card" id="inf-examples-card" style="display:none;">
+          <h3>Ejemplos / descripción</h3>
+          <div class="qa-text" id="inf-ejemplos"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const DIMENSIONS = [
+      {
+            "id": "dim_0",
+            "name": "Precisión y cumplimiento de procesos",
+            "definition": "Mide la corrección con la que el agente ha seguido los procedimientos internos y ha proporcionado información precisa.",
+            "scores": {
+                  "0": "Proceso incorrecto | No realizó nada",
+                  "1": "Parcialmente correcto, pero incompleto con afección en el resultado del proceso",
+                  "2": "Sigue el proceso con pequeñas deficiencias sin afección en el resultado del proceso",
+                  "3": "Totalmente preciso, ejecución fluida. | Va más allá de lo que se espera de ellos/ Supera las expectativas."
+            },
+            "example": "Identidad del cliente confirmada; se han seguido los pasos y se han utilizado las herramientas correctas; se han seguido los procedimientos de forma adecuada.",
+            "notes": []
+      },
+      {
+            "id": "dim_1",
+            "name": "Empatía y tono",
+            "definition": "Evalúa la inteligencia emocional, la cortesía y la capacidad de comunicarse con respeto y cordialidad.\nEl agente se comunica de manera efectiva, respetando la ortografía, puntuación, dicción y edición de Scripts.",
+            "definition2": "Evalúa la comunicación dentro de las interacciones de chat.",
+            "scores": {
+                  "0": "Impaciente, sin actitud de servicio. Tiene faltas ortografícas, de puntuación, redacción y edición del mensaje que afectan la interpretación del mensaje.",
+                  "1": "Educado, pero robótico. Tiene faltas ortografícas, de puntuación, redacción y edición del mensaje que no afectan la interpretación del mensaje.",
+                  "2": "Amable, reconoce las emociones. | Tiene faltas ortografícas, de puntuación, redacción y edición del mensaje pero son corregidas. Estructura profesional",
+                  "3": "Muy empático, tono adaptable. | El estilo del mensaje fue personalizado con empatía visible, uso de emojis. Fluido y con confianza sobresaliente."
+            },
+            "scores2": {
+                  "0": "Más de 3 faltas ortográficas.\nEscribir solo en mayúsculas.\nUtilizar tecnicismos.\nSaludar innecesariamente o agradecer el tiempo de espera en el mensaje inicial.\nUtilizar emojis que no van acorde al mensaje, ej.: una negativa al cliente y un corazón anaranjado.\nUtilizar dos frases de agradecimiento de relleno.\nUtilizar preámbulo técnico.\nResponder al cliente cuando necesita transferir a Expertos, Débito, Inversiones.",
+                  "1": "Incluir párrafos largos en lugar de pasos a seguir.\nIncluir un mensaje de despedida antes de que el cliente lo mencione.",
+                  "2": "No tener faltas ortográficas, no utilizar tecnicismos.\nSeguir el flujo de la conversación con mensajes previos, no solicitar información previamente brindada.\nUtilizar palabras amables, pero no frases.\nBrindar los pasos entendibles y directos.\nNotificar al cliente cuando necesita transferir a otra área: Antifraude, Disputas, AML, Retención y UNE.",
+                  "3": "No tener faltas ortográficas, no utilizar tecnicismos.\nSeguir el flujo de la conversación con mensajes previos, no solicitar información previamente brindada.\nUtilizar palabras amables, pero no frases.\nBrindar los pasos entendibles y directos y los enlista.\nNotificar al cliente cuando necesite transferir a otra área: Antifraude, Disputas, AML, Retención y UNE."
+            },
+            "example": "Entiendo que este retraso puede ser frustrante. Vamos a solucionarlo juntos",
+            "notes": []
+      },
+      {
+            "id": "dim_2",
+            "name": "Resolución de problemas y autonomía",
+            "definition": "Comprueba la eficacia con la que el agente identifica el problema, propone soluciones y utiliza su autonomía dentro de los límites permitidos.",
+            "scores": {
+                  "0": "Sin intento de resolver / No identifica el problema del cliente",
+                  "1": "Respuesta básica o preparada / Identifica el problema pero no pide información esencial para la resolución. /Identifica el problema, pregunta adecuadamente pero no brinda una resolución completa",
+                  "2": "Encuentra una solución válida / Identifica el problema, pregunta adecuadamente y brinda una solución",
+                  "3": "Identifica el problema del cliente / Asume la responsabilidad, realiza el proceso más eficiente y ofreció ayuda adicional."
+            },
+            "example": "«Yo mismo enviaré la solicitud para que no tenga que volver a llamar».",
+            "notes": []
+      },
+      {
+            "id": "dim_3",
+            "name": "Resultados para el cliente y responsabilidad",
+            "definition": "Mide si se ha resuelto el problema del cliente y si se han establecido expectativas claras.",
+            "scores": {
+                  "0": "Sin resolver, sin cierre a cara del cliente",
+                  "1": "Dio información, pero no confirmó que se hubiera entendido",
+                  "2": "Problema resuelto o se compartió el siguiente paso | El agente buscó alternativas para que el cliente entienda la información",
+                  "3": "Totalmente resuelto y seguimiento proactivo, añadiendo información adicional que evite segundo contacto"
+            },
+            "example": "«He reactivado su tarjeta y le confirmaré por correo electrónico cuando esté funcionando».",
+            "notes": [
+                  "Educación sobre segundo contacto, uso de la app"
+            ]
+      },
+      {
+            "id": "dim_4",
+            "name": "Trabajar con la negatividad",
+            "definition": "Campo opcional, relevante para llamadas negativas.",
+            "scores": {
+                  "0": "Ignoró los comentarios negativos, los inició él mismo",
+                  "1": "Lo intentó, pero no tomó las medidas necesarias",
+                  "2": "Remitió la queja, informó al cliente al respecto",
+                  "3": "Gestionó los comentarios negativos de forma independiente"
+            },
+            "example": "",
+            "notes": []
+      }
+];
+    const INFRACCIONES = [{"id": "inf_0", "type": "Divulgación de datos o acceso no autorizado", "description": "Compartir datos confidenciales o personales de clientes sin autorización o infringir la ley.", "examples": ["«Tu saldo es de 23 450 MXN» antes de la verificación.", "Escenario: Se comunica el esposo de la titular y quiere retirar parte de la línea de crédito y aparece como fondos insuficientes.\nRespuesta del asesor:Realizas autenticación con un tercero y le mencionas que las compras son declinadas por el nip y orientas al cliente en la app.\nPuntos omitidos durante la interacción. No podemos generar autenticación con un tercero y tampoco orientarlo para realizar el cambio de Nip."], "evaluation": "Hard Violation"}, {"id": "inf_1", "type": "Tono agresivo/irrespetuoso/Discriminación o prejuicio", "description": "Sarcasmo, impaciencia o lenguaje grosero.", "examples": ["Escenario:El cliente se encuentra molesto, ya que recibe llamadas.\nRespuesta por parte del asesor:La ejecutiva empieza a insultar y a discriminar con frases como \"igual que tu mamá\", \"nadie te quiere\", \"extranjero tonto\", \"muerto de hambre\".\nPuntos omitidos en la interacción:El ejecutivo se engancha con los comentarios del cliente y empieza a insultarlo."], "evaluation": "Hard Violation"}, {"id": "inf_2", "type": "Malinformación/Declaraciones falsas", "description": "Proporcionar información errónea o engañosa.", "examples": ["«Esta tarifa no existe», cuando sí existe."], "evaluation": "Hard Violation"}, {"id": "inf_3", "type": "Evasión", "description": "Evitar atender una interacción", "examples": ["Chats: El agente no atiende al cliente durante la interacción al ignorar sus solicitudes o no responderlas; tarda más de 5 minutos en cerrar la tarea una vez finalizada la interacción; formula preguntas innecesarias o fuera de contexto que no contribuyen a la resolución del caso; o envía al cliente un mensaje indicando «en proceso» y luego no responde durante más de 10 minutos.\nLlamadas: El agente termina o prolonga intencionalmente la interacción, lo que incluye, pero lo limita a, poner al cliente en esperan más de 3 minutos sin retomar o ignorar la interacción. Si se desconecta la llamada, el agente debe devolver la llamada al cliente tan pronto como se desconecte la llamada, o si el agente tarda más de 1 minuto en completar la tarea después de que la interacción haya finalizado sin mensajes necesarios en el chat. El agente debe iniciar una llamada en las colas de llamadas a más tardar 1 minuto después de recibir una tarea."], "exampleNotes": {"0": "⚠️ NOTA: Los agentes de Retención pueden iniciar la llamada en las colas de llamadas hasta 2 minutos después de recibir una tarea."}, "evaluation": "Hard Violation"}];
+
+    const SCORE_META = {
+      "0": "Puntuación 0 · Proceso incorrecto",
+      "1": "Puntuación 1 · Parcial",
+      "2": "Puntuación 2 · Cumplimiento",
+      "3": "Puntuación 3 · Excelente"
+    };
+
+    let mode = "grid";
+    let selectedDimensionId = DIMENSIONS[0] ? DIMENSIONS[0].id : null;
+    let selectedScore = "0";
+    let selectedInfId = INFRACCIONES[0] ? INFRACCIONES[0].id : null;
+
+    const modeGridBtn = document.getElementById("mode-grid");
+    const modeInfraBtn = document.getElementById("mode-infra");
+    const fieldLabelEl = document.getElementById("field-label");
+    const pillContainer = document.getElementById("pill-container");
+    const sectionGrid = document.getElementById("section-grid");
+    const sectionInfra = document.getElementById("section-infra");
+    const dimTitleEl = document.getElementById("dim-title");
+    const dimDefinitionEl = document.getElementById("dim-definition");
+    const dimNotesEl = document.getElementById("dim-notes");
+    const dimExampleWrap = document.getElementById("dim-example-wrap");
+    const dimExampleEl = document.getElementById("dim-example");
+    const dimDefinition2El = document.getElementById("dim-definition-2");
+    const metaChipsEl = document.getElementById("meta-chips");
+    const scoreLabelEl = document.getElementById("score-label");
+    const scoreTextEl = document.getElementById("score-text");
+    const scoreButtons = Array.from(document.querySelectorAll(".qa-score-btn"));
+    const infTitleEl = document.getElementById("inf-title");
+    const infMetaChipsEl = document.getElementById("inf-meta-chips");
+    const infDescripcionEl = document.getElementById("inf-descripcion");
+    const infExamplesCard = document.getElementById("inf-examples-card");
+    const infEjemplosEl = document.getElementById("inf-ejemplos");
+
+    function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+    function findDimension(id){ return DIMENSIONS.find(d => d.id === id) || null; }
+    function findInfraccion(id){ return INFRACCIONES.find(i => i.id === id) || null; }
+    function formatLineText(t){ return String(t == null ? "" : t); }
+    function escapeHtml(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function appendLabeledLines(container, label, raw){
+      const h = document.createElement("div");
+      h.className = "qa-aspect-label";
+      h.textContent = label;
+      container.appendChild(h);
+      const parts = String(raw || "").split(/\r?\n/).filter(x => x.trim());
+      parts.forEach(part => {
+        const row = document.createElement("div");
+        row.className = "qa-score-line";
+        const dot = document.createElement("span");
+        dot.className = "qa-dot";
+        row.appendChild(dot);
+        const span = document.createElement("span");
+        span.textContent = part.trim();
+        row.appendChild(span);
+        container.appendChild(row);
+      });
+    }
+
+    function renderChips(container, items){
+      clearNode(container);
+      items.forEach(it => {
+        const chip = document.createElement("span");
+        chip.className = "qa-chip " + (it.kind || "");
+        chip.innerHTML = '<span class="dot" aria-hidden="true"></span>' + it.text;
+        container.appendChild(chip);
+      });
+    }
+
+    function renderNotes(node, notes){
+      if(!notes || !notes.length){
+        node.style.display = "none";
+        clearNode(node);
+        return;
+      }
+      node.style.display = "block";
+      clearNode(node);
+      const title = document.createElement("div");
+      title.className = "qa-note-title";
+      title.innerHTML = '<span class="icon" aria-hidden="true">📝</span>Notas';
+      node.appendChild(title);
+      notes.forEach(n => {
+        const row = document.createElement("div");
+        row.className = "qa-score-line";
+        const dot = document.createElement("span");
+        dot.className = "qa-dot sub";
+        row.appendChild(dot);
+        const span = document.createElement("span");
+        span.textContent = formatLineText(n);
+        row.appendChild(span);
+        node.appendChild(row);
+      });
+    }
+
+    function addTextBlock(container, raw, danger){
+      clearNode(container);
+      if(!raw) return;
+      const text = String(raw).trim();
+      const parts = text.split(/\r?\n/).filter(x => x.trim());
+      if(!parts.length){
+        const p = document.createElement("p");
+        p.textContent = text;
+        container.appendChild(p);
+        return;
+      }
+      parts.forEach(part => {
+        const row = document.createElement("div");
+        row.className = "qa-score-line";
+        const dot = document.createElement("span");
+        dot.className = "qa-dot" + (danger ? " red" : "");
+        row.appendChild(dot);
+        const span = document.createElement("span");
+        span.textContent = part.trim();
+        row.appendChild(span);
+        container.appendChild(row);
+      });
+    }
+
+    function renderPills(){
+      clearNode(pillContainer);
+      if(mode === "grid"){
+        fieldLabelEl.textContent = "Dimensión";
+        DIMENSIONS.forEach(dim => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "qa-pill qa-pill-dim" + (dim.id === selectedDimensionId ? " is-active" : "");
+          btn.textContent = dim.name;
+          btn.addEventListener("click", () => {
+            selectedDimensionId = dim.id;
+            selectedScore = "0";
+            renderPills();
+            renderGridContent();
+          });
+          pillContainer.appendChild(btn);
+        });
+      }else{
+        fieldLabelEl.textContent = "Tipo de infracción";
+        INFRACCIONES.forEach(inf => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "qa-pill qa-pill-inf" + (inf.id === selectedInfId ? " is-active" : "");
+          btn.textContent = inf.type;
+          btn.addEventListener("click", () => {
+            selectedInfId = inf.id;
+            renderPills();
+            renderInfraContent();
+          });
+          pillContainer.appendChild(btn);
+        });
+      }
+    }
+
+    function renderMode(){
+      if(mode === "grid"){
+        sectionInfra.classList.remove("is-visible");
+        sectionGrid.classList.add("is-visible");
+        modeGridBtn.classList.add("is-active");
+        modeInfraBtn.classList.remove("is-active");
+        modeGridBtn.setAttribute("aria-selected","true");
+        modeInfraBtn.setAttribute("aria-selected","false");
+      }else{
+        sectionGrid.classList.remove("is-visible");
+        sectionInfra.classList.add("is-visible");
+        modeInfraBtn.classList.add("is-active");
+        modeGridBtn.classList.remove("is-active");
+        modeGridBtn.setAttribute("aria-selected","false");
+        modeInfraBtn.setAttribute("aria-selected","true");
+      }
+      renderPills();
+      if(mode === "grid") renderGridContent();
+      else renderInfraContent();
+    }
+
+    function renderGridContent(){
+      const dim = findDimension(selectedDimensionId);
+      renderChips(metaChipsEl, [
+        { text: "Customer Care", kind: "" },
+        { text: "Dimensión " + (DIMENSIONS.findIndex(d => d.id === selectedDimensionId)+1) + " de " + DIMENSIONS.length, kind: "" }
+      ]);
+
+      dimTitleEl.textContent = dim ? dim.name : "Dimensión";
+      if(dim && dim.definition2){
+        dimDefinitionEl.innerHTML =
+          '<strong>General:</strong> ' + escapeHtml(dim.definition).replace(/\n/g,"<br>");
+        dimDefinition2El.style.display = "block";
+        dimDefinition2El.innerHTML =
+          '<strong>Comunicación en chat:</strong> ' + escapeHtml(dim.definition2);
+      } else {
+        dimDefinitionEl.textContent = dim ? dim.definition : "";
+        dimDefinition2El.style.display = "none";
+        dimDefinition2El.innerHTML = "";
+      }
+      renderNotes(dimNotesEl, dim ? dim.notes : []);
+
+      if(dim && dim.example){
+        dimExampleWrap.style.display = "block";
+        dimExampleEl.textContent = dim.example;
+      }else{
+        dimExampleWrap.style.display = "none";
+        dimExampleEl.textContent = "";
+      }
+
+      scoreButtons.forEach(btn => {
+        btn.classList.toggle("is-active", btn.getAttribute("data-score") === selectedScore);
+      });
+
+      scoreLabelEl.textContent = SCORE_META[selectedScore] || ("Puntuación " + selectedScore);
+      if(dim && dim.scores2){
+        clearNode(scoreTextEl);
+        appendLabeledLines(scoreTextEl, "General", dim.scores[selectedScore]);
+        appendLabeledLines(scoreTextEl, "Comunicación en chat", dim.scores2[selectedScore]);
+      } else {
+        addTextBlock(scoreTextEl, dim ? dim.scores[selectedScore] : "", false);
+      }
+    }
+
+    function renderInfraContent(){
+      const inf = findInfraccion(selectedInfId);
+      renderChips(infMetaChipsEl, [
+        { text: "Infracción grave", kind: "danger" },
+        { text: inf && inf.evaluation ? inf.evaluation : "Evaluación", kind: "danger" }
+      ]);
+
+      infTitleEl.textContent = inf ? inf.type : "Infracción grave";
+      addTextBlock(infDescripcionEl, inf ? inf.description : "", true);
+
+      if(inf && inf.examples && inf.examples.length){
+        infExamplesCard.style.display = "block";
+        clearNode(infEjemplosEl);
+        inf.examples.forEach((ex, idx) => {
+          const block = document.createElement("div");
+          block.className = "qa-inline-card";
+          const h = document.createElement("h4");
+          h.textContent = "Ejemplo / descripción " + (idx + 1);
+          const div = document.createElement("div");
+          div.className = "qa-text";
+          addTextBlock(div, ex, true);
+          block.appendChild(h);
+          block.appendChild(div);
+          if(inf.exampleNotes && inf.exampleNotes[idx]){
+            const note = document.createElement("div");
+            note.className = "qa-red-note";
+            const p = document.createElement("p");
+            p.textContent = inf.exampleNotes[idx];
+            note.appendChild(p);
+            block.appendChild(note);
+          }
+          infEjemplosEl.appendChild(block);
+        });
+      }else{
+        infExamplesCard.style.display = "none";
+        clearNode(infEjemplosEl);
+      }
+    }
+
+    modeGridBtn.addEventListener("click", () => { mode = "grid"; renderMode(); });
+    modeInfraBtn.addEventListener("click", () => { mode = "infra"; renderMode(); });
+
+    scoreButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedScore = btn.getAttribute("data-score") || "0";
+        renderGridContent();
+      });
+    });
+
+    renderMode();
+  })();
+  </script>
+
+<script>
+(function(){
+  function qaFormatText(text){
+    return String(text || "")
+      .replace(/:([^\s\/])/g, ": $1")
+      .replace(/;([^\s])/g, "; $1")
+      .replace(/,([^\s])/g, ", $1")
+      .replace(/\.([A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/g, ". $1")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+
+  function qaFormatContainer(root){
+    if(!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      const oldValue = n.nodeValue;
+      const newValue = qaFormatText(oldValue);
+      if(oldValue !== newValue) n.nodeValue = newValue;
+    });
+  }
+
+  function qaCleanNumericNotes(){
+    const notes = document.querySelectorAll('#dim-notes .qa-score-line');
+    notes.forEach(row => {
+      const text = row.textContent.trim();
+      if(/^\d+$/.test(text)) row.remove();
+    });
+    const dimNotes = document.getElementById('dim-notes');
+    if(dimNotes && !dimNotes.querySelector('.qa-score-line')){
+      dimNotes.style.display = 'none';
+    }
+  }
+
+  function qaPatchAllText(){
+    ['score-text','inf-descripcion','inf-ejemplo','dim-notes'].forEach(id => qaFormatContainer(document.getElementById(id)));
+    qaCleanNumericNotes();
+  }
+
+  function qaGetSelectedDimension(){
+    const activeDim = document.querySelector('#pill-container .qa-pill-dim.is-active');
+    return activeDim ? activeDim.textContent.trim() : '';
+  }
+
+  function qaScoreLinesForCustomerCare(dimName, score){
+    // Fallback for Resultados para el cliente y responsabilidad when original score buttons fail.
+    // Reads from existing rendered content only when available; otherwise keeps panel responsive.
+    return null;
+  }
+
+  function qaForceScoreButtonBehavior(){
+    const buttons = Array.from(document.querySelectorAll('.qa-score-btn'));
+    const label = document.getElementById('score-label');
+    const scoreText = document.getElementById('score-text');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', function(){
+        const score = this.getAttribute('data-score') || '0';
+        buttons.forEach(b => b.classList.toggle('is-active', b === this));
+
+        // Let original app run first if it still works, then format and ensure label updates.
+        setTimeout(function(){
+          const meta = {
+            "0":"Puntuación 0 · Incumplimiento",
+            "1":"Puntuación 1 · Omisiones",
+            "2":"Puntuación 2 · Cumplimiento",
+            "3":"Puntuación 3 · Excelente"
+          };
+          if(label) label.textContent = meta[score] || ("Puntuación " + score);
+          qaPatchAllText();
+        }, 0);
+      }, true);
+    });
+  }
+
+  function qaObserveChanges(){
+    const app = document.getElementById('qa-grid-app') || document.body;
+    const obs = new MutationObserver(function(){
+      qaPatchAllText();
+    });
+    obs.observe(app, {childList:true, subtree:true, characterData:true});
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      qaForceScoreButtonBehavior();
+      qaPatchAllText();
+      qaObserveChanges();
+    });
+  }else{
+    qaForceScoreButtonBehavior();
+    qaPatchAllText();
+    qaObserveChanges();
+  }
+})();
+</script>
+<script>
+(function(){
+  const TARGET_DIMENSION = "Resultados para el cliente y responsabilidad";
+
+  const CUSTOMER_RESULT_SCORES = {
+    "0": {
+      label: "PUNTUACIÓN 0 · INCUMPLIMIENTO",
+      text: "Sin resolver, sin cierre a cara del cliente."
+    },
+    "1": {
+      label: "PUNTUACIÓN 1 · OMISIONES",
+      text: "Dio información, pero no confirmó que se hubiera entendido."
+    },
+    "2": {
+      label: "PUNTUACIÓN 2 · CUMPLIMIENTO",
+      text: "Problema resuelto o se compartió el siguiente paso | El agente buscó alternativas para que el cliente entienda la información."
+    },
+    "3": {
+      label: "PUNTUACIÓN 3 · EXCELENTE",
+      text: "Totalmente resuelto y seguimiento proactivo, añadiendo información adicional que evite segundo contacto."
+    }
+  };
+
+  function getSelectedDimension(){
+    const activeDim = document.querySelector("#pill-container .qa-pill-dim.is-active");
+    return activeDim ? activeDim.textContent.trim() : "";
+  }
+
+  function applyCustomerResultScore(score){
+    if(getSelectedDimension() !== TARGET_DIMENSION) return;
+
+    const scoreData = CUSTOMER_RESULT_SCORES[score];
+    const label = document.getElementById("score-label");
+    const scoreText = document.getElementById("score-text");
+
+    if(!scoreData || !label || !scoreText) return;
+
+    label.textContent = scoreData.label;
+
+    scoreText.innerHTML = "";
+
+    const row = document.createElement("div");
+    row.className = "qa-score-line";
+
+    const dot = document.createElement("span");
+    dot.className = "qa-dot";
+
+    const span = document.createElement("span");
+    span.textContent = scoreData.text;
+
+    row.appendChild(dot);
+    row.appendChild(span);
+    scoreText.appendChild(row);
+  }
+
+  document.querySelectorAll(".qa-score-btn").forEach(btn => {
+    btn.addEventListener("click", function(){
+      const score = this.getAttribute("data-score") || "0";
+      setTimeout(function(){
+        applyCustomerResultScore(score);
+      }, 0);
+    });
+  });
+
+  document.querySelectorAll("#pill-container").forEach(container => {
+    container.addEventListener("click", function(){
+      setTimeout(function(){
+        const activeScore = document.querySelector(".qa-score-btn.is-active");
+        const score = activeScore ? activeScore.getAttribute("data-score") : "0";
+        applyCustomerResultScore(score);
+      }, 0);
+    });
+  });
+})();
+</script>
+</body>
+</html>
