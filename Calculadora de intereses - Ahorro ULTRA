@@ -1,0 +1,226 @@
+/* ==========================================================
+   Infografía Qué hacer / Qué no hacer: Ahorro Flexible ULTRA
+   Pareja de: dodont-ultra.html
+   Scope acotado a .dd-wrap: no toca el resto de la página.
+   ========================================================== */
+
+/* Poppins. Si el macro elimina el @import, ver nota en el chat. */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+.dd-wrap {
+  /* Paleta tomada de la infografía VS (GAT nominal vs GAT real) */
+  --naranja-1: #FFB300;   /* naranja dorado  -> Qué hacer */
+  --naranja-2: #FB8C00;
+  --coral-1:   #FF7043;   /* coral profundo  -> Qué no hacer */
+  --coral-2:   #E64A19;
+  --txt-do:    #EF6C00;
+  --txt-dont:  #D84315;
+  --dd-gap:    14px;      /* un solo gap para encabezados y tarjetas */
+
+  width: 100%;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 16px;
+  background: transparent;
+  padding: 24px 0;
+}
+
+/* Scope acotado: no toca el resto de la página anfitriona */
+.dd-wrap,
+.dd-wrap *,
+.dd-wrap *::before,
+.dd-wrap *::after {
+  box-sizing: border-box;
+}
+
+/* Encabezados superiores (mismo gap que el grid para que alineen) */
+.dd-wrap .dd-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--dd-gap);
+  margin-bottom: 20px;
+}
+
+.dd-wrap .dd-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.dd-wrap .dd-header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.dd-wrap .dd-header-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.dd-wrap .dd-header-icon--do   { background: linear-gradient(135deg, var(--naranja-1), var(--naranja-2)); }
+.dd-wrap .dd-header-icon--dont { background: linear-gradient(135deg, var(--coral-1), var(--coral-2)); }
+
+.dd-wrap .dd-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dd-wrap .dd-header--do   .dd-header-title { color: var(--txt-do); }
+.dd-wrap .dd-header--dont .dd-header-title { color: var(--txt-dont); }
+
+/* ======= GRID ÚNICO: la clave del alto igualado ======= */
+/* align-items por defecto = stretch, así cada tarjeta llena su fila.
+   OJO: no volver a poner align-items: start aquí, rompe el fix. */
+.dd-wrap .dd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--dd-gap);
+}
+
+/* Los contenedores de columna desaparecen del layout: las tarjetas
+   pasan a ser hijos directos del grid y comparten filas reales. */
+.dd-wrap .dd-col {
+  display: contents;
+}
+
+.dd-wrap .dd-col--do   > .dd-card { grid-column: 1; }
+.dd-wrap .dd-col--dont > .dd-card { grid-column: 2; }
+
+/* Emparejamiento explícito por posición: la tarjeta n de la izquierda
+   comparte fila con la tarjeta n de la derecha.
+   Hay margen hasta 8 filas; agrega más pares si crece la lista. */
+.dd-wrap .dd-col > .dd-card:nth-child(1) { grid-row: 1; }
+.dd-wrap .dd-col > .dd-card:nth-child(2) { grid-row: 2; }
+.dd-wrap .dd-col > .dd-card:nth-child(3) { grid-row: 3; }
+.dd-wrap .dd-col > .dd-card:nth-child(4) { grid-row: 4; }
+.dd-wrap .dd-col > .dd-card:nth-child(5) { grid-row: 5; }
+.dd-wrap .dd-col > .dd-card:nth-child(6) { grid-row: 6; }
+.dd-wrap .dd-col > .dd-card:nth-child(7) { grid-row: 7; }
+.dd-wrap .dd-col > .dd-card:nth-child(8) { grid-row: 8; }
+
+/* Tarjetas */
+.dd-wrap .dd-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  color: #FFFFFF;
+  height: 100%;          /* llena la altura de su fila */
+  min-width: 0;
+}
+
+.dd-wrap .dd-card--do   { background: linear-gradient(135deg, var(--naranja-1), var(--naranja-2)); }
+.dd-wrap .dd-card--dont { background: linear-gradient(135deg, var(--coral-1), var(--coral-2)); }
+
+.dd-wrap .dd-card-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  opacity: 0.95;
+}
+
+.dd-wrap .dd-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dd-wrap .dd-card-text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #FFFFFF;
+  font-weight: 400;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+.dd-wrap .dd-card-text strong {
+  font-weight: 600;
+  color: #FFF2E6;
+}
+
+/* =============== ANIMACIONES =============== */
+
+@keyframes dd-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.dd-wrap .dd-anim-bounce { animation: dd-bounce 1.8s ease-in-out infinite; }
+
+@keyframes dd-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+.dd-wrap .dd-anim-shake { animation: dd-shake 2s ease-in-out infinite; }
+
+@keyframes dd-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.dd-wrap .dd-anim-pulse { animation: dd-pulse 1.5s ease-in-out infinite; }
+
+@keyframes dd-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.dd-wrap .dd-anim-float { animation: dd-float 2.5s ease-in-out infinite; }
+
+@keyframes dd-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.dd-wrap .dd-anim-rotate svg {
+  animation: dd-rotate 8s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes dd-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(6deg); }
+}
+.dd-wrap .dd-anim-wobble { animation: dd-wobble 2.2s ease-in-out infinite; }
+
+/* Respeto a preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .dd-wrap .dd-anim-bounce,
+  .dd-wrap .dd-anim-shake,
+  .dd-wrap .dd-anim-pulse,
+  .dd-wrap .dd-anim-float,
+  .dd-wrap .dd-anim-rotate svg,
+  .dd-wrap .dd-anim-wobble {
+    animation: none;
+  }
+}
+
+/* Responsive: una sola columna, sin emparejar filas */
+@media (max-width: 768px) {
+  .dd-wrap .dd-headers,
+  .dd-wrap .dd-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .dd-wrap .dd-col > .dd-card {
+    grid-column: 1;
+    grid-row: auto;
+    height: auto;
+  }
+  .dd-wrap .dd-header-title { font-size: 20px; }
+  .dd-wrap .dd-card { padding: 13px 16px; }
+  .dd-wrap .dd-card-icon { width: 42px; height: 42px; }
+}
