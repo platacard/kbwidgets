@@ -1,226 +1,816 @@
-/* ==========================================================
-   Infografía Qué hacer / Qué no hacer: Ahorro Flexible ULTRA
-   Pareja de: dodont-ultra.html
-   Scope acotado a .dd-wrap: no toca el resto de la página.
-   ========================================================== */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculadora de rendimientos · Ahorro Flexible ULTRA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ===================================================================
+     TOKENS · Brand kit Plata (design.platacard.mx)
+     Plata Orange #FF5000 · gradiente #FF4000 → #FF5000 → #FF711F
+     Grises con tinte azul (guía "Grays") · Poppins 16
+     =================================================================== */
+  :root {
+    --orange:       #FF5000;
+    --orange-deep:  #FF4000;
+    --orange-light: #FF711F;
+    --orange-ink:   #B23800;
+    --tint:         #FFF1E8;
+    --tint-line:    #FFD3BA;
 
-/* Poppins. Si el macro elimina el @import, ver nota en el chat. */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+    --silver:       #7C879C;
+    --silver-soft:  #A8B2C4;
+    --silver-tint:  #EEF1F7;
 
-.dd-wrap {
-  /* Paleta tomada de la infografía VS (GAT nominal vs GAT real) */
-  --naranja-1: #FFB300;   /* naranja dorado  -> Qué hacer */
-  --naranja-2: #FB8C00;
-  --coral-1:   #FF7043;   /* coral profundo  -> Qué no hacer */
-  --coral-2:   #E64A19;
-  --txt-do:    #EF6C00;
-  --txt-dont:  #D84315;
-  --dd-gap:    14px;      /* un solo gap para encabezados y tarjetas */
+    --ink:          #10151F;
+    --ink-soft:     #2A3140;
+    --muted:        #5C6577;
+    --line:         #E3E8F1;
+    --surface:      #FFFFFF;
+    --surface-alt:  #F4F7FC;
 
-  width: 100%;
-  font-family: 'Poppins', Arial, sans-serif;
-  font-size: 16px;
-  background: transparent;
-  padding: 24px 0;
-}
+    --r-lg: 22px;
+    --r-md: 16px;
+    --r-sm: 11px;
 
-/* Scope acotado: no toca el resto de la página anfitriona */
-.dd-wrap,
-.dd-wrap *,
-.dd-wrap *::before,
-.dd-wrap *::after {
-  box-sizing: border-box;
-}
-
-/* Encabezados superiores (mismo gap que el grid para que alineen) */
-.dd-wrap .dd-headers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--dd-gap);
-  margin-bottom: 20px;
-}
-
-.dd-wrap .dd-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-
-.dd-wrap .dd-header-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  flex-shrink: 0;
-}
-
-.dd-wrap .dd-header-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.dd-wrap .dd-header-icon--do   { background: linear-gradient(135deg, var(--naranja-1), var(--naranja-2)); }
-.dd-wrap .dd-header-icon--dont { background: linear-gradient(135deg, var(--coral-1), var(--coral-2)); }
-
-.dd-wrap .dd-header-title {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.dd-wrap .dd-header--do   .dd-header-title { color: var(--txt-do); }
-.dd-wrap .dd-header--dont .dd-header-title { color: var(--txt-dont); }
-
-/* ======= GRID ÚNICO: la clave del alto igualado ======= */
-/* align-items por defecto = stretch, así cada tarjeta llena su fila.
-   OJO: no volver a poner align-items: start aquí, rompe el fix. */
-.dd-wrap .dd-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--dd-gap);
-}
-
-/* Los contenedores de columna desaparecen del layout: las tarjetas
-   pasan a ser hijos directos del grid y comparten filas reales. */
-.dd-wrap .dd-col {
-  display: contents;
-}
-
-.dd-wrap .dd-col--do   > .dd-card { grid-column: 1; }
-.dd-wrap .dd-col--dont > .dd-card { grid-column: 2; }
-
-/* Emparejamiento explícito por posición: la tarjeta n de la izquierda
-   comparte fila con la tarjeta n de la derecha.
-   Hay margen hasta 8 filas; agrega más pares si crece la lista. */
-.dd-wrap .dd-col > .dd-card:nth-child(1) { grid-row: 1; }
-.dd-wrap .dd-col > .dd-card:nth-child(2) { grid-row: 2; }
-.dd-wrap .dd-col > .dd-card:nth-child(3) { grid-row: 3; }
-.dd-wrap .dd-col > .dd-card:nth-child(4) { grid-row: 4; }
-.dd-wrap .dd-col > .dd-card:nth-child(5) { grid-row: 5; }
-.dd-wrap .dd-col > .dd-card:nth-child(6) { grid-row: 6; }
-.dd-wrap .dd-col > .dd-card:nth-child(7) { grid-row: 7; }
-.dd-wrap .dd-col > .dd-card:nth-child(8) { grid-row: 8; }
-
-/* Tarjetas */
-.dd-wrap .dd-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  color: #FFFFFF;
-  height: 100%;          /* llena la altura de su fila */
-  min-width: 0;
-}
-
-.dd-wrap .dd-card--do   { background: linear-gradient(135deg, var(--naranja-1), var(--naranja-2)); }
-.dd-wrap .dd-card--dont { background: linear-gradient(135deg, var(--coral-1), var(--coral-2)); }
-
-.dd-wrap .dd-card-icon {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  opacity: 0.95;
-}
-
-.dd-wrap .dd-card-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.dd-wrap .dd-card-text {
-  margin: 0;
-  font-size: 14.5px;
-  line-height: 1.45;
-  color: #FFFFFF;
-  font-weight: 400;
-  text-wrap: pretty;
-  overflow-wrap: break-word;
-}
-
-.dd-wrap .dd-card-text strong {
-  font-weight: 600;
-  color: #FFF2E6;
-}
-
-/* =============== ANIMACIONES =============== */
-
-@keyframes dd-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-.dd-wrap .dd-anim-bounce { animation: dd-bounce 1.8s ease-in-out infinite; }
-
-@keyframes dd-shake {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-8deg); }
-  75% { transform: rotate(8deg); }
-}
-.dd-wrap .dd-anim-shake { animation: dd-shake 2s ease-in-out infinite; }
-
-@keyframes dd-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.95; }
-  50% { transform: scale(1.12); opacity: 1; }
-}
-.dd-wrap .dd-anim-pulse { animation: dd-pulse 1.5s ease-in-out infinite; }
-
-@keyframes dd-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.dd-wrap .dd-anim-float { animation: dd-float 2.5s ease-in-out infinite; }
-
-@keyframes dd-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.dd-wrap .dd-anim-rotate svg {
-  animation: dd-rotate 8s linear infinite;
-  transform-origin: center;
-}
-
-@keyframes dd-wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-6deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(6deg); }
-}
-.dd-wrap .dd-anim-wobble { animation: dd-wobble 2.2s ease-in-out infinite; }
-
-/* Respeto a preferencias de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  .dd-wrap .dd-anim-bounce,
-  .dd-wrap .dd-anim-shake,
-  .dd-wrap .dd-anim-pulse,
-  .dd-wrap .dd-anim-float,
-  .dd-wrap .dd-anim-rotate svg,
-  .dd-wrap .dd-anim-wobble {
-    animation: none;
+    --shadow:      0 16px 40px rgba(16,21,31,.09);
+    --shadow-soft: 0 6px 16px rgba(16,21,31,.05);
   }
-}
 
-/* Responsive: una sola columna, sin emparejar filas */
-@media (max-width: 768px) {
-  .dd-wrap .dd-headers,
-  .dd-wrap .dd-grid {
-    grid-template-columns: 1fr;
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 18px; }
+
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---------------- HEAD ---------------- */
+  .head {
+    padding: 24px 26px 22px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(255,80,0,.09) 0%, transparent 32%),
+      var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.12;
+    letter-spacing: -.025em;
+    font-weight: 700;
+  }
+
+  /* ---------------- INSTRUCCIONES ---------------- */
+  .howto {
+    counter-reset: paso;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px 22px;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+
+  .howto li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+
+  .howto li::before {
+    counter-increment: paso;
+    content: counter(paso);
+    display: grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-deep), var(--orange-light));
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* Insignia numerada que marca la sección donde se ejecuta cada paso */
+  .step-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-deep), var(--orange-light));
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1;
+    margin-right: 9px;
+    vertical-align: middle;
+  }
+
+  .formula-card {
+    margin-top: 20px;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+  }
+
+  .card-label {
+    margin: 0 0 14px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .formula-scroll { overflow-x: auto; padding-bottom: 4px; text-align: center; }
+
+  .formula {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: max-content;
+    margin: 0 auto;
+    font-size: clamp(13px, 1.35vw, 17px);
+    font-weight: 500;
+  }
+
+  .formula .op { font-weight: 700; color: var(--muted); }
+
+  .frac {
+    display: inline-grid;
+    grid-template-rows: auto auto;
+    justify-items: center;
+  }
+
+  .frac .num {
+    padding: 0 10px 6px;
+    border-bottom: 2px solid var(--ink);
+    white-space: nowrap;
+  }
+
+  .frac .den { padding-top: 6px; white-space: nowrap; }
+
+  .tag-hi { color: var(--orange-ink); font-weight: 700; }
+  .tag-lo { color: var(--silver);     font-weight: 700; }
+
+  /* ---------------- LAYOUT ---------------- */
+  .main {
+    display: grid;
+    grid-template-columns: minmax(300px, .8fr) minmax(340px, 1.2fr);
+    gap: 20px;
+    padding: 24px 26px 26px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    align-content: start;
+  }
+
+  h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    font-weight: 700;
+  }
+
+  /* "Desglose" al tamaño de las etiquetas de instrucción (pasos 1 y 2) */
+  h2.as-step {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+  }
+
+  .stack { display: grid; gap: 18px; }
+  .field { display: grid; gap: 8px; }
+
+  .field > label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  /* ---------------- SEGMENTED ---------------- */
+  .segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 5px;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+  }
+
+  .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .segmented label {
+    display: grid;
+    gap: 1px;
+    justify-items: center;
+    padding: 10px 8px;
+    border-radius: var(--r-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+
+  .segmented label small { font-size: 11.5px; font-weight: 500; opacity: .85; }
+
+  .segmented input:checked + label {
+    background: linear-gradient(135deg, var(--orange-deep), var(--orange-light));
+    color: #fff;
+    box-shadow: 0 5px 12px rgba(255,80,0,.22);
+  }
+
+  .segmented input:focus-visible + label {
+    outline: 3px solid rgba(255,80,0,.4);
+    outline-offset: 2px;
+  }
+
+  /* ---------------- INPUTS ---------------- */
+  .num-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .num-input:focus-within {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgba(255,80,0,.12);
+  }
+
+  .num-input .prefix,
+  .num-input .suffix {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .num-input input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .num-input input::-webkit-outer-spin-button,
+  .num-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .num-input input[type=number] { -moz-appearance: textfield; }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 26px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 6px; border-radius: 999px; background: var(--silver-tint);
+  }
+
+  input[type=range]::-moz-range-track {
+    height: 6px; border-radius: 999px; background: var(--silver-tint);
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px; margin-top: -8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-deep), var(--orange-light));
+    border: 3px solid #fff;
+    box-shadow: 0 3px 10px rgba(255,80,0,.4);
+  }
+
+  input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-deep), var(--orange-light));
+    border: 3px solid #fff;
+    box-shadow: 0 3px 10px rgba(255,80,0,.4);
+  }
+
+  input[type=range]:focus-visible { outline: 3px solid rgba(255,80,0,.4); outline-offset: 4px; }
+
+  .range-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--silver);
+    font-variant-numeric: tabular-nums;
+    margin-top: -4px;
+  }
+
+  /* ---------------- BARRA DE BLOQUES ---------------- */
+  .split { display: grid; gap: 12px; }
+
+  .split-bar {
+    display: flex;
+    height: 42px;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: var(--silver-tint);
+    box-shadow: inset 0 0 0 1px rgba(16,21,31,.05);
+  }
+
+  .seg-hi, .seg-lo {
+    display: grid;
+    place-items: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 0;
+    transition: flex-basis .26s ease;
+  }
+
+  .seg-hi { background: linear-gradient(135deg, var(--orange-deep), var(--orange-light)); }
+  .seg-lo { background: linear-gradient(135deg, #6E7A90, var(--silver-soft)); }
+
+  .split-legend { display: grid; gap: 7px; }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+  }
+
+  .dot { width: 11px; height: 11px; border-radius: 4px; flex-shrink: 0; }
+  .dot-hi { background: var(--orange); }
+  .dot-lo { background: var(--silver-soft); }
+
+  .legend-row .lg-text { flex: 1; min-width: 0; color: var(--muted); }
+  .legend-row .lg-amt {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* ---------------- RESULTADOS ---------------- */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .dd-wrap .dd-col > .dd-card {
-    grid-column: 1;
-    grid-row: auto;
-    height: auto;
+
+  .stat {
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface-alt);
   }
-  .dd-wrap .dd-header-title { font-size: 20px; }
-  .dd-wrap .dd-card { padding: 13px 16px; }
-  .dd-wrap .dd-card-icon { width: 42px; height: 42px; }
+
+  .stat.accent { background: var(--tint); border-color: var(--tint-line); }
+
+  .stat .k {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .stat.accent .k { color: var(--orange-ink); }
+
+  .stat .v {
+    margin-top: 7px;
+    font-size: clamp(21px, 2.7vw, 29px);
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat.accent .v { color: var(--orange-ink); }
+
+  .table {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+
+  .trow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 11px 15px;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trow:last-child { border-bottom: 0; }
+
+  .trow.head {
+    background: var(--surface-alt);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .trow.sum { background: var(--tint); font-weight: 700; color: var(--orange-ink); }
+  .trow .val { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------------- PROCEDIMIENTO ---------------- */
+  .proc {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface-alt);
+  }
+
+  .steps {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 9px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+
+  .steps li { line-height: 1.55; }
+  .steps b { font-weight: 700; }
+  .steps code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seg-hi, .seg-lo, .segmented label { transition: none; }
+  }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 12px; }
+    .head { padding: 20px 18px 18px; }
+    .main { padding: 18px; gap: 16px; }
+    .panel { padding: 17px; }
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="widget">
+
+    <!-- ============ HEAD ============ -->
+    <section class="head">
+      <p class="eyebrow">Ahorro Flexible ULTRA</p>
+      <h1>Calculadora de rendimientos</h1>
+
+      <ol class="howto">
+        <li>Escribe el saldo total de la cuenta.</li>
+        <li>Marca si el cliente tiene Plata+.</li>
+        <li>Consulta el desglose a la derecha.</li>
+      </ol>
+
+      <div class="formula-card">
+        <p class="card-label">Fórmula del interés diario</p>
+        <div class="formula-scroll">
+          <div class="formula">
+            <span class="frac">
+              <span class="num">min(saldo; $25,000) &times; <span class="tag-hi">15%</span></span>
+              <span class="den">360</span>
+            </span>
+            <span class="op">+</span>
+            <span class="frac">
+              <span class="num">max(saldo &minus; $25,000; 0) &times; <span class="tag-lo" id="fTasaLo">10%</span></span>
+              <span class="den">360</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MAIN ============ -->
+    <section class="main">
+
+      <div class="panel">
+        <h2>Datos</h2>
+
+        <div class="stack">
+          <div class="field">
+            <label for="saldoNum"><span class="step-badge" aria-hidden="true">1</span>Saldo total del Ahorro Flexible ULTRA</label>
+            <div class="num-input">
+              <span class="prefix">$</span>
+              <input id="saldoNum" type="text" value="35,000" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Saldo total en pesos" />
+              <span class="suffix">MXN</span>
+            </div>
+            <input id="saldoRange" type="range" min="0" max="100000" step="500" value="35000" aria-label="Deslizador de saldo" />
+            <div class="range-scale"><span>$0</span><span>$25,000</span><span>$50,000</span><span>$100,000</span></div>
+          </div>
+
+          <div class="field">
+            <label><span class="step-badge" aria-hidden="true">2</span>Estado Plata+</label>
+            <div class="segmented">
+              <input type="radio" name="plata" id="plataSi" value="si" checked />
+              <label for="plataSi">Con Plata+ <small>excedente al 10%</small></label>
+              <input type="radio" name="plata" id="plataNo" value="no" />
+              <label for="plataNo">Sin Plata+ <small>excedente al 7%</small></label>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="split-bar" role="img" aria-labelledby="splitLegend">
+              <div class="seg-hi" id="segHi"></div>
+              <div class="seg-lo" id="segLo"></div>
+            </div>
+            <div class="split-legend" id="splitLegend">
+              <div class="legend-row">
+                <span class="dot dot-hi"></span>
+                <span class="lg-text">Bloque 1 · 15%</span>
+                <span class="lg-amt" id="lgHiAmt"></span>
+              </div>
+              <div class="legend-row">
+                <span class="dot dot-lo"></span>
+                <span class="lg-text" id="lgLoLabel">Bloque 2 · 10%</span>
+                <span class="lg-amt" id="lgLoAmt"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="as-step"><span class="step-badge" aria-hidden="true">3</span>Desglose</h2>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Interés por día</div>
+            <div class="v" id="vDiario">—</div>
+          </div>
+          <div class="stat accent">
+            <div class="k">Rendimiento en 60 días</div>
+            <div class="v" id="vPeriodo">—</div>
+          </div>
+        </div>
+
+        <div class="table">
+          <div class="trow head"><span>Concepto</span><span class="val">Interés por día</span></div>
+          <div class="trow"><span id="tHiLabel">Bloque 1</span><span class="val" id="tHiVal">—</span></div>
+          <div class="trow"><span id="tLoLabel">Bloque 2</span><span class="val" id="tLoVal">—</span></div>
+          <div class="trow sum"><span>Total diario</span><span class="val" id="tSumVal">—</span></div>
+          <div class="trow"><span>Tasa promedio ponderada</span><span class="val" id="tPondVal">—</span></div>
+        </div>
+
+        <div class="proc">
+          <p class="card-label">Procedimiento</p>
+          <ol class="steps" id="steps"></ol>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIG · Parámetros del producto. Editar solo aquí.
+   ===================================================================== */
+const CONFIG = {
+  TASA_ALTA: 0.15,
+  TOPE: 25000,
+  DIAS_PROMO: 60,
+  BASE: 360,
+  TASA_BAJA: { si: 0.10, no: 0.07 },
+  SALDO_MAX: 10000000
+};
+
+const $ = (id) => document.getElementById(id);
+
+const saldoNum   = $('saldoNum');
+const saldoRange = $('saldoRange');
+const fTasaLo    = $('fTasaLo');
+const segHi = $('segHi'), segLo = $('segLo');
+const lgHiAmt = $('lgHiAmt'), lgLoAmt = $('lgLoAmt'), lgLoLabel = $('lgLoLabel');
+const vDiario = $('vDiario'), vPeriodo = $('vPeriodo');
+const tHiLabel = $('tHiLabel'), tHiVal = $('tHiVal');
+const tLoLabel = $('tLoLabel'), tLoVal = $('tLoVal');
+const tSumVal = $('tSumVal'), tPondVal = $('tPondVal');
+const stepsEl = $('steps');
+
+/* ---------- Formato ---------- */
+const money = (n) => new Intl.NumberFormat('es-MX', {
+  style: 'currency', currency: 'MXN',
+  minimumFractionDigits: 2, maximumFractionDigits: 2
+}).format(n);
+
+const money0 = (n) => new Intl.NumberFormat('es-MX', {
+  style: 'currency', currency: 'MXN', maximumFractionDigits: 0
+}).format(n);
+
+const pct = (n) => new Intl.NumberFormat('es-MX', {
+  style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2
+}).format(n);
+
+const pct0 = (n) => new Intl.NumberFormat('es-MX', {
+  style: 'percent', maximumFractionDigits: 0
+}).format(n);
+
+/* ---------- Motor ---------- */
+// Interés diario truncado a 2 decimales: 25,000 × 15% ÷ 360 = 10.4166… → 10.41
+const trunc2 = (n) => Math.trunc(n * 100) / 100;
+const interesDiario = (monto, tasa) => trunc2(monto * tasa / CONFIG.BASE);
+
+const plataActual = () => document.querySelector('input[name="plata"]:checked').value;
+
+/* ---------- Separador de miles en el campo ---------- */
+// Deja solo dígitos y un punto decimal, y agrupa la parte entera de 3 en 3.
+function agruparMiles(texto) {
+  const limpio = String(texto).replace(/[^\d.]/g, '');
+  const partes = limpio.split('.');
+  let entero = partes[0].replace(/^0+(?=\d)/, '');
+  const decimal = partes.length > 1
+    ? '.' + partes.slice(1).join('').slice(0, 2)
+    : '';
+  if (entero === '') return decimal ? '0' + decimal : decimal;
+  return entero.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + decimal;
 }
+
+// Reformatea conservando la posición del cursor: cuenta los dígitos que había
+// antes del cursor y lo recoloca después de ese mismo número de dígitos.
+function reformatearCampo() {
+  const pos = saldoNum.selectionStart;
+  const digitosAntes = (saldoNum.value.slice(0, pos).match(/[\d.]/g) || []).length;
+
+  saldoNum.value = agruparMiles(saldoNum.value);
+
+  let nuevaPos = 0;
+  if (digitosAntes > 0) {
+    let cuenta = 0;
+    nuevaPos = saldoNum.value.length;
+    for (let i = 0; i < saldoNum.value.length; i++) {
+      if (/[\d.]/.test(saldoNum.value[i])) cuenta++;
+      if (cuenta >= digitosAntes) { nuevaPos = i + 1; break; }
+    }
+  }
+  saldoNum.setSelectionRange(nuevaPos, nuevaPos);
+}
+
+function leerSaldo() {
+  const v = parseFloat(saldoNum.value.replace(/,/g, ''));
+  return Number.isFinite(v) && v > 0 ? v : 0;
+}
+
+function render() {
+  const saldo    = leerSaldo();
+  const tasaBaja = CONFIG.TASA_BAJA[plataActual()];
+
+  const montoHi = Math.min(saldo, CONFIG.TOPE);
+  const montoLo = Math.max(saldo - CONFIG.TOPE, 0);
+
+  const diarioHi  = interesDiario(montoHi, CONFIG.TASA_ALTA);
+  const diarioLo  = interesDiario(montoLo, tasaBaja);
+  const diarioTot = diarioHi + diarioLo;
+  const periodo   = diarioTot * CONFIG.DIAS_PROMO;
+
+  fTasaLo.textContent   = pct0(tasaBaja);
+  lgLoLabel.textContent = `Bloque 2 · ${pct0(tasaBaja)}`;
+
+  /* Barra */
+  const pctHi = saldo > 0 ? (montoHi / saldo) * 100 : 100;
+  const pctLo = 100 - pctHi;
+  segHi.style.flexBasis = pctHi + '%';
+  segLo.style.flexBasis = pctLo + '%';
+  segHi.textContent = pctHi >= 18 ? money0(montoHi) : '';
+  segLo.textContent = pctLo >= 18 ? money0(montoLo) : '';
+  lgHiAmt.textContent = money0(montoHi);
+  lgLoAmt.textContent = money0(montoLo);
+
+  /* Estado vacío */
+  if (saldo <= 0) {
+    vDiario.textContent = vPeriodo.textContent = '—';
+    tHiVal.textContent = tLoVal.textContent = tSumVal.textContent = tPondVal.textContent = '—';
+    tHiLabel.textContent = 'Bloque 1 · 15%';
+    tLoLabel.textContent = `Bloque 2 · ${pct0(tasaBaja)}`;
+    stepsEl.innerHTML = '<li>Captura el saldo total de la cuenta.</li>';
+    return;
+  }
+
+  /* Stats */
+  vDiario.textContent  = money(diarioTot);
+  vPeriodo.textContent = money(periodo);
+
+  /* Tabla */
+  tHiLabel.textContent = `Bloque 1 · ${money0(montoHi)} al ${pct0(CONFIG.TASA_ALTA)}`;
+  tHiVal.textContent   = money(diarioHi);
+  tLoLabel.textContent = montoLo > 0
+    ? `Bloque 2 · ${money0(montoLo)} al ${pct0(tasaBaja)}`
+    : 'Bloque 2 · sin excedente';
+  tLoVal.textContent   = money(diarioLo);
+  tSumVal.textContent  = money(diarioTot);
+  tPondVal.textContent = pct(diarioTot * CONFIG.BASE / saldo);
+
+  /* Procedimiento */
+  const pasoLo = montoLo > 0
+    ? `<li>Bloque 2: <code>${money0(montoLo)} × ${pct0(tasaBaja)} ÷ ${CONFIG.BASE}</code> = <b>${money(diarioLo)}</b> por día.</li>`
+    : `<li>Bloque 2: <code>${money0(0)}</code>. El saldo no rebasa los ${money0(CONFIG.TOPE)}, así que no hay excedente.</li>`;
+
+  stepsEl.innerHTML = `
+    <li>Se parte el saldo: <b>${money0(montoHi)}</b> en el bloque 1 y <b>${money0(montoLo)}</b> en el bloque 2.</li>
+    <li>Bloque 1: <code>${money0(montoHi)} × ${pct0(CONFIG.TASA_ALTA)} ÷ ${CONFIG.BASE}</code> = <b>${money(diarioHi)}</b> por día.</li>
+    ${pasoLo}
+    <li>Total diario: <code>${money(diarioHi)} + ${money(diarioLo)}</code> = <b>${money(diarioTot)}</b>.</li>
+    <li>Periodo completo: <code>${money(diarioTot)} × ${CONFIG.DIAS_PROMO}</code> = <b>${money(periodo)}</b>.</li>
+  `;
+}
+
+/* ---------- Sincronía ---------- */
+saldoRange.addEventListener('input', () => {
+  saldoNum.value = agruparMiles(saldoRange.value);
+  render();
+});
+
+saldoNum.addEventListener('input', () => {
+  reformatearCampo();
+  saldoRange.value = Math.min(leerSaldo(), parseFloat(saldoRange.max));
+  render();
+});
+
+// Al salir del campo: aplica el tope y normaliza el formato
+saldoNum.addEventListener('blur', () => {
+  const v = leerSaldo();
+  if (v > CONFIG.SALDO_MAX) saldoNum.value = agruparMiles(CONFIG.SALDO_MAX);
+  else if (v === 0) saldoNum.value = '';
+  else saldoNum.value = agruparMiles(saldoNum.value);
+  saldoRange.value = Math.min(leerSaldo(), parseFloat(saldoRange.max));
+  render();
+});
+document.querySelectorAll('input[name="plata"]').forEach((r) => r.addEventListener('change', render));
+
+render();
+</script>
+</body>
+</html>
