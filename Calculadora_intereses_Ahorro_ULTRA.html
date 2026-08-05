@@ -532,7 +532,7 @@
 
       <ol class="howto">
         <li>Escribe el saldo total de la cuenta.</li>
-        <li>Marca si el cliente tiene Plata+.</li>
+        <li>Marca si el cliente tiene Plata+ o no.</li>
         <li>Consulta el desglose a la derecha.</li>
       </ol>
 
@@ -546,7 +546,7 @@
             </span>
             <span class="op">+</span>
             <span class="frac">
-              <span class="num">max(saldo &minus; $25,000; 0) &times; <span class="tag-lo" id="fTasaLo">10%</span></span>
+              <span class="num">max(saldo &minus; $25,000; 0) &times; <span class="tag-lo" id="fTasaLo">7% o 9%</span></span>
               <span class="den">360</span>
             </span>
           </div>
@@ -576,7 +576,7 @@
             <label><span class="step-badge" aria-hidden="true">2</span>Estado Plata+</label>
             <div class="segmented">
               <input type="radio" name="plata" id="plataSi" value="si" checked />
-              <label for="plataSi">Con Plata+ <small>excedente al 10%</small></label>
+              <label for="plataSi">Con Plata+ <small>excedente al 9%</small></label>
               <input type="radio" name="plata" id="plataNo" value="no" />
               <label for="plataNo">Sin Plata+ <small>excedente al 7%</small></label>
             </div>
@@ -595,7 +595,7 @@
               </div>
               <div class="legend-row">
                 <span class="dot dot-lo"></span>
-                <span class="lg-text" id="lgLoLabel">Bloque 2 · 10%</span>
+                <span class="lg-text" id="lgLoLabel">Bloque 2 · 9%</span>
                 <span class="lg-amt" id="lgLoAmt"></span>
               </div>
             </div>
@@ -622,7 +622,6 @@
           <div class="trow"><span id="tHiLabel">Bloque 1</span><span class="val" id="tHiVal">—</span></div>
           <div class="trow"><span id="tLoLabel">Bloque 2</span><span class="val" id="tLoVal">—</span></div>
           <div class="trow sum"><span>Total diario</span><span class="val" id="tSumVal">—</span></div>
-          <div class="trow"><span>Tasa promedio ponderada</span><span class="val" id="tPondVal">—</span></div>
         </div>
 
         <div class="proc">
@@ -644,7 +643,7 @@ const CONFIG = {
   TOPE: 25000,
   DIAS_PROMO: 60,
   BASE: 360,
-  TASA_BAJA: { si: 0.10, no: 0.07 },
+  TASA_BAJA: { si: 0.09, no: 0.07 },
   SALDO_MAX: 10000000
 };
 
@@ -658,7 +657,7 @@ const lgHiAmt = $('lgHiAmt'), lgLoAmt = $('lgLoAmt'), lgLoLabel = $('lgLoLabel')
 const vDiario = $('vDiario'), vPeriodo = $('vPeriodo');
 const tHiLabel = $('tHiLabel'), tHiVal = $('tHiVal');
 const tLoLabel = $('tLoLabel'), tLoVal = $('tLoVal');
-const tSumVal = $('tSumVal'), tPondVal = $('tPondVal');
+const tSumVal = $('tSumVal');
 const stepsEl = $('steps');
 
 /* ---------- Formato ---------- */
@@ -736,7 +735,6 @@ function render() {
   const diarioTot = diarioHi + diarioLo;
   const periodo   = diarioTot * CONFIG.DIAS_PROMO;
 
-  fTasaLo.textContent   = pct0(tasaBaja);
   lgLoLabel.textContent = `Bloque 2 · ${pct0(tasaBaja)}`;
 
   /* Barra */
@@ -752,7 +750,7 @@ function render() {
   /* Estado vacío */
   if (saldo <= 0) {
     vDiario.textContent = vPeriodo.textContent = '—';
-    tHiVal.textContent = tLoVal.textContent = tSumVal.textContent = tPondVal.textContent = '—';
+    tHiVal.textContent = tLoVal.textContent = tSumVal.textContent = '—';
     tHiLabel.textContent = 'Bloque 1 · 15%';
     tLoLabel.textContent = `Bloque 2 · ${pct0(tasaBaja)}`;
     stepsEl.innerHTML = '<li>Captura el saldo total de la cuenta.</li>';
@@ -771,7 +769,6 @@ function render() {
     : 'Bloque 2 · sin excedente';
   tLoVal.textContent   = money(diarioLo);
   tSumVal.textContent  = money(diarioTot);
-  tPondVal.textContent = pct(diarioTot * CONFIG.BASE / saldo);
 
   /* Procedimiento */
   const pasoLo = montoLo > 0
