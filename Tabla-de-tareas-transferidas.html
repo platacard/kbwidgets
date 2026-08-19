@@ -1,0 +1,361 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .acordeon-wrap{
+    background:#fff2e6;
+    border:2px solid #ff7a00;
+    border-radius:12px;
+    padding:12px;
+    font-family:'Poppins', Arial, sans-serif;
+    font-size:16px;
+  }
+
+  .acordeon-header-main{
+    display:flex;
+    background:#ff7a00;
+    color:#fff;
+    font-weight:700;
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:12px;
+  }
+
+  .acordeon-header-main div{
+    padding:12px;
+    text-align:center;
+  }
+
+  .col-left{ width:35%; }
+  .col-right{ width:65%; }
+
+  .acordeon-item{
+    border:2px solid #ff7a00;
+    border-radius:10px;
+    margin-bottom:10px;
+    overflow:hidden;
+  }
+
+  .acordeon-header{
+    display:flex;
+    cursor:pointer;
+    background:#fffaf5;
+  }
+
+  .acordeon-label{
+    width:35%;
+    background:#fde8d7;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    border-right:2px solid #ff7a00;
+    text-align:center;
+  }
+
+  .acordeon-title{
+    width:65%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    font-weight:600;
+    text-align:center;
+  }
+
+  .acordeon-content{
+    display:none;
+    background:#fffaf5;
+    padding:14px;
+    text-align:left;
+    border-top:2px solid #ff7a00;
+  }
+
+  .acordeon-content ul{
+    margin:0;
+    padding-left:18px;
+  }
+
+  .nota{
+    background:#fffaf5;
+    border:2px dashed #ff7a00;
+    border-radius:10px;
+    padding:12px;
+    margin-top:12px;
+  }
+
+  /* Enlaces a artículos de la KB (azul, negrita, itálica, subrayado) */
+  .kb-link{
+    color:#2401fe;
+    font-style:italic;
+    font-weight:700;
+    text-decoration:underline;
+  }
+</style>
+
+<div class="acordeon-wrap">
+
+  <div class="acordeon-header-main">
+    <div class="col-left">Canales de transferencia</div>
+    <div class="col-right">Transferir cuando</div>
+  </div>
+
+  <!-- Inversiones -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('inv')">
+      <div class="acordeon-label">Inversiones</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="inv" class="acordeon-content">
+      <ul>
+        <li>El cliente tiene dudas sobre Plata Inversiones.</li>
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/plata-inversiones" class="kb-link">"Plata Inversiones".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Antifraude -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('anti')">
+      <div class="acordeon-label">Antifraude</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+
+    <div id="anti" class="acordeon-content">
+      <ul>
+        <li>
+          El agente de Antifraude le pide al cliente que confirme una transacción (sospechosa) por chat o videollamada, y el cliente ya la ha confirmado; o bien, está listo para hacerlo por videollamada.
+        </li>
+      </ul>
+
+      <ul>
+        <li>
+          El cliente:
+          <ul>
+            <li>Quiere conocer el estado de su disputa,</li>
+            <li>Responde las preguntas del ticket de su disputa por chat,</li>
+            <li>Ha enviado pruebas para su disputa/desbloqueo de tarjeta (como un estado de cuenta actualizado),</li>
+            <li>Solicita la escalación de su caso,</li>
+            <li>No está satisfecho con la resolución de su disputa y:
+              <ul>
+                <li>Aporta nueva evidencia, o</li>
+                <li>Envía la evidencia solicitada desde el inicio, pero que nunca proporcionó.</li>
+              </ul>
+            </li>
+            <li>Quiere retirar sus disputas,</li>
+            <li>No encuentra su tarjeta o piensa que la perdió.</li>
+            <li>reporta un posible caso de fraude, etc.</li>
+          </ul>
+        </li>
+
+        <li style="list-style:none; margin-top:12px;">
+          👉 Para mayor información, consulta el artículo
+          <a href="https://sites.google.com/dif.tech/knowledgebase/fraude-y-disputas/escenarios-de-antifraude#h.5mxxr7q3kdie" class="kb-link">"Escenarios de Antifraude".</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AML -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('aml')">
+      <div class="acordeon-label">AML</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="aml" class="acordeon-content">
+      <ul>
+        <li>El cliente ya envió los documentos solicitados por el equipo de AML.</li>
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/fraude-y-disputas/aml" class="kb-link">"AML".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AML PyME -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('amlpyme')">
+      <div class="acordeon-label">AML PyME</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="amlpyme" class="acordeon-content">
+      <p>El cliente tiene la etiqueta "AML PyME" y:</p>
+      <ul>
+        <li>Envía los documentos/fotos solicitadas por AML,</li>
+        <li>Responde las preguntas de verificación de AML, o</li>
+        <li>Proporciona la información requerida por AML.</li>
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/fraude-y-disputas/aml" class="kb-link">"AML".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expertos -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('exp')">
+      <div class="acordeon-label">Expertos - Tarjeta de crédito</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="exp" class="acordeon-content">
+      <ul>
+        <li>El cliente no reconoce una transacción y solicita ayuda/su investigación.</li>
+        <li>El cliente tiene dudas ESPECÍFICAS sobre:
+          <ul>
+            <li>La cuenta de crédito,</li>
+            <li>La Plata Garantizada,</li>
+            <li>La app de Plata,</li>
+            <li>Los estados de cuenta de crédito,</li>
+            <li>Un préstamo en efectivo,</li>
+            <li>Disputas, y</li>
+            <li>Pagos.</li>
+          </ul>
+        </li>
+        <li><strong>NO CUENTAS con el skill "Experto en tarjeta de crédito"</strong> y recibes interacciones relacionadas con <strong>Antifraude</strong> o situaciones de <strong>CNR.</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Retención -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('ret')">
+      <div class="acordeon-label">Retención de clientes</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="ret" class="acordeon-content">
+      <ul>
+        <li>El cliente desea cerrar su cuenta de crédito y acepta recibir la llamada de Retención en las próximas 24 hrs.</li>
+        <li>El cliente desea cerrar sus cuentas de débito y crédito.</li>
+        <li>El cliente desea cerrar su cuenta de crédito, pero NO responde / deja de responder.</li>
+        <li>El cliente se comunica de 10:00 p.m. - 8:00 a.m. porque desea cerrar su cuenta de crédito y exige atención INMEDIATA (esto incluye clientes molestos o enojados, que amenazan con presentar una queja ante la CONDUSEF, entre otros).
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/procedimientos/cierre-de-cuenta/cierre-de-cr%C3%A9dito-b%C3%A1sicos" class="kb-link">"Cierre de cuenta de crédito - Agentes de la 1ra línea de atención".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Retención en línea -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('retl')">
+      <div class="acordeon-label">Retención en línea</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="retl" class="acordeon-content">
+      <ul>
+        <li>
+          El cliente desea cerrar su cuenta de crédito y:
+          <ul>
+            <li>Exige atención INMEDIATA por LLAMADA (no quiere esperar).</li>
+            <li>NO quiere recibir la llamada de Retención, sino que pide mantener la comunicación por CHAT.</li>
+          </ul>
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/procedimientos/cierre-de-cuenta/cierre-de-cr%C3%A9dito-b%C3%A1sicos" class="kb-link">"Cierre de cuenta de crédito - Agentes de la 1ra línea de atención".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Débito -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('deb')">
+      <div class="acordeon-label">Débito</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="deb" class="acordeon-content">
+      <p>El cliente:</p>
+      <ul>
+        <li>Tiene preguntas ESPECÍFICAS sobre los productos de débito y/o ahorro; o bien,</li>
+        <li>Quiere cerrar su cuenta de débito únicamente.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- UNE -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('une')">
+      <div class="acordeon-label">UNE</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="une" class="acordeon-content">
+      <p>El cliente:</p>
+      <ul>
+        <li>Pide, explícitamente, que lo comuniquen con la UNE.</li>
+        <li>Quiere presentar una queja formal sobre Banco Plata, sus procesos, decisiones o empleados (por ejemplo: uso de lenguaje altisonante (groserías), información incorrecta, incumplimiento o impuntualidad en una reunión con embajador, etc.).</li>
+        <li>Nos contacta nuevamente porque su problema, previamente atendido por otro equipo, fue mal gestionado o sigue sin resolverse.</li>
+      </ul>
+
+      <div style="margin-top:12px;">
+        📌 NOTA: La UNE se pondrá en contacto con el cliente en el plazo de <strong>un día hábil.</strong>
+      </div>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/quejas-reclamos" class="kb-link">"Quejas (Reclamos)".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PyME -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('pyme')">
+      <div class="acordeon-label">PyME</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="pyme" class="acordeon-content">
+      El cliente tiene dudas sobre su cuenta empresarial.
+    </div>
+  </div>
+
+  <!-- ATM -->
+  <div class="acordeon-item">
+    <div class="acordeon-header" onclick="toggleAcc('atm')">
+      <div class="acordeon-label">ATM</div>
+      <div class="acordeon-title">Ver condiciones</div>
+    </div>
+    <div id="atm" class="acordeon-content">
+      <p>El solicitante (cliente o no-cliente de Plata) reporta problemas con un cajero automático de Plata, por ejemplo:</p>
+      <ul>
+        <li>Técnicos o físicos,</li>
+        <li>Financieros (con depósitos y retiros),</li>
+        <li>De fraude y seguridad, etc.</li>
+      </ul>
+
+      <div style="margin-top:12px;">
+        👉 Para mayor información, consulta el artículo
+        <a href="https://sites.google.com/dif.tech/knowledgebase/cajero-autom%C3%A1tico-de-plata-atm/problemas-con-el-atm-de-plata" class="kb-link">"Problemas con el ATM de Plata".</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nota -->
+  <div class="nota">
+    ⚠️ <strong>Importante:</strong>
+    <ul>
+      <li>Los agentes de <strong>Retención</strong> NO deben transferir tareas al canal <strong>"Retención de clientes"</strong>.</li>
+      <li>Los agentes <strong>Expertos</strong> NO deben transferir tareas al canal <strong>"Expertos - Tarjeta de crédito"</strong>.</li>
+      <li>Si la cuenta <strong>ya está en proceso de cierre,</strong> los agentes de la 1ra línea de atención <strong>NO deben transferir a "Retención de clientes" ni "Retención de clientes en línea".</strong></li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  function toggleAcc(id) {
+    const el = document.getElementById(id);
+    el.style.display = (el.style.display === "block") ? "none" : "block";
+  }
+</script>
