@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador · Registro de visita domiciliaria</title>
+<style>
+/* ═══ tokens ═══ */
+:root{
+  --plata:#FF5000; --ink:#121416; --muted:#6B7280; --bg:#F2F5FA;
+  --line:#E3E8F0; --ok:#0B8A5B; --okbg:#DFF3EA; --bad:#D93025; --badbg:#FDE7E5;
+  --slack-green:#007A5A; --slack-red:#B3261E; --slack-blue:#1264A3;
+  --slack-border:#C9CCD1; --slack-ink:#1D1C1D; --slack-muted:#616061;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.5;
+  -webkit-font-smoothing:antialiased; padding:18px; overflow-x:hidden;
+}
+.app{max-width:960px;margin:0 auto}
+
+/* ═══ encabezado ═══ */
+.hd{margin-bottom:16px}
+.hd h1{font-size:19px;font-weight:700;letter-spacing:-.2px}
+.hd p{font-size:13.5px;color:var(--muted);margin-top:3px}
+.steps{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.stp{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:20px;
+     background:#fff;color:var(--muted);border:1px solid var(--line)}
+.stp.on{background:var(--plata);color:#fff;border-color:var(--plata)}
+.stp.done{background:var(--okbg);color:var(--ok);border-color:#BFE6D5}
+
+/* ═══ canal de Slack ═══ */
+.slack{background:#fff;border-radius:var(--radius);padding:16px 18px;
+       box-shadow:0 2px 12px rgba(18,20,22,.07)}
+.chan{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;
+      color:var(--slack-ink);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.chan span{color:var(--slack-muted);font-weight:400}
+.msg{display:flex;gap:11px}
+.av{flex:0 0 36px;height:36px;border-radius:5px;background:#4A154B;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.who{font-size:14.5px;font-weight:700;color:var(--slack-ink)}
+.who i{font-size:11.5px;color:var(--slack-muted);font-weight:400;font-style:normal;margin-left:7px}
+.body{font-size:14.5px;color:var(--slack-ink);margin-top:3px}
+.body b{font-weight:700}
+.acts{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
+.sb{padding:8px 16px;border-radius:5px;font-size:13.5px;font-weight:700;color:#fff;
+    border:none;cursor:pointer;font-family:inherit}
+.sb.g{background:var(--slack-green)} .sb.r{background:var(--slack-red)}
+.sb:disabled{opacity:.45;cursor:not-allowed}
+.meta{font-size:11.5px;color:#868686;margin-top:10px}
+
+/* ═══ modal ═══ */
+.scrim{position:fixed;inset:0;background:rgba(18,20,22,.42);display:none;
+       align-items:flex-start;justify-content:center;padding:26px 16px;overflow-y:auto;z-index:40}
+.scrim.on{display:flex}
+.modal{width:100%;max-width:520px;background:#fff;border-radius:10px;
+       box-shadow:0 16px 48px rgba(0,0,0,.24);overflow:hidden;animation:pop .16s ease-out}
+@keyframes pop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:17px 22px 13px}
+.mt{font-size:19px;font-weight:700;color:var(--slack-ink)}
+.mx{background:none;border:none;font-size:19px;color:#868686;cursor:pointer;line-height:1;font-family:inherit}
+.mb{padding:0 22px 16px}
+.mf{display:flex;justify-content:flex-end;gap:10px;padding:10px 22px 20px}
+.fld{margin-bottom:16px}
+label.l{display:block;font-size:14px;font-weight:600;color:var(--slack-ink);margin-bottom:6px}
+label.l em{font-weight:400;color:var(--slack-muted);font-style:normal}
+select,input[type=text],input[type=number],input[type=date],textarea{
+  width:100%;border:1px solid var(--slack-border);border-radius:5px;padding:9px 11px;
+  font-size:14px;font-family:inherit;color:var(--slack-ink);background:#fff}
+select{height:38px;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%23616061' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 11px center}
+textarea{min-height:76px;resize:vertical}
+:focus-visible{outline:none;border-color:var(--slack-blue);box-shadow:0 0 0 3px rgba(18,100,163,.2)}
+.help{font-size:12.5px;color:var(--slack-muted);margin-top:7px}
+.err{border-color:var(--bad) !important;box-shadow:0 0 0 3px rgba(217,48,37,.14)}
+.errtxt{font-size:12.5px;color:var(--bad);margin-top:5px;font-weight:600;display:none}
+.errtxt.on{display:block}
+.btn{padding:9px 19px;border-radius:5px;font-size:14px;font-weight:700;
+     border:none;cursor:pointer;font-family:inherit}
+.b2{background:#fff;border:1px solid var(--slack-border);color:var(--slack-ink)}
+.b1{background:var(--slack-green);color:#fff}
+
+/* ═══ selector de foto ═══ */
+.upl{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--slack-border);
+     border-radius:5px;padding:8px 13px;font-size:14px;font-weight:600;color:var(--slack-ink);
+     background:#fff;cursor:pointer;font-family:inherit}
+.picked{display:flex;gap:11px;align-items:flex-end;margin-bottom:4px}
+.thumb{width:120px;height:120px;border-radius:6px;border:1px solid var(--line);overflow:hidden;flex:0 0 120px}
+.thumb svg{display:block;width:100%;height:100%}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-top:4px}
+.gi{position:relative;border:2px solid transparent;border-radius:8px;overflow:hidden;
+    cursor:pointer;background:#000;line-height:0}
+.gi svg{width:100%;height:auto;display:block}
+.gi.sel{border-color:var(--plata)}
+.gl{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;background:#111;
+    color:#fff;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.gcap{font-size:11px;color:var(--slack-muted);text-align:center;padding:5px 4px;background:#fff;line-height:1.3}
+
+/* ═══ resultado ═══ */
+.res{margin-top:18px;display:none}
+.res.on{display:block}
+.card{background:#fff;border-radius:var(--radius);padding:20px 22px;
+      box-shadow:0 2px 12px rgba(18,20,22,.07);margin-bottom:14px}
+.card h2{font-size:16.5px;font-weight:700;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.verdict{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:20px;
+         font-size:12.5px;font-weight:700;letter-spacing:.3px;margin-bottom:14px}
+.v-ok{background:var(--okbg);color:#0B6B47} .v-bad{background:var(--badbg);color:#B3261E}
+.dot{width:8px;height:8px;border-radius:50%}
+.v-ok .dot{background:var(--ok)} .v-bad .dot{background:var(--bad)}
+.iss{display:flex;gap:11px;padding:13px 0;border-top:1px solid var(--line)}
+.pin{flex:0 0 23px;height:23px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;
+     display:flex;align-items:center;justify-content:center;margin-top:1px}
+.p-bad{background:var(--bad)} .p-warn{background:#B4770B} .p-ok{background:var(--ok)}
+.iss h4{font-size:14px;font-weight:700;margin-bottom:2px}
+.iss p{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.4px;
+     padding:2px 8px;border-radius:4px;margin-left:7px;vertical-align:1px}
+.t-bad{background:var(--badbg);color:#B3261E} .t-warn{background:#FDF1DC;color:#8A5A08}
+.shwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.sh{border-collapse:collapse;width:100%;min-width:640px;border-radius:8px;overflow:hidden}
+.sh th{background:#3C4048;color:#fff;font-size:11px;font-weight:600;padding:9px 12px;
+       text-align:left;white-space:nowrap}
+.sh td{font-size:12.5px;padding:11px 12px;border-bottom:1px solid var(--line);
+       white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.sh td.empty{color:#B6BCC6;font-style:italic}
+.sh td.lnk{color:var(--slack-blue);text-decoration:underline}
+.again{background:var(--plata);color:#fff;padding:11px 22px;border-radius:6px;
+       font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.foot{font-size:11.5px;color:#9AA2AE;text-align:center;margin-top:20px;line-height:1.6}
+@media(max-width:560px){
+  body{padding:12px} .hd h1{font-size:17px} .mb,.mh,.mf{padding-left:16px;padding-right:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hd">
+    <h1>Registro de visita domiciliaria</h1>
+    <p>Simulador de práctica. Recorre el flujo completo como lo harías en campo y recibe retroalimentación al enviar.</p>
+    <div class="steps">
+      <div class="stp on" id="s1">1 · Asignación</div>
+      <div class="stp" id="s2">2 · Estatus de la visita</div>
+      <div class="stp" id="s3">3 · ¿Con quién?</div>
+      <div class="stp" id="s4">4 · Promesa de pago</div>
+      <div class="stp" id="s5">5 · Resultado</div>
+    </div>
+  </div>
+
+  <!-- ══ canal ══ -->
+  <div class="slack">
+    <div class="chan">🔒 field_collection <span>· canal del equipo de campo</span></div>
+    <div class="msg">
+      <div class="av">FW</div>
+      <div style="flex:1;min-width:0">
+        <div class="who">Field WorkFlow <i>9:35</i></div>
+        <div class="body">
+          <b>@nombre.agente</b><br>
+          Es tu visita&nbsp; 6 &nbsp;para hoy<br>
+          <b>Dirección:</b> Calle Ejemplo 000, Colonia Ejemplo, Ciudad, 00000 Estado
+        </div>
+        <div class="acts">
+          <button class="sb g" id="bHecho">Hecho</button>
+          <button class="sb r" id="bNo">No se pudo visitar</button>
+        </div>
+        <div class="meta">Added by Field WorkFlow</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ resultado ══ -->
+  <div class="res" id="res">
+    <div class="card">
+      <div class="verdict" id="verdict"><span class="dot"></span><span id="vtxt"></span></div>
+      <h2>Revisión de tu registro</h2>
+      <div class="sub" id="ressub"></div>
+      <div id="issues"></div>
+    </div>
+    <div class="card">
+      <h2>Lo que ve tu supervisor</h2>
+      <div class="sub">La misma fila de su hoja de control, actualizada al instante.</div>
+      <div class="shwrap">
+        <table class="sh">
+          <tr>
+            <th>order_num</th><th>Estatus de la visita</th><th>last_comment</th>
+            <th>visit_date</th><th>file_link</th><th>monto_promesa</th><th>fecha_promesa</th>
+          </tr>
+          <tr id="shrow"></tr>
+        </table>
+      </div>
+    </div>
+    <div style="text-align:center"><button class="again" id="bAgain">Intentar de nuevo</button></div>
+  </div>
+
+  <div class="foot">
+    Simulador de práctica · Equipo de Learning Experience · Banco Plata<br>
+    Los datos son ficticios. Las etiquetas reproducen la herramienta real.
+  </div>
+</div>
+
+<!-- ══════ MODALES ══════ -->
+<div class="scrim" id="scrim">
+
+  <!-- Formulario 1 -->
+  <div class="modal" id="m1" hidden>
+    <div class="mh"><div class="mt">Estatus de la visita</div><button class="mx" data-close>✕</button></div>
+    <div class="mb">
+      <div class="fld">
+        <label class="l" for="q1">¿Se localizó el domicilio?</label>
+        <select id="q1"><option value="">Select an option</option><option>Sí</option><option>No</option></select>
+        <div class="errtxt" id="e1">Este campo es obligatorio.</div>
+      </div>
+      <div class="fld" id="w2">
+        <label class="l" for="q2">¿Se tuvo acceso?</label>
+        <select id="q2">
+          <option value="">Select an option</option>
+          <option>Sí</option>
+          <option>No — privada / portón / vigilancia</option>
+          <option>No, por lo anterior</option>
+        </select>
+        <div class="errtxt" id="e2">Este campo es obligatorio.</div>
+      </div>
+      <div class="fld" id="w3">
+        <label class="l" for="q3">¿Se realizó contacto?</label>
+        <select id="q3"><option value="">Select an option</option><option>Sí</option><option>No</option></select>
+        <div class="errtxt" id="e3">Este campo es obligatorio.</div>
+      </div>
+      <div class="fld">
+        <label class="l">Foto</label>
+        <div class="picked" id="picked" hidden>
+          <div class="thumb" id="thumb"></div>
+          <button class="upl" id="bChange">⟳ Cambiar</button>
+        </div>
+        <button class="upl" id="bUpload">⟳ Upload File</button>
+        <div class="gal" id="gal" hidden></div>
+        <div class="help">Foto de la fachada de la vivienda (obligatoria). Si dejaste carta o
+          notificación, agrega también foto de la carta.</div>
+        <div class="errtxt" id="e4">La foto es obligatoria.</div>
+      </div>
+      <div class="fld">
+        <label class="l" for="q5">Comentarios de la visita <em>(optional)</em></label>
+        <textarea id="q5" placeholder="Write something"></textarea>
+      </div>
+    </div>
+    <div class="mf"><button class="btn b2" data-close>Close</button>
+      <button class="btn b1" id="sub1">Submit</button></div>
+  </div>
+
+  <!-- Formulario 2 -->
+  <div class="modal" id="m2" hidden>
+    <div class="mh"><div class="mt">¿Con quién?</div><button class="mx" data-close>✕</button></div>
+    <div class="mb">
+      <div class="fld">
+        <label class="l" for="q6">¿Con quién se tuvo contacto?</label>
+        <select id="q6">
+          <option value="">Select an option</option>
+          <option>Titular</option><option>Familiar</option>
+          <option>Vecino</option><option>Vigilante</option>
+        </select>
+        <div class="errtxt" id="e6">Este campo es obligatorio.</div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn b2" data-close>Close</button>
+      <button class="btn b1" id="sub2">Submit</button></div>
+  </div>
+
+  <!-- Formulario 3 -->
+  <div class="modal" id="m3" hidden>
+    <div class="mh"><div class="mt">promesa de pago</div><button class="mx" data-close>✕</button></div>
+    <div class="mb">
+      <div class="fld">
+        <label class="l" for="q7">¿Se logró promesa de pago?</label>
+        <select id="q7"><option value="">Select an option</option><option>Sí</option><option>No</option></select>
+        <div class="errtxt" id="e7">Este campo es obligatorio.</div>
+      </div>
+      <div class="fld">
+        <label class="l" for="q8">Monto prometido ($) <em>(optional)</em></label>
+        <input type="number" id="q8" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="fld">
+        <label class="l" for="q9">Fecha compromiso de pago <em>(optional)</em></label>
+        <input type="date" id="q9">
+      </div>
+      <div class="fld">
+        <label class="l" for="q10">¿Se dejó carta / aviso de visita?</label>
+        <select id="q10"><option value="">Select an option</option><option>Sí</option><option>No</option></select>
+        <div class="errtxt" id="e10">Este campo es obligatorio.</div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn b2" data-close>Close</button>
+      <button class="btn b1" id="sub3">Submit</button></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ═══════════ fotos de la galería (SVG en línea) ═══════════ */
+const HOUSE = `
+  <rect x="42" y="76" width="216" height="150" fill="#E3E7ED" stroke="#B9C0CC" stroke-width="2"/>
+  <path d="M32 78 L150 26 L268 78z" fill="#B24A2E"/>
+  <rect x="122" y="150" width="56" height="76" rx="3" fill="#8A5A3B"/>
+  <circle cx="168" cy="190" r="3.4" fill="#E8C86A"/>
+  <rect x="62" y="104" width="44" height="40" rx="3" fill="#7FA8C9" stroke="#B9C0CC"/>
+  <rect x="196" y="104" width="44" height="40" rx="3" fill="#7FA8C9" stroke="#B9C0CC"/>`;
+const NUM = `
+  <rect x="196" y="118" width="62" height="30" rx="4" fill="#fff" stroke="#B9C0CC"/>
+  <text x="227" y="139" font-family="sans-serif" font-size="17" font-weight="700"
+        text-anchor="middle" fill="#1D1C1D">000</text>`;
+const SKY = '<rect width="300" height="300" fill="#C8D4E3"/><rect y="182" width="300" height="118" fill="#9FAEC0"/>';
+const GND = '<rect y="288" width="300" height="12" fill="#8998AA"/>';
+const wrap = inner => `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+
+const PHOTOS = {
+  A:{ ok:true, cap:"Fachada, tomada hoy",
+      svg:wrap(SKY+HOUSE+NUM+GND) },
+  B:{ ok:false, cap:"Con el titular", crit:true,
+      why:{t:"Hay una persona en la foto",
+           p:"Fotografiar personas está prohibido sin excepción, incluido el propio cliente. Invalida el registro y es causa de retiro de funciones de campo."},
+      svg:wrap(SKY+`<g opacity=".55">${HOUSE}${NUM}</g>`+GND+`
+        <path d="M62 300 q88-104 176 0z" fill="#3E4A5B"/>
+        <circle cx="150" cy="140" r="46" fill="#C98F6B"/>
+        <path d="M104 132 q46-42 92 0 q-6-46-46-46 q-40 0-46 46z" fill="#2B2B2B"/>
+        <circle cx="133" cy="140" r="4.6" fill="#2B2B2B"/><circle cx="167" cy="140" r="4.6" fill="#2B2B2B"/>
+        <path d="M136 162 q14 11 28 0" stroke="#8A5A3B" stroke-width="3.4" fill="none" stroke-linecap="round"/>`) },
+  C:{ ok:false, cap:"Adentro de la casa", crit:true,
+      why:{t:"Es el interior de un domicilio",
+           p:"Nunca se fotografía el interior de una vivienda. Y antes de eso: no puedes entrar a un domicilio bajo ninguna circunstancia."},
+      svg:wrap(`<rect width="300" height="300" fill="#E8DFD3"/><rect y="226" width="300" height="74" fill="#B98F63"/>
+        <rect x="26" y="88" width="94" height="70" rx="3" fill="#CBB79B" stroke="#A98F70" stroke-width="2"/>
+        <rect x="176" y="70" width="104" height="96" rx="4" fill="#A7BFD4" stroke="#8FA6BB" stroke-width="2"/>
+        <rect x="222" y="70" width="6" height="96" fill="#8FA6BB"/>
+        <rect x="52" y="188" width="196" height="46" rx="6" fill="#7C6350"/>
+        <rect x="74" y="164" width="152" height="26" rx="5" fill="#95795F"/>
+        <rect x="120" y="234" width="14" height="52" fill="#5E4A3B"/>
+        <rect x="180" y="234" width="14" height="52" fill="#5E4A3B"/>`) },
+  D:{ ok:false, cap:"Acercamiento a la puerta",
+      why:{t:"No se puede identificar el domicilio",
+           p:"Sin fachada ni número exterior, la foto no prueba a qué dirección fuiste. No sirve como evidencia."},
+      svg:wrap(`<rect width="300" height="300" fill="#DCD3C6"/>
+        <rect x="46" y="-30" width="208" height="360" rx="4" fill="#8A5A3B"/>
+        <rect x="72" y="34" width="70" height="96" rx="3" fill="#79492E"/>
+        <rect x="158" y="34" width="70" height="96" rx="3" fill="#79492E"/>
+        <rect x="72" y="164" width="70" height="112" rx="3" fill="#79492E"/>
+        <rect x="158" y="164" width="70" height="112" rx="3" fill="#79492E"/>
+        <circle cx="240" cy="150" r="9" fill="#E8C86A"/>`) },
+  E:{ ok:false, cap:"De la galería · hace 12 días", crit:true,
+      why:{t:"Es una foto reutilizada",
+           p:"Reutilizar la foto de otro envío es falsificación de evidencia. El campo dice «Upload File» y acepta cualquier archivo, pero eso no lo vuelve permitido."},
+      svg:wrap(`<rect width="300" height="300" fill="#15161A"/>
+        <g transform="translate(0,44) scale(1,0.72)">${SKY}${HOUSE}${NUM}${GND}</g>
+        <rect y="0" width="300" height="30" fill="#0C0D10"/>
+        <text x="150" y="20" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#9AA2AE">hace 12 días</text>
+        <text x="150" y="248" font-family="sans-serif" font-size="12" text-anchor="middle" fill="#9AA2AE">Galería del teléfono</text>
+        <rect y="262" width="300" height="38" fill="#0C0D10"/>
+        <circle cx="70" cy="281" r="7" fill="none" stroke="#9AA2AE" stroke-width="2"/>
+        <rect x="140" y="274" width="16" height="14" rx="2" fill="none" stroke="#9AA2AE" stroke-width="2"/>
+        <path d="M222 288 v-14 m-6 6 l6-6 6 6" stroke="#9AA2AE" stroke-width="2" fill="none" stroke-linecap="round"/>`) }
+};
+
+/* ═══════════ estado ═══════════ */
+let S = {};
+const reset = () => { S = { photo:null, visited:null }; };
+reset();
+
+const $ = id => document.getElementById(id);
+const scrim = $("scrim"), M = { 1:$("m1"), 2:$("m2"), 3:$("m3") };
+
+function step(n){
+  ["s1","s2","s3","s4","s5"].forEach((id,i)=>{
+    const el=$(id); el.className="stp";
+    if(i+1<n) el.classList.add("done");
+    if(i+1===n) el.classList.add("on");
+  });
+}
+function open(n){
+  Object.values(M).forEach(m=>m.hidden=true);
+  M[n].hidden=false; scrim.classList.add("on");
+  step(n+1);
+  scrim.scrollTop=0;
+}
+function closeAll(){ scrim.classList.remove("on"); Object.values(M).forEach(m=>m.hidden=true); }
+function bad(id,on){ const f=$(id); f.classList.toggle("err",on); const e=$("e"+id.slice(1)); if(e) e.classList.toggle("on",on); }
+
+/* ═══════════ galería ═══════════ */
+const gal=$("gal");
+Object.entries(PHOTOS).forEach(([k,v])=>{
+  const d=document.createElement("div");
+  d.className="gi"; d.dataset.k=k;
+  d.innerHTML=`<div class="gl">${k}</div>${v.svg}<div class="gcap">${v.cap}</div>`;
+  d.onclick=()=>{
+    S.photo=k;
+    [...gal.children].forEach(c=>c.classList.toggle("sel",c.dataset.k===k));
+    $("thumb").innerHTML=v.svg;
+    $("picked").hidden=false; $("bUpload").hidden=true; gal.hidden=true;
+    $("e4").classList.remove("on");
+  };
+  gal.appendChild(d);
+});
+$("bUpload").onclick=()=>{ gal.hidden=false; $("bUpload").hidden=true; };
+$("bChange").onclick=()=>{ gal.hidden=false; };
+
+/* ═══════════ ramificación del formulario 1 ═══════════ */
+function branch(){
+  const a=$("q1").value, b=$("q2").value;
+  const noAddr = a==="No";
+  const noAcc  = b.startsWith("No");
+  $("w2").style.display = noAddr ? "none" : "";
+  $("w3").style.display = (noAddr||noAcc) ? "none" : "";
+  if(noAddr){ $("q2").value=""; $("q3").value=""; }
+  else if(noAcc){ $("q3").value=""; }
+}
+$("q1").onchange=branch; $("q2").onchange=branch;
+
+/* ═══════════ navegación ═══════════ */
+$("bHecho").onclick=()=>{ S.visited=true; open(1); };
+$("bNo").onclick=()=>{ S.visited=false; finish(); };
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeAll);
+scrim.onclick=e=>{ if(e.target===scrim) closeAll(); };
+$("bAgain").onclick=()=>location.reload();
+
+$("sub1").onclick=()=>{
+  let stop=false;
+  const a=$("q1").value;
+  bad("q1",!a); if(!a) stop=true;
+  if(a!=="No"){
+    const b=$("q2").value; bad("q2",!b); if(!b) stop=true;
+    if(b==="Sí"){ const c=$("q3").value; bad("q3",!c); if(!c) stop=true; }
+  }
+  if(!S.photo){ $("e4").classList.add("on"); stop=true; }
+  if(stop) return;
+  S.q1=a; S.q2=$("q2").value; S.q3=$("q3").value; S.com=$("q5").value.trim();
+  if(S.q3==="Sí") open(2); else finish();
+};
+$("sub2").onclick=()=>{
+  const v=$("q6").value; bad("q6",!v); if(!v) return;
+  S.quien=v;
+  if(v==="Titular") open(3); else finish();
+};
+$("sub3").onclick=()=>{
+  let stop=false;
+  const p=$("q7").value; bad("q7",!p); if(!p) stop=true;
+  const c=$("q10").value; bad("q10",!c); if(!c) stop=true;
+  if(stop) return;
+  S.promesa=p; S.monto=$("q8").value; S.fecha=$("q9").value; S.carta=c;
+  finish();
+};
+
+/* ═══════════ evaluación ═══════════ */
+const RX_TEL   = /(?:\b\d[\d\s\-().]{6,}\d\b)/;
+const RX_DEUDA = /\b(deb[eo]|adeud|saldo|debe\s|mil\b|\$\s?\d|pesos)/i;
+const RX_3RO   = /\b(vecin[ao]|se[ñn]ora?\s+de\s+al\s+lado|comadre|casero|portero|vigilante|guardia|conserje|su\s+(esposa|esposo|mam[áa]|pap[áa]|hij[ao]))\b/i;
+const RX_JUICIO= /\b(gro?ser[oa]|borrach[oa]|mentiros[oa]|se hace|no quiere pagar|flojo|rat[eé]ro)\b/i;
+
+function daysFromToday(iso){
+  if(!iso) return null;
+  const t=new Date(); t.setHours(0,0,0,0);
+  const d=new Date(iso+"T00:00:00");
+  return Math.round((d-t)/864e5);
+}
+
+function evaluate(){
+  const I=[];
+  const add=(lvl,t,p)=>I.push({lvl,t,p});
+
+  if(S.visited===false){
+    add("ok","Usaste «No se pudo visitar»",
+      "Es la salida correcta cuando la visita no ocurrió, incluido el caso en que te retiraste por seguridad. Abortar nunca se penaliza y cuenta como intento realizado.");
+    add("warn","Aun así hay que registrar el motivo",
+      "Tu supervisor necesita saber por qué, para poder replanear la ruta. Si el canal te abre un campo de comentario, úsalo.");
+    return I;
+  }
+
+  /* — foto — */
+  const ph=PHOTOS[S.photo];
+  if(ph.ok) add("ok","La foto sirve como evidencia",
+    "Fachada completa, número exterior visible y sin personas en el encuadre.");
+  else add(ph.crit?"bad":"warn", ph.why.t, ph.why.p);
+
+  /* — comentario — */
+  const c=S.com||"";
+  if(RX_TEL.test(c))   add("bad","Hay un número de teléfono en el comentario",
+    "De un tercero solo se registra si el cliente vive ahí y un horario aproximado. Nombre, teléfono y parentesco nunca se anotan.");
+  if(RX_DEUDA.test(c)) add("bad","Escribiste información de la deuda en el comentario",
+    "El envío se publica en un canal compartido. El monto y la situación del adeudo no se escriben ahí.");
+  if(RX_3RO.test(c) && !RX_TEL.test(c)) add("warn","Estás describiendo a un tercero",
+    "Puedes anotar que el cliente vive ahí y un horario. Identificar a la persona que abrió no aporta y sí genera riesgo.");
+  if(RX_JUICIO.test(c)) add("warn","El comentario incluye un juicio sobre la persona",
+    "El registro es un documento del banco. Describe hechos observables, no opiniones sobre el cliente.");
+  if(!c) add("warn","Dejaste el comentario vacío",
+    "Dice «optional», pero es el único lugar donde explicas lo que pasó. Sin eso, quien siga esa cuenta empieza a ciegas.");
+  else if(c.length>=12 && !RX_TEL.test(c) && !RX_DEUDA.test(c) && !RX_JUICIO.test(c))
+    add("ok","El comentario es útil y no expone datos",
+      "Describe lo que ocurrió sin identificar terceros ni mencionar el adeudo.");
+
+  /* — con quién — */
+  if(S.quien && S.quien!=="Titular")
+    add("warn",`Registraste contacto con: ${S.quien}`,
+      "Correcto como registro de quién abrió. Recuerda que con esa persona solo confirmas si el cliente vive ahí y un horario: no se menciona deuda, monto ni motivo de visita.");
+  if(S.quien==="Titular")
+    add("ok","Contacto con el titular",
+      "Es el único caso en que puedes hablar de la cuenta y buscar una promesa de pago.");
+
+  /* — promesa — */
+  if(S.promesa==="Sí"){
+    if(!S.monto) add("bad","Promesa de pago sin monto",
+      "El campo dice «optional», pero registrar el acuerdo por escrito es una obligación regulatoria. Una promesa sin monto no es un acuerdo.");
+    if(!S.fecha) add("bad","Promesa de pago sin fecha",
+      "Sin fecha nadie puede darle seguimiento, y queda registrada como una promesa que tú no documentaste.");
+    else {
+      const d=daysFromToday(S.fecha);
+      if(d===null){}
+      else if(d<0) add("bad","La fecha de la promesa ya pasó",
+        "Revisa la fecha: quedó en el pasado.");
+      else if(d>7) add("bad",`La fecha está a ${d} días`,
+        "Tú solo puedes registrar promesas dentro de 7 días. Más allá de eso, se escala al supervisor: es el límite de tu autoridad.");
+      else add("ok",`Fecha dentro de tu autoridad (${d} día${d===1?"":"s"})`,
+        "Está dentro de los 7 días que puedes registrar sin escalar.");
+    }
+    if(S.monto && S.fecha && daysFromToday(S.fecha)>=0 && daysFromToday(S.fecha)<=7)
+      add("ok","Promesa documentada completa",
+        "Monto y fecha registrados. Así es como el acuerdo queda respaldado.");
+  }
+  return I;
+}
+
+/* ═══════════ resultado ═══════════ */
+function finish(){
+  closeAll(); step(5);
+  const I=evaluate();
+  const nBad=I.filter(x=>x.lvl==="bad").length;
+  const nWarn=I.filter(x=>x.lvl==="warn").length;
+
+  const v=$("verdict"), vt=$("vtxt");
+  v.className="verdict "+(nBad?"v-bad":"v-ok");
+  vt.textContent = nBad ? `REGISTRO NO VÁLIDO · ${nBad} ${nBad===1?"falta":"faltas"}`
+                        : (nWarn ? "REGISTRO VÁLIDO CON OBSERVACIONES" : "REGISTRO VÁLIDO");
+  $("ressub").textContent = nBad
+    ? "Un registro con cualquiera de estas faltas no cuenta para tu certificación. Revisa y vuelve a intentarlo."
+    : "Así se ve un registro que cumple. Revisa las observaciones para afinarlo.";
+
+  const order={bad:0,warn:1,ok:2};
+  $("issues").innerHTML = I.sort((a,b)=>order[a.lvl]-order[b.lvl]).map(x=>{
+    const pin = x.lvl==="bad"?"p-bad":x.lvl==="warn"?"p-warn":"p-ok";
+    const ic  = x.lvl==="bad"?"✕":x.lvl==="warn"?"!":"✓";
+    const tag = x.lvl==="bad"?'<span class="tag t-bad">FALTA</span>'
+              : x.lvl==="warn"?'<span class="tag t-warn">OBSERVACIÓN</span>':"";
+    return `<div class="iss"><div class="pin ${pin}">${ic}</div>
+      <div><h4>${x.t}${tag}</h4><p>${x.p}</p></div></div>`;
+  }).join("");
+
+  /* fila del supervisor */
+  const em = t => t ? `<td>${t}</td>` : `<td class="empty">vacío</td>`;
+  const today = new Date().toISOString().slice(0,10);
+  $("shrow").innerHTML = S.visited===false
+    ? `<td>6</td><td>No se pudo visitar</td><td class="empty">vacío</td><td>${today}</td>
+       <td class="empty">vacío</td><td class="empty">vacío</td><td class="empty">vacío</td>`
+    : `<td>6</td>${em(S.q3||S.q2||S.q1)}${em(S.com)}<td>${today}</td>
+       <td class="lnk">https://…/foto_${S.photo}</td>${em(S.monto)}${em(S.fecha)}`;
+
+  $("res").classList.add("on");
+  $("bHecho").disabled=true; $("bNo").disabled=true;
+  $("res").scrollIntoView({behavior:"smooth",block:"start"});
+}
+</script>
+</body>
+</html>
