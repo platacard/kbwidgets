@@ -1,0 +1,280 @@
+<div class="atm-fees">
+
+  <!-- ===== Filtros ===== -->
+  <div class="filters">
+    <div class="filter-group">
+      <span class="filter-label">Tipo de tarjeta</span>
+      <div class="chips" id="cardChips">
+        <button type="button" class="chip active" data-card="todas">Todas las tarjetas</button>
+        <button type="button" class="chip" data-card="debito-plata">Tarjeta de débito de Plata</button>
+        <button type="button" class="chip" data-card="credito-plata">Tarjeta de crédito de Plata</button>
+        <button type="button" class="chip" data-card="plata-cualquier">Cualquier tarjeta de Plata</button>
+        <button type="button" class="chip" data-card="nacional">Tarjeta de otro banco NACIONAL</button>
+        <button type="button" class="chip" data-card="extranjero">Tarjeta de otro banco EXTRANJERO</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Operación</span>
+      <div class="chips" id="opChips">
+        <button type="button" class="chip active" data-op="todas">Todas las operaciones</button>
+        <button type="button" class="chip" data-op="retiro">Retiro</button>
+        <button type="button" class="chip" data-op="deposito">Depósito</button>
+        <button type="button" class="chip" data-op="consulta">Consulta de saldo</button>
+        <button type="button" class="chip" data-op="comprobante">Impresión de comprobante</button>
+        <button type="button" class="chip" data-op="fuera-horario">Uso del ATM fuera de horario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tabla ===== -->
+  <div class="table-scroll">
+    <table class="fees-table">
+      <thead>
+        <tr>
+          <th>Tarjeta</th>
+          <th>Operación</th>
+          <th>Comisión</th>
+          <th>Detalles</th>
+        </tr>
+      </thead>
+      <tbody id="feesBody">
+        <tr data-card="debito-plata" data-op="retiro">
+          <td class="c-card">Plata débito</td>
+          <td class="c-op">Retiro</td>
+          <td><span class="badge badge-free">Sin comisión</span></td>
+          <td class="c-det">Para cliente Plata con tarjeta de débito.</td>
+        </tr>
+        <tr data-card="credito-plata" data-op="retiro">
+          <td class="c-card">Plata crédito</td>
+          <td class="c-op">Retiro</td>
+          <td><span class="badge badge-charge">10 % + IVA</span></td>
+          <td class="c-det">Uso de línea de crédito · 10 % del monto retirado + IVA.</td>
+        </tr>
+        <tr data-card="debito-plata credito-plata plata-cualquier" data-op="deposito">
+          <td class="c-card">Plata crédito + débito</td>
+          <td class="c-op">Depósito</td>
+          <td><span class="badge badge-free">Sin comisión</span></td>
+          <td class="c-det">Cualquier tarjeta Plata.</td>
+        </tr>
+        <tr data-card="debito-plata credito-plata plata-cualquier" data-op="consulta">
+          <td class="c-card">Plata crédito + débito</td>
+          <td class="c-op">Consulta de saldo</td>
+          <td><span class="badge badge-free">Sin comisión</span></td>
+          <td class="c-det">Cualquier tarjeta Plata.</td>
+        </tr>
+        <tr data-card="debito-plata credito-plata plata-cualquier" data-op="comprobante">
+          <td class="c-card">Cualquiera</td>
+          <td class="c-op">Comprobante</td>
+          <td><span class="badge badge-free">Sin comisión adicional</span></td>
+          <td class="c-det">Comprobante / impresión / QR.</td>
+        </tr>
+        <tr data-card="nacional" data-op="retiro">
+          <td class="c-card">Otro banco NACIONAL</td>
+          <td class="c-op">Retiro</td>
+          <td><span class="badge badge-charge">Máx ~$25 MXN + IVA</span></td>
+          <td class="c-det">Comisión mostrada en pantalla antes de confirmar.</td>
+        </tr>
+        <tr data-card="nacional" data-op="consulta">
+          <td class="c-card">Otro banco NACIONAL</td>
+          <td class="c-op">Consulta de saldo</td>
+          <td><span class="badge badge-charge">Máx ~$12 MXN + IVA</span></td>
+          <td class="c-det">Consulta de saldo · mostrada en pantalla.</td>
+        </tr>
+        <tr data-card="nacional" data-op="deposito">
+          <td class="c-card">Otro banco NACIONAL</td>
+          <td class="c-op">Depósito</td>
+          <td><span class="badge badge-none">No disponible</span></td>
+          <td class="c-det">Depósito no permitido con tarjeta de otro banco mexicano.</td>
+        </tr>
+        <tr data-card="extranjero" data-op="retiro">
+          <td class="c-card">Otro banco EXTRANJERO</td>
+          <td class="c-op">Retiro</td>
+          <td><span class="badge badge-variable">Variable</span></td>
+          <td class="c-det">Depende del banco emisor · mostrada en pantalla.</td>
+        </tr>
+        <tr data-card="extranjero" data-op="consulta">
+          <td class="c-card">Otro banco EXTRANJERO</td>
+          <td class="c-op">Consulta de saldo</td>
+          <td><span class="badge badge-variable">Variable</span></td>
+          <td class="c-det">Mostrada en pantalla antes de confirmar.</td>
+        </tr>
+        <tr data-card="debito-plata credito-plata plata-cualquier nacional extranjero" data-op="fuera-horario">
+          <td class="c-card">Cualquiera</td>
+          <td class="c-op">Uso fuera de horario</td>
+          <td><span class="badge badge-free">Sin cargo adicional</span></td>
+          <td class="c-det">Uso fuera de horario comercial.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="no-results" id="noResults" hidden>No hay resultados para esta combinación de filtros.</div>
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+  .atm-fees {
+    --naranja-1: #FFB300;
+    --naranja-2: #FB8C00;
+    --coral-1:   #FF7043;
+    --coral-2:   #E64A19;
+    --txt-acento:#D84315;
+
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 16px;
+    color: #2b2b2b;
+    background: #ffffff;
+    border: 2px solid #ff5d15;
+    border-radius: 18px;
+    box-shadow: 0 8px 26px rgba(216,67,21,0.08);
+    padding: 22px;
+  }
+
+  /* ---------- Filtros ---------- */
+  .filters { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+  .filter-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #b06a3a;
+    margin-bottom: 8px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #5a5a5a;
+    background: #ffffff;
+    border: 1.5px solid #ecdccb;
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: none;
+  }
+  .chip:hover { border-color: var(--naranja-2); color: var(--coral-2); }
+  .chip.active {
+    background: linear-gradient(135deg, var(--naranja-2), var(--coral-2));
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(216,67,21,0.25);
+  }
+
+  /* ---------- Tabla ---------- */
+  .table-scroll { overflow-x: auto; border-radius: 12px; }
+
+  .fees-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    min-width: 640px;
+  }
+  .fees-table thead th {
+    background: #ff5d15;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: left;
+    padding: 14px 16px;
+    letter-spacing: 0.3px;
+  }
+  .fees-table thead th:first-child { border-top-left-radius: 12px; }
+  .fees-table thead th:last-child  { border-top-right-radius: 12px; }
+
+  .fees-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3e7da;
+    vertical-align: middle;
+    line-height: 1.45;
+  }
+  .fees-table tbody tr:last-child td { border-bottom: none; }
+  .fees-table tbody tr:hover td { background: #fff7ef; }
+
+  .c-card { font-weight: 700; color: #2b2b2b; white-space: nowrap; }
+  .c-op   { color: #555; }
+  .c-det  { color: #666; font-size: 14px; }
+
+  /* ---------- Badges de comisión ---------- */
+  .badge {
+    display: inline-block;
+    padding: 5px 13px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .badge-free     { background: #e6f6ec; color: #1f8a4c; }   /* sin comisión */
+  .badge-charge   { background: #ffe7cf; color: #c2410c; }   /* comisión fija/% */
+  .badge-variable { background: #ffe0cc; color: var(--txt-acento); } /* variable */
+  .badge-none     { background: #fde2dd; color: #c62828; }   /* no disponible */
+
+  .no-results {
+    padding: 28px 16px;
+    text-align: center;
+    color: #9a7a63;
+    font-weight: 500;
+    background: #fff7ef;
+    border-radius: 12px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 640px) {
+    .atm-fees { padding: 16px; }
+    .chip { font-size: 12.5px; padding: 7px 13px; }
+    .fees-table { font-size: 14px; }
+  }
+</style>
+
+<script>
+  (function () {
+    function init() {
+      var cardBtns = Array.prototype.slice.call(document.querySelectorAll('#cardChips .chip'));
+      var opBtns   = Array.prototype.slice.call(document.querySelectorAll('#opChips .chip'));
+      var rows     = Array.prototype.slice.call(document.querySelectorAll('#feesBody tr'));
+      var noResults = document.getElementById('noResults');
+      var selCard = 'todas', selOp = 'todas';
+
+      function applyFilters() {
+        var visible = 0;
+        rows.forEach(function (r) {
+          var cards = (r.getAttribute('data-card') || '').split(' ');
+          var op = r.getAttribute('data-op');
+          var okCard = (selCard === 'todas') || cards.indexOf(selCard) > -1;
+          var okOp = (selOp === 'todas') || op === selOp;
+          if (okCard && okOp) { r.style.display = ''; visible++; }
+          else { r.style.display = 'none'; }
+        });
+        if (noResults) noResults.hidden = visible > 0;
+      }
+
+      cardBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          cardBtns.forEach(function (x) { x.classList.remove('active'); });
+          b.classList.add('active');
+          selCard = b.getAttribute('data-card');
+          applyFilters();
+        });
+      });
+      opBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          opBtns.forEach(function (x) { x.classList.remove('active'); });
+          b.classList.add('active');
+          selOp = b.getAttribute('data-op');
+          applyFilters();
+        });
+      });
+
+      applyFilters();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
