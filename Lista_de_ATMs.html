@@ -1,0 +1,163 @@
+/**
+ * Tabla de ATMs Plata — versión SCRIPT INDEPENDIENTE.
+ * Úsala cuando NO tienes acceso de editor a la hoja original:
+ * este script es TUYO y solo necesita que tu cuenta pueda VER la hoja.
+ * Lee la hoja original por su ID, en vivo, y devuelve la tabla maquetada.
+ *
+ * Cómo usarlo:
+ *  1. Ve a https://script.google.com  >  Nuevo proyecto.
+ *  2. Pega TODO este código en Código.gs (borra lo que haya).
+ *  3. Verifica el SOURCE_ID de abajo (ya está puesto).
+ *  4. Implementar > Nueva implementación > tipo "Aplicación web".
+ *       - Ejecutar como: Yo (tu cuenta; así lee la hoja con TU acceso de lectura).
+ *       - Quién tiene acceso: "Cualquier usuario de Banco Plata" (dominio interno).
+ *  5. Autoriza los permisos la primera vez (te pedirá permiso para ver tus Sheets).
+ *  6. Copia la URL /exec y pégala en Google Sites: Insertar > Insertar > Por URL.
+ *
+ *  Nota: como el script corre "como tú", los agentes ven la tabla en Sites
+ *  SIN necesitar acceso a la hoja original.
+ */
+
+// ===================== CONFIG =====================
+const CONFIG = {
+  // ID de la hoja ORIGINAL (lo que va entre /d/ y /edit en su URL).
+  SOURCE_ID: '1Y53twW1FOg-1YjynXSZfKLUIC1aFrIRtXXBy32h4ywc',
+  // Déjalo vacío para usar la primera pestaña (gid=0), o pon el nombre exacto de la pestaña.
+  TAB_NAME: '',
+  // Solo se muestran las filas cuyo "Type" coincida con esto. Pon '' para no filtrar.
+  TYPE_FILTER: 'Public',
+  // Nombres EXACTOS de los encabezados en el Sheet (mapea por nombre, no por posición).
+  HEADERS: {
+    id:      'ATM ID',
+    serial:  'Serial number',
+    address: 'ATM Address',
+    type:    'Type',
+    desc:    'Description',
+    maps:    'Maps link',
+    status:  'Status'
+  }
+};
+// ==================================================
+
+function doGet() {
+  return HtmlService.createHtmlOutput(buildHtml())
+    .setTitle('Cajeros automáticos Plata')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function getRows_() {
+  // openById solo requiere acceso de LECTURA a la hoja original.
+  const ss = SpreadsheetApp.openById(CONFIG.SOURCE_ID);
+  const sheet = CONFIG.TAB_NAME ? ss.getSheetByName(CONFIG.TAB_NAME) : ss.getSheets()[0];
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  const header = values[0].map(h => String(h).trim());
+  const col = {};
+  for (const key in CONFIG.HEADERS) {
+    col[key] = header.indexOf(CONFIG.HEADERS[key]);
+  }
+
+  const rows = [];
+  for (let i = 1; i < values.length; i++) {
+    const r = values[i];
+    const type = col.type > -1 ? String(r[col.type]).trim() : '';
+    if (CONFIG.TYPE_FILTER && type !== CONFIG.TYPE_FILTER) continue;
+
+    const idRaw = col.id > -1 ? String(r[col.id]).trim() : '';
+    if (idRaw === '' || idRaw === '#REF!' || idRaw.toLowerCase() === 'loading...') continue;
+
+    rows.push({
+      id:      idRaw,
+      serial:  col.serial  > -1 ? String(r[col.serial]).trim()  : '',
+      address: col.address > -1 ? String(r[col.address]).trim() : '',
+      desc:    col.desc    > -1 ? String(r[col.desc]).trim()    : '',
+      maps:    col.maps    > -1 ? String(r[col.maps]).trim()    : '',
+      status:  col.status  > -1 ? String(r[col.status]).trim()  : ''
+    });
+  }
+  return rows;
+}
+
+function esc_(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function dash_(s) { return (s === null || String(s).trim() === '') ? '-' : esc_(s); }
+
+function statusBadge_(raw) {
+  const v = String(raw).trim().toLowerCase();
+  if (v === 'active' || v === 'activo') {
+    return '<span class="status status-active">Activo</span>';
+  }
+  const label = (v === 'inactive' || v === 'inactivo') ? 'Inactivo' : (raw ? esc_(raw) : 'Inactivo');
+  return '<span class="status status-inactive">' + label + '</span>';
+}
+
+function mapsPill_(url) {
+  const u = String(url).trim();
+  if (!/^https?:\/\//i.test(u)) return '-';
+  return '<a class="maps-link" href="' + esc_(u) + '" target="_blank" rel="noopener">Ver en Maps</a>';
+}
+
+function buildRows_() {
+  let rows;
+  try {
+    rows = getRows_();
+  } catch (err) {
+    return '<tr><td colspan="6" style="padding:24px;color:#D84315;">' +
+           'No se pudo leer la hoja. Verifica que tu cuenta tenga acceso de lectura y el SOURCE_ID.' +
+           '</td></tr>';
+  }
+  if (!rows.length) {
+    return '<tr><td colspan="6" style="padding:24px;color:#888;">Sin cajeros para mostrar.</td></tr>';
+  }
+  return rows.map(function (row) {
+    const idNum = parseInt(String(row.id).replace(/[^0-9-]/g, ''), 10);
+    const parity = (!isNaN(idNum) && idNum % 2 === 0) ? 'id-par' : 'id-impar';
+    return '' +
+      '<tr class="' + parity + '">' +
+        '<td class="id-cell">' + esc_(row.id) + '</td>' +
+        '<td>' + dash_(row.serial) + '</td>' +
+        '<td>' + dash_(row.address) + '</td>' +
+        '<td>' + dash_(row.desc) + '</td>' +
+        '<td>' + mapsPill_(row.maps) + '</td>' +
+        '<td>' + statusBadge_(row.status) + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function buildHtml() {
+  return '' +
+'<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+'<style>' +
+"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');" +
+'html,body{margin:0;padding:0;background:transparent;}' +
+'.tabla-atms-wrap{--coral-1:#FF7043;--coral-2:#E64A19;--txt-acento:#D84315;' +
+'width:100%;font-family:"Poppins",Arial,sans-serif;font-size:16px;box-sizing:border-box;' +
+'overflow-x:auto;border-radius:16px;border:2px solid var(--coral-2);background:#fff;}' +
+'.tabla-atms{width:100%;border-collapse:collapse;text-align:center;color:#2b2b2b;border-radius:16px;overflow:hidden;}' +
+'.tabla-atms thead{background:#ff5d15;}' +
+'.tabla-atms thead th{background:transparent;color:#fff;font-weight:700;font-size:16px;padding:16px 12px;' +
+'text-align:center;vertical-align:middle;border:none;line-height:1.3;letter-spacing:.3px;}' +
+'.tabla-atms tbody td{padding:14px 12px;text-align:center;vertical-align:middle;border:none;line-height:1.5;}' +
+'.tabla-atms tbody tr.id-par td{background:#ffece4;}' +
+'.tabla-atms tbody tr.id-impar td{background:#fff;}' +
+'.id-cell{font-weight:700;font-size:18px;color:var(--coral-2);}' +
+'.maps-link{display:inline-block;padding:6px 14px;border-radius:999px;' +
+'background:linear-gradient(135deg,var(--coral-1),var(--coral-2));color:#fff;text-decoration:none;' +
+'font-weight:600;font-size:13px;white-space:nowrap;}' +
+'.status{display:inline-block;padding:5px 14px;border-radius:999px;font-weight:600;font-size:13px;letter-spacing:.3px;}' +
+'.status-active{background:#e6f6ec;color:#1f8a4c;border:1px solid #9ed7b3;}' +
+'.status-inactive{background:#ffe0d4;color:var(--txt-acento);border:1px solid #ffb59e;}' +
+'@media (max-width:768px){.tabla-atms thead th,.tabla-atms tbody td{font-size:14px;padding:11px 9px;}.id-cell{font-size:16px;}}' +
+'</style></head><body>' +
+'<div class="tabla-atms-wrap"><table class="tabla-atms"><thead><tr>' +
+'<th>ID del ATM</th><th>Número de serie</th><th>Dirección</th>' +
+'<th>Descripción</th><th>Link de Google Maps</th><th>Estatus</th>' +
+'</tr></thead><tbody>' + buildRows_() + '</tbody></table></div>' +
+'</body></html>';
+}
