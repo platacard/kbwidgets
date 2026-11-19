@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador · Resultado de la tarea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6FA; --card:#FFFFFF; --field:#E6EAF2; --field-hover:#DDE2EC;
+    --ink:#171C26; --muted:#6B7280; --placeholder:#8A94A6;
+    --accent:#FF5000; --ok:#1A9B5B; --ok-bg:#E8F7EF; --bad:#E11D2E; --bad-bg:#FDECEE;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:560px;margin:0 auto;padding:24px 16px 48px}
+  .progress{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:10px}
+  .bar{height:4px;background:#DDE2EC;border-radius:4px;overflow:hidden;margin-bottom:20px}
+  .bar>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+  .case{background:var(--card);border-radius:20px;padding:18px 20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(23,28,38,.04)}
+  .case .label{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .case p{margin:0;font-size:15px;line-height:22px}
+  .case .quote{margin-top:10px;padding:10px 14px;border-left:3px solid var(--accent);background:#FFF4EE;border-radius:0 12px 12px 0;font-size:15px;line-height:22px}
+  .panel{background:var(--card);border-radius:24px;padding:24px 20px 20px;box-shadow:0 1px 2px rgba(23,28,38,.04)}
+  h1{font-size:26px;line-height:32px;font-weight:700;margin:0 0 20px}
+  .field{position:relative;background:var(--field);border-radius:var(--radius);margin-bottom:12px;transition:background .15s}
+  .field:hover{background:var(--field-hover)}
+  select,textarea{width:100%;border:0;background:transparent;font:inherit;color:var(--ink);padding:22px 48px 22px 20px;outline:none;appearance:none;-webkit-appearance:none;border-radius:var(--radius)}
+  select{font-size:17px;cursor:pointer}
+  select.empty{color:var(--placeholder)}
+  textarea{font-size:17px;min-height:76px;resize:vertical;padding-right:20px}
+  textarea::placeholder{color:var(--placeholder)}
+  .chev{position:absolute;right:20px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--placeholder)}
+  button.cta{width:100%;border:0;border-radius:var(--radius);padding:22px;font:inherit;font-size:17px;font-weight:600;cursor:pointer;background:var(--field);color:var(--ink);transition:background .15s}
+  button.cta:hover{background:var(--field-hover)}
+  button.cta.primary{background:var(--accent);color:#fff}
+  button.cta.primary:hover{background:#E04600}
+  button.cta:disabled{opacity:.5;cursor:default}
+  .feedback{margin-top:16px;border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:22px;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--ok-bg);border:1px solid #BFE6D0}
+  .feedback.bad{background:var(--bad-bg);border:1px solid #F5C2C7}
+  .feedback .title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .feedback.ok .title{color:var(--ok)} .feedback.bad .title{color:var(--bad)}
+  .feedback .correct{margin-top:8px;padding:10px 12px;background:#fff;border-radius:12px}
+  .feedback .correct b{display:block;margin-bottom:2px}
+  .feedback .comment{margin-top:8px;color:var(--muted);font-size:14px}
+  .next{margin-top:12px}
+  .summary{text-align:center;padding:8px 0}
+  .summary .big{font-size:48px;font-weight:700;color:var(--accent);line-height:1;margin:8px 0}
+  .summary p{color:var(--muted);margin:8px 0 20px}
+  .review{text-align:left;margin:0 0 20px;padding:0;list-style:none}
+  .review li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #EEF1F6;font-size:14px;line-height:20px}
+  .review li .dot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:5px}
+  .review li .dot.ok{background:var(--ok)} .review li .dot.bad{background:var(--bad)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="progress"><span id="counter">Caso 1 de 14</span><span id="score">Aciertos: 0</span></div>
+  <div class="bar"><div id="barfill"></div></div>
+
+  <div class="case" id="case">
+    <div class="label">Cómo terminó la llamada</div>
+    <p id="caseText"></p>
+    <div class="quote" id="caseQuote"></div>
+  </div>
+
+  <div class="panel" id="panel">
+    <h1>Resultado de la tarea</h1>
+    <div class="field">
+      <select id="result" class="empty" aria-label="Seleccionar resultado">
+        <option value="" disabled selected>Seleccionar resultado</option>
+      </select>
+      <svg class="chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="field">
+      <textarea id="comment" placeholder="Comentario del resultado" aria-label="Comentario del resultado"></textarea>
+    </div>
+    <button class="cta" id="close" disabled>Cerrar tarea</button>
+
+    <div class="feedback" id="feedback" role="status" aria-live="polite">
+      <div class="title" id="fbTitle"></div>
+      <div id="fbBody"></div>
+      <div class="correct hidden" id="fbCorrect"></div>
+      <div class="comment hidden" id="fbComment"></div>
+      <button class="cta primary next" id="next">Siguiente caso</button>
+    </div>
+  </div>
+
+  <div class="panel hidden" id="done">
+    <div class="summary">
+      <div class="label" style="font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)">Resultado</div>
+      <div class="big" id="finalScore">0/14</div>
+      <p id="finalText"></p>
+      <ul class="review" id="review"></ul>
+      <button class="cta primary" id="restart">Repetir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RESULTS = [
+  "Respuesta - Otra persona autorizada",
+  "Respuesta - Documentos de otra persona",
+  "Respuesta - El cliente no es una empresa",
+  "Respuesta - No está formalizado ante SAT",
+  "Respuesta - No cuenta con CSF",
+  "Respuesta - No está de acuerdo",
+  "Respuesta - Reacción de forma negativa / Solicita que no le vuelvan a llamar",
+  "Respuesta - Que le vuelvan a llamar",
+  "Respuesta - Contesto otra persona",
+  "Respuesta - Problema técnico",
+  "Respuesta - Otro",
+  "Sin respuesta - Buzón de voz",
+  "Sin respuesta - Llamada no disponible / Número incorrecto",
+  "Sin respuesta - Otro"
+];
+
+// Un caso por resultado. text = cómo terminó la llamada; quote = última frase del cliente (opcional);
+// answer = índice en RESULTS; why = por qué; comment = qué va en el comentario.
+const CASES = [
+  {
+    text: "Tarea: Jorge Ramírez, Taller Mecánico del Valle, S. de R.L. de C.V. Jorge es el gerente de la sucursal. El director le pidió «ver lo de la cuenta». En la pantalla de autorización te dice que él no firma nada por la empresa y te da el nombre y el celular del director.",
+    quote: "«El que firma es don Arturo, el director. Anota su número: 55 1234 5678».",
+    answer: 0,
+    why: "Quien contestó no está autorizado para abrir la cuenta de la empresa. Solo el representante legal puede hacerlo; te quedas con el contacto del autorizado.",
+    comment: "Nombre y teléfono del autorizado: «Arturo Pérez, director, 55 1234 5678. Jorge es gerente, no firma»."
+  },
+  {
+    text: "Tarea: Mariana Soto, Consultores MS, S.C. Mariana es socia administradora y está autorizada. Al llegar a los documentos te dice que ella no tiene nada: el acta, la boleta y la CSF las guarda el despacho contable externo. Te da el teléfono de la contadora.",
+    quote: "«Yo de papeles no sé nada, eso lo lleva Paty, la contadora. Márcale a ella».",
+    answer: 1,
+    why: "La cliente sí está autorizada; el problema son solo los documentos, que los tiene otra persona. Por eso no es «Otra persona autorizada».",
+    comment: "Contacto de quien tiene los documentos: «Documentos con Paty Ruiz, contadora externa, 55 9876 5432»."
+  },
+  {
+    text: "Tarea: Ricardo López. Al saludar y preguntar por su empresa, Ricardo te dice que no tiene ningún negocio: trabaja como empleado en una tienda departamental y hace meses empezó una solicitud en Plata «por curiosidad», pensando que era una cuenta personal.",
+    quote: "«¿Empresa? No, yo soy empleado, trabajo en Liverpool. Eso lo llené por curiosidad, pensé que era una cuenta normal».",
+    answer: 2,
+    why: "El cliente no tiene negocio: ni empresa (PM) ni actividad empresarial como persona física (PFAE). No hay nada que abrir por la rama PyME.",
+    comment: "«Es empleado, sin negocio propio; llenó la solicitud por error pensando que era cuenta personal»."
+  },
+  {
+    text: "Tarea: Daniel Cruz, «Eventos DC». Daniel organiza fiestas con dos amigos. Al preguntar por el RFC te dice que no tienen: cobran en efectivo y por transferencia a sus cuentas personales. No están dados de alta ni como empresa ni como personas físicas con actividad.",
+    quote: "«¿RFC? No, todavía no nos hemos dado de alta en nada, apenas vamos empezando».",
+    answer: 3,
+    why: "El negocio no está registrado ante el SAT, ni como Persona Moral ni como PFAE. Sin RFC no hay solicitud.",
+    comment: "«Sin alta en el SAT; negocio informal de tres personas. Le dijiste que puede volver cuando se formalice»."
+  },
+  {
+    text: "Tarea: Elena Vargas, Panificadora Vargas, S.A. de C.V. Elena está autorizada y quiere la cuenta. Al hablar de los documentos resulta que la empresa nunca ha descargado su Constancia de Situación Fiscal: no tienen la contraseña del SAT de la empresa ni e.firma, y el contador que la tramitó ya no trabaja con ellos.",
+    quote: "«No tenemos ni la contraseña del SAT; el contador se fue y se llevó todo. No sé ni cómo sacar esa constancia».",
+    answer: 4,
+    why: "La empresa no tiene la CSF y hoy no puede obtenerla. Sin CSF la solicitud no avanza; se registra este resultado y se anota cómo quedó.",
+    comment: "«Sin acceso al SAT de la empresa (sin contraseña ni e.firma); va a recuperarlo con un contador nuevo. Le explicaste cómo descargar la CSF en el portal del SAT»."
+  },
+  {
+    text: "Tarea: Fernando Gil, Ferretería Gil Hermanos, S. de R.L. de C.V. Fernando escuchó el pitch, preguntó por los planes, hiciste dos intentos con sus objeciones (ya tiene banco, no ve para qué otra cuenta) y al final te dijo con calma que no le interesa.",
+    quote: "«Gracias, de verdad, pero por ahora estamos bien con lo que tenemos».",
+    answer: 5,
+    why: "El cliente escuchó, lo trabajaste y decidió que no. Es un «no» tranquilo y claro, sin molestia ni petición de no llamar.",
+    comment: "Qué objeción pesó: «Ya tiene cuenta en otro banco y no ve diferencia; no quiere dos cuentas»."
+  },
+  {
+    text: "Tarea: Patricia Núñez, Clínica Dental PN, S.C. Contesta Patricia, molesta desde el saludo: dice que ya le han llamado tres veces esta semana de Plata y que no quiere que la vuelvan a contactar.",
+    quote: "«¡Ya basta! Es la tercera vez. Bórrenme de su lista y no me vuelvan a llamar».",
+    answer: 6,
+    why: "La cliente reaccionó de forma negativa y pidió explícitamente que no la vuelvan a llamar. Ese resultado es el que evita que reciba otra llamada.",
+    comment: "«Pide no ser contactada; dice que la llamaron tres veces esta semana»."
+  },
+  {
+    text: "Tarea: Óscar Herrera, Transportes Herrera, S.A. de C.V. Óscar contesta, le interesa, pero está en carretera y no puede hablar. Te pide que le llames el jueves después de las 4 de la tarde.",
+    quote: "«Me interesa, pero voy manejando. ¿Me marcas el jueves después de las cuatro?».",
+    answer: 7,
+    why: "El cliente pidió que le vuelvan a llamar y dio un momento concreto. No es un «no» ni un «sin respuesta».",
+    comment: "Cuándo: «Volver a llamar el jueves después de las 16:00; le interesa, va manejando»."
+  },
+  {
+    text: "Tarea: Alberto Díaz, Muebles Díaz, S.A. de C.V. Contesta una mujer que se presenta como Carmen, recepcionista. Dice que Alberto no está y que ella no sabe de qué se trata ni cuándo regresa. No tiene autorización para dar otro número.",
+    quote: "«El señor Alberto no se encuentra. Yo soy la recepcionista, no sabría decirle».",
+    answer: 8,
+    why: "Contestó una persona distinta a la de la tarea y no es con quien se puede trabajar la llamada. Si el nombre no coincide con la tarea, este es el resultado.",
+    comment: "«Contestó Carmen, recepcionista; Alberto no estaba; sin otro número»."
+  },
+  {
+    text: "Tarea: Gabriela Torres, Textiles GT, S.A. de C.V. Gabriela está autorizada, tiene INE, todo bien. Al dar Continuar después del RFC, el CRM muestra un error y no deja pasar a la pantalla de ingresos. Lo intentas tres veces, cierras y abres la tarea, y el error sigue.",
+    quote: "«¿Entonces qué hacemos? Yo sí quiero abrir la cuenta».",
+    answer: 9,
+    why: "Fue el CRM el que no dejó terminar la llamada, no el cliente. Se registra el problema técnico y se describe para que lo revisen.",
+    comment: "Qué pasó exactamente: «Error al dar Continuar después del RFC, tres intentos, pantalla de ingresos no abre. Cliente quiere continuar; volver a llamar»."
+  },
+  {
+    text: "Tarea: Luis Mendoza, Importadora LM, S.A. de C.V. Luis confirma que es Persona Moral y está autorizado, pero te dice que la empresa está en proceso de liquidación: cierran en dos meses y ya no van a operar. No quiere abrir nada, pero tampoco está molesto ni pide que no le llamen.",
+    quote: "«Estamos cerrando la empresa, en dos meses ya no existe. No tiene caso».",
+    answer: 10,
+    why: "El cliente contestó, pero ninguno de los resultados específicos describe lo que pasó: no es un «no está de acuerdo» con el producto, no es PFAE, no es un problema de documentos. Por eso «Otro», siempre con comentario.",
+    comment: "Obligatorio: «Empresa en liquidación, cierra en dos meses; no aplica»."
+  },
+  {
+    text: "Tarea: Sofía Castillo, Agencia Creativa SC, S.A.S. Marcas y después de varios tonos entra el buzón de voz de Sofía. No dejas mensaje.",
+    quote: "«Hola, soy Sofía, deja tu mensaje después del tono…».",
+    answer: 11,
+    why: "No hubo respuesta: entró el buzón de voz. Es un «sin respuesta», no una llamada contestada.",
+    comment: "Puede ir vacío o con la hora del intento."
+  },
+  {
+    text: "Tarea: Héctor Morales, Constructora HM, S.A. de C.V. Marcas y una grabadora dice que el número no existe. Vuelves a marcar con cuidado el mismo número de la tarea y pasa lo mismo.",
+    quote: "«El número que usted marcó no existe. Favor de verificarlo».",
+    answer: 12,
+    why: "La llamada no se puede completar: el número no está disponible o no es correcto. No hubo contacto con nadie.",
+    comment: "«Número no existe, dos intentos»."
+  },
+  {
+    text: "Tarea: Andrea Flores, Vinícola Flores, S. de R.L. de C.V. Marcas, suena una vez y la llamada se corta sin tono ni buzón. Lo intentas dos veces más y pasa lo mismo: no llega ni a timbrar bien.",
+    quote: "(silencio y la llamada se corta)",
+    answer: 13,
+    why: "No hubo respuesta, pero tampoco fue buzón de voz ni número inexistente: la llamada se corta sin explicación. Es un «Sin respuesta - Otro», con comentario.",
+    comment: "«La llamada se corta al primer tono, tres intentos»."
+  }
+];
+
+// Orden aleatorio por sesión
+const order = CASES.map((_, i) => i).sort(() => Math.random() - 0.5);
+let idx = 0, hits = 0, answered = false;
+const log = [];
+
+const sel = document.getElementById('result');
+RESULTS.forEach((r, i) => { const o = document.createElement('option'); o.value = i; o.textContent = r; sel.appendChild(o); });
+
+const $ = id => document.getElementById(id);
+
+function render() {
+  const c = CASES[order[idx]];
+  $('counter').textContent = `Caso ${idx + 1} de ${CASES.length}`;
+  $('score').textContent = `Aciertos: ${hits}`;
+  $('barfill').style.width = (idx / CASES.length * 100) + '%';
+  $('caseText').textContent = c.text;
+  $('caseQuote').textContent = c.quote;
+  sel.value = ''; sel.classList.add('empty'); sel.disabled = false;
+  $('comment').value = ''; $('comment').disabled = false;
+  $('close').disabled = true; $('close').classList.remove('primary');
+  const fb = $('feedback'); fb.className = 'feedback';
+  $('fbCorrect').className = 'correct hidden'; $('fbComment').className = 'comment hidden';
+  answered = false;
+}
+
+sel.addEventListener('change', () => {
+  sel.classList.toggle('empty', sel.value === '');
+  $('close').disabled = sel.value === '';
+  $('close').classList.toggle('primary', sel.value !== '');
+});
+
+$('close').addEventListener('click', () => {
+  if (answered || sel.value === '') return;
+  answered = true;
+  const c = CASES[order[idx]];
+  const chosen = Number(sel.value);
+  const ok = chosen === c.answer;
+  if (ok) hits++;
+  log.push({ ok, chosen: RESULTS[chosen], correct: RESULTS[c.answer] });
+  sel.disabled = true; $('comment').disabled = true; $('close').disabled = true;
+  const fb = $('feedback');
+  fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+  $('fbTitle').textContent = ok ? '✓ Correcto' : '✗ No es ese resultado';
+  $('fbBody').textContent = c.why;
+  if (!ok) {
+    $('fbCorrect').className = 'correct';
+    $('fbCorrect').innerHTML = `<b>El resultado correcto:</b>${RESULTS[c.answer]}`;
+  }
+  $('fbComment').className = 'comment';
+  $('fbComment').innerHTML = `<b>En el comentario:</b> ${c.comment}`;
+  $('score').textContent = `Aciertos: ${hits}`;
+  $('next').textContent = idx === CASES.length - 1 ? 'Ver mi resultado' : 'Siguiente caso';
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+$('next').addEventListener('click', () => {
+  idx++;
+  if (idx >= CASES.length) return finish();
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+function finish() {
+  $('case').classList.add('hidden'); $('panel').classList.add('hidden');
+  $('barfill').style.width = '100%';
+  $('counter').textContent = 'Completado';
+  $('done').classList.remove('hidden');
+  $('finalScore').textContent = `${hits}/${CASES.length}`;
+  $('finalText').textContent = hits === CASES.length
+    ? 'Todos los resultados correctos. Recuerda: si la solicitud quedó creada, no registras resultado; la tarea se cierra sola.'
+    : hits >= CASES.length - 3
+      ? 'Casi todos. Revisa abajo los casos donde elegiste otro resultado.'
+      : 'Vuelve a la tarjeta «Resultado de la llamada» y repite el simulador: los resultados que se confunden están marcados abajo.';
+  const ul = $('review'); ul.innerHTML = '';
+  log.forEach((l, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="dot ${l.ok ? 'ok' : 'bad'}"></span><span>${l.ok ? l.correct : `Elegiste «${l.chosen}». Correcto: «${l.correct}»`}</span>`;
+    ul.appendChild(li);
+  });
+}
+
+$('restart').addEventListener('click', () => {
+  order.sort(() => Math.random() - 0.5);
+  idx = 0; hits = 0; log.length = 0;
+  $('done').classList.add('hidden'); $('case').classList.remove('hidden'); $('panel').classList.remove('hidden');
+  render(); window.scrollTo({ top: 0 });
+});
+
+render();
+</script>
+</body>
+</html>

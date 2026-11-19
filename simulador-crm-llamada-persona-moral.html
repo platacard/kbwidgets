@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador CRM · Llamada con Persona Moral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6FA;--card:#FFF;--field:#E6EAF2;--field-hover:#DDE2EC;--ink:#171C26;--muted:#4B5563;--placeholder:#8A94A6;
+  --accent:#FF5000;--accent-hover:#E64800;--err:#E11D2E;--ok:#1A9B5B;--ok-bg:#E8F7EF;--bad-bg:#FDECEE;
+  --info-bg:#E8EEFC;--info-bar:#3B6EF5;--task-bg:#FFF6E0;--task-bar:#FF8A00;--warn-bg:#FFF4E5;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);font-size:14px;line-height:20px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.toolbar{max-width:1536px;margin:0 auto;padding:16px 20px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar .tb{height:36px;border-radius:999px;border:1px solid #D9DEE7;background:#fff;padding:0 14px;font-weight:500;cursor:pointer;color:var(--ink);font-size:13px}
+.toolbar .tb:hover{border-color:var(--accent)}
+.toolbar .tb.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toolbar .tb.free.active{background:var(--accent);border-color:var(--accent)}
+.toolbar .tb .st{margin-left:6px;color:var(--ok);font-weight:700}
+.toolbar .tb.active .st{color:#fff}
+.toolbar .sep{width:1px;height:24px;background:#D9DEE7;margin:0 4px}
+.toolbar .reset{margin-left:auto;background:transparent;border-color:transparent;color:var(--muted)}
+.toolbar .reset:hover{color:var(--ink);border-color:transparent;text-decoration:underline}
+.app{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;padding:12px 20px 20px;min-height:calc(100vh - 64px);max-width:1536px;margin:0 auto}
+.rail{background:var(--card);border-radius:16px}
+.main{display:grid;grid-template-rows:72px 1fr;gap:8px;min-width:0}
+.topbar{background:var(--card);border-radius:16px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;padding:0 20px;min-width:0}
+.topbar .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 12px}
+.mic{width:64px;height:40px;border-radius:10px;background:var(--field);display:flex;align-items:center;justify-content:center;color:#5B6475}
+.topbar .name{text-align:center;font-weight:600;font-size:15px}
+.hang{display:flex;align-items:center;gap:14px;border:1px solid #F0888F;border-radius:10px;padding:0 14px;height:40px;color:#5B6475;background:#FFF5F5;cursor:pointer;font:inherit}
+.hang:hover{background:#FFE9EA}
+.hang:disabled{cursor:default;opacity:.6}
+.hangover{position:fixed;inset:0;background:var(--accent);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;padding:24px}
+.hangover .big{font-size:160px;line-height:1;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.hangover .sub{color:rgba(255,255,255,.85);font-size:16px;margin-top:-24px}
+.hangover .card{background:#fff;border-radius:20px;padding:24px;width:min(560px,100%)}
+.hangover .card h2{margin-bottom:16px}
+.hang svg{color:var(--err)}
+.body{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,32%,480px);gap:8px;min-height:680px;min-width:0}
+.screen{background:var(--card);border-radius:16px;padding:20px 20px 40px;display:flex;justify-content:center;min-width:0;overflow:hidden}
+.col{width:100%;max-width:600px;padding:0 20px;min-width:0}
+.result{background:var(--card);border-radius:16px;padding:20px;min-width:0}
+.task{background:var(--task-bg);border-left:4px solid var(--task-bar);border-radius:8px;padding:12px 16px;margin-bottom:40px}
+.task b{display:block;margin-bottom:4px}
+h2{font-size:20px;line-height:24px;font-weight:600;margin:0 0 8px}
+h2+.sub{color:var(--muted);margin:0 0 16px}
+.informer{border-left:4px solid var(--info-bar);background:var(--info-bg);border-radius:8px;padding:12px 16px;margin:0 0 16px}
+.informer b{display:block;margin-bottom:4px}
+.informer.plain{background:#fff;border:1px solid #D9DEE7;border-left:4px solid #C9D0DC}
+.informer ul{margin:6px 0;padding-left:18px}
+.informer.warn{background:var(--warn-bg);border-left-color:var(--task-bar)}
+.field{margin-bottom:24px}
+.field label.title{display:block;font-size:20px;line-height:24px;font-weight:600;margin-bottom:8px}
+.hint{color:var(--muted);margin:-4px 0 12px}
+input.txt{width:100%;height:40px;border-radius:8px;border:1px solid transparent;background:var(--field);padding:0 12px;outline:none}
+input.txt::placeholder{color:var(--placeholder);text-transform:none}
+input.txt:focus{border-color:#B9C2D3;background:#fff}
+.money{position:relative}.money input{padding-left:26px}.money::before{content:"$";position:absolute;left:12px;top:10px;color:var(--placeholder)}
+.stack input.txt{margin-bottom:8px}
+.stack .err{margin:-4px 0 12px}
+.err{display:none;color:var(--err);margin:4px 0 0 12px}
+.invalid input.txt,.invalid .radios,.invalid .check{border-color:var(--err)}
+.invalid .err{display:block}
+.radios{border:1px solid #D9DEE7;border-radius:8px;padding:4px 12px}
+.radios label{display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer}
+.radios input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.check{border:1px solid #D9DEE7;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.btn{height:40px;border:0;border-radius:8px;padding:0 16px;font-weight:600;cursor:pointer;background:var(--field);color:var(--ink);width:100%}
+.btn:hover{background:var(--field-hover)}
+.btn.primary{background:var(--accent);color:#fff}.btn.primary:hover{background:var(--accent-hover)}
+.btn:disabled{opacity:.5;cursor:default}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px}
+.badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.badge.ok{background:#1DB954;color:#fff}.badge.bad{background:var(--err);color:#fff}.badge.warn{background:var(--task-bar);color:#fff}
+/* result panel */
+.result h2{margin-bottom:16px}
+.rfield{background:var(--field);border-radius:8px;margin-bottom:12px;position:relative}
+.rfield select,.rfield textarea{width:100%;border:0;background:transparent;padding:12px 40px 12px 16px;outline:none;appearance:none;border-radius:8px}
+.rfield select.empty{color:var(--placeholder)}
+.rfield textarea{min-height:40px;resize:vertical;padding-right:16px}
+.rfield textarea::placeholder{color:var(--placeholder)}
+.rfield .chev{position:absolute;right:14px;top:12px;color:var(--placeholder);pointer-events:none}
+/* transcript */
+.call{margin-top:40px;border-top:1px solid #EEF1F6;padding-top:16px}
+.call .label{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.call .label span.step{color:var(--placeholder);font-weight:500;text-transform:none;letter-spacing:0}
+.bubble{background:var(--bg);border-radius:12px 12px 12px 4px;padding:10px 14px;margin-bottom:8px;max-width:100%}
+.bubble.agent{background:#FFF4EE;border-radius:12px 12px 4px 12px;margin-left:24px}
+.bubble .who{font-size:12px;color:var(--muted);margin-bottom:2px}
+/* intro / feedback overlay */
+.overlay{position:fixed;inset:0;background:rgba(23,28,38,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal{background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:28px}
+.modal h1{font-size:24px;line-height:30px;margin:0 0 12px}
+.modal p{margin:0 0 12px;font-size:15px;line-height:22px}
+.modal .scen{display:grid;gap:10px;margin:16px 0 20px}
+.modal .scen button{text-align:left;background:var(--bg);border:1px solid #E3E8F0;border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.modal .scen button:hover{border-color:var(--accent)}
+.modal .scen button .st{font-size:12px;color:var(--muted);white-space:nowrap}
+.modal .scen button .st.done{color:var(--ok);font-weight:600}
+.checks{list-style:none;margin:16px 0;padding:0}
+.checks li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #EEF1F6;font-size:14px;line-height:20px}
+.checks li .dot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:5px;background:var(--ok)}
+.checks li.bad .dot{background:var(--err)}
+.checks li b{display:block}
+.hidden{display:none !important}
+@media (max-width:1000px){.body{grid-template-columns:1fr}.app{grid-template-columns:1fr}.rail{display:none}}
+html,body{overflow-x:hidden}
+</style>
+</head>
+<body>
+<div class="toolbar" id="toolbar"></div>
+<div class="app">
+  <div class="rail"></div>
+  <div class="main">
+    <div class="topbar">
+      <div class="mic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5a4 4 0 0 0 4 4z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4"/></svg></div>
+      <div class="name" id="clientName">—</div>
+      <button class="hang" id="hang" title="Terminar la llamada"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-3.3 0-6.3.8-8.9 2.3-.7.4-1.1 1.2-1.1 2v2.2c0 .6.5 1.1 1.1 1l3.6-.5c.5-.1.9-.5 1-1l.4-2.2c1.2-.4 2.5-.6 3.9-.6s2.7.2 3.9.6l.4 2.2c.1.5.5.9 1 1l3.6.5c.6.1 1.1-.4 1.1-1v-2.2c0-.8-.4-1.6-1.1-2C18.3 9.8 15.3 9 12 9z"/></svg><span id="timer">0:00</span></button>
+    </div>
+    <div class="body">
+      <div class="screen"><div class="col" id="screen"></div></div>
+      <div class="result">
+        <div id="resultForm">
+        <h2>Resultado de la tarea</h2>
+        <div class="rfield">
+          <select id="result" class="empty"><option value="" disabled selected>Seleccionar resultado</option></select>
+          <svg class="chev" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="rfield"><textarea id="comment" placeholder="Comentario del resultado"></textarea></div>
+        <button class="btn" id="closeTask">Cerrar tarea</button>
+        </div>
+
+        <div class="call">
+          <div class="label"><span>En la llamada</span><span class="step" id="stepLabel"></span></div>
+          <div id="transcript"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="overlay hidden" id="feedback">
+  <div class="modal">
+    <h1 id="fbTitle"></h1>
+    <p id="fbIntro"></p>
+    <ul class="checks" id="fbChecks"></ul>
+    <div class="row2">
+      <button class="btn" id="fbRetry">Repetir este escenario</button>
+      <button class="btn primary" id="fbMenu">Volver al inicio</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Datos ---------- */
+const RESULTS = [
+  "Respuesta - Otra persona autorizada","Respuesta - Documentos de otra persona",
+  "Respuesta - El cliente no es una empresa","Respuesta - No está formalizado ante SAT","Respuesta - No cuenta con CSF",
+  "Respuesta - No está de acuerdo","Respuesta - Reacción de forma negativa / Solicita que no le vuelvan a llamar",
+  "Respuesta - Que le vuelvan a llamar","Respuesta - Contesto otra persona","Respuesta - Problema técnico","Respuesta - Otro",
+  "Sin respuesta - Buzón de voz","Sin respuesta - Llamada no disponible / Número incorrecto","Sin respuesta - Otro"
+];
+
+/* Cada escenario: datos del cliente, lo que dice en cada pantalla y lo que se espera del agente */
+const FREE = { id:"free", title:"Modo libre", client:"Santa Maria de Santa cruz de la Seros", task:"Título de la tarea", taskDesc:"Descripción de la tarea", phone:"0624", say:{}, expect:null };
+
+const SCENARIOS = [
+  {
+    id:"happy", title:"1 · Laura, Distribuidora Luma", desc:"Llamada completa: todo en orden",
+    client:"Laura Méndez Ortega", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Distribuidora Luma, S.A. de C.V. · Laura Méndez · Golden",
+    phone:"0624",
+    say:{
+      link:[["c","Sí, ese es mi número, el que termina en 0624."]],
+      type:[["c","Somos una S.A. de C.V., Distribuidora Luma. Yo soy la administradora única."]],
+      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, de acuerdo."]],
+      company:[["c","El RFC de la empresa es DLU190512AB3."],["c","Facturamos como unos 350 mil al mes."],["c","Sí, yo firmo por la empresa, está en el acta."]],
+      person:[["c","Como viene en mi INE: Laura Patricia, Méndez, Ortega. Nací el 14 de marzo de 1985."],["c","Sí, tengo mi INE vigente, aquí la traigo."]],
+      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","Ahorita no los tengo, los tiene la contadora."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Perfecto, mañana me siento con la contadora y subimos todo."]],
+      pfae:[["c","¿Persona física? No, no: Distribuidora Luma es una S.A. de C.V., con acta constitutiva y todo. La cuenta tiene que ser de la empresa."]]
+    },
+    expect:{ type:"PM", rfc:"DLU190512AB3", auth:"si", names:["Laura Patricia","Méndez","Ortega"], dob:"14/03/1985", doc:"INE", noResult:true }
+  },
+  {
+    id:"pfae", title:"2 · Ricardo, Abarrotes López", desc:"¿PM o PFAE?",
+    client:"Ricardo López", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Abarrotes López · Ricardo López · Tibio",
+    phone:"8812",
+    say:{
+      link:[["c","Sí, ese es."]],
+      type:[["c","Pues tengo mi tienda, estoy en RESICO. Todo está a mi nombre, yo soy el dueño."],["a","¿Tu RFC tiene 12 o 13 caracteres?"],["c","Déjame ver… LOGR800315HT7. Trece."]],
+      pfae:[["c","Sí, exacto, todo a mi nombre. ¿Entonces qué sigue?"]],
+      consent:[["c","Oye, pero yo no tengo ninguna empresa, la tienda está a mi nombre…"]]
+    },
+    expect:{ type:"PFAE" }
+  },
+  {
+    id:"noauth", title:"3 · Jorge, Taller Mecánico del Valle", desc:"Quien contesta no está autorizado",
+    client:"Jorge Ramírez", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Taller Mecánico del Valle, S. de R.L. de C.V. · Jorge Ramírez · Tibio",
+    phone:"4471",
+    say:{
+      link:[["c","Sí, es mi celular."]],
+      type:[["c","Es una S. de R.L. de C.V. Yo soy el gerente de la sucursal; el director me pidió ver lo de la cuenta."]],
+      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, está bien."]],
+      company:[["c","El RFC de la empresa es TMV200115KL8."],["c","Facturamos como 180 mil al mes."],["c","¿Autorizado yo? No, yo no firmo nada por la empresa. El que firma es don Arturo, el director."]],
+      noauth:[["a","(Le explicas que la cuenta solo la puede abrir quien tiene facultades y le pides el contacto.)"],["c","Claro: Arturo Pérez, director. Su celular es 55 1234 5678."]],
+      pfae:[["c","¿Cómo que a mi nombre? No, el taller es una S. de R.L. de C.V., tiene su acta y su RFC de empresa."]]
+    },
+    expect:{ type:"PM", rfc:"TMV200115KL8", auth:"no", result:0, commentMust:["Arturo","1234"], commentHint:"el nombre y el teléfono del autorizado: «Arturo Pérez, director, 55 1234 5678»" }
+  },
+  {
+    id:"rfctrap", title:"4 · Mariana, Consultores MS", desc:"El RFC que dicta no es el de la empresa",
+    client:"Mariana Soto", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Consultores MS, S.C. · Mariana Soto · Golden",
+    phone:"3390",
+    say:{
+      link:[["c","Sí, ese número."]],
+      type:[["c","Somos una Sociedad Civil, Consultores MS. Yo soy la socia administradora."]],
+      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, adelante."]],
+      company:[["c","Mi RFC es SOMM850920QR4."],["a","Ese es el tuyo personal, tiene 13. Necesito el de la empresa, el de 12 caracteres: viene en la CSF de la empresa o en cualquier factura."],["c","Ah, cierto. El de la empresa es CMS150303JK9."],["c","Facturamos como 90 mil al mes."],["c","Sí, yo tengo facultades, está en el acta."]],
+      person:[["c","Mariana, Soto, Delgado. 20 de septiembre de 1985."],["c","Sí, INE vigente."]],
+      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","Ahora no puedo, estoy con un cliente."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Va, los subo mañana."]],
+      pfae:[["c","No, somos una Sociedad Civil con acta ante notario; la cuenta es para la empresa, no para mí."]]
+    },
+    expect:{ type:"PM", rfc:"CMS150303JK9", auth:"si", names:["Mariana","Soto","Delgado"], dob:"20/09/1985", doc:"INE", noResult:true }
+  },
+  {
+    id:"name", title:"5 · José Luis, Transportes Hernández", desc:"El nombre como viene en la INE",
+    client:"Pepe Hernández", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Transportes Hernández, S.A. de C.V. · Pepe Hernández · Tibio",
+    phone:"7705",
+    say:{
+      link:[["c","Sí, es ese."]],
+      type:[["c","Es una S.A. de C.V., somos tres socios. Yo soy el administrador único."]],
+      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, sí."]],
+      company:[["c","RFC de la empresa: THE170808MN2."],["c","Como 600 mil al mes."],["c","Sí, yo estoy autorizado."]],
+      person:[["c","Pepe Hernández."],["a","Necesito tu nombre completo tal como aparece en tu INE, letra por letra."],["c","Ah. José Luis, Hernández, García. 22 de julio de 1979."],["c","INE sí tengo, vigente."]],
+      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","No, los papeles los tiene mi contador."],["a","(Le pides que suba todo él mismo en los próximos dos días.)"],["c","Va, mañana lo vemos con mi contador y los subimos."]],
+      pfae:[["c","¿A mi nombre? No, la cuenta es para Transportes Hernández, S.A. de C.V. Somos tres socios."]]
+    },
+    expect:{ type:"PM", rfc:"THE170808MN2", auth:"si", names:["José Luis","Hernández","García"], dob:"22/07/1979", doc:"INE", noResult:true }
+  },
+  {
+    id:"noine", title:"6 · Carlos, Grupo Industrial CN", desc:"Sin INE ni permiso de residencia",
+    client:"Carlos Navarro", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Grupo Industrial CN, S.A. de C.V. · Carlos Navarro · Golden",
+    phone:"2218",
+    say:{
+      link:[["c","Sí."]],
+      type:[["c","S.A. de C.V., yo soy el director general y represento a la empresa."]],
+      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","De acuerdo."]],
+      company:[["c","RFC de la empresa: GIC120627PQ5."],["c","Unos 2 millones al mes."],["c","Sí, estoy autorizado."]],
+      person:[["c","Carlos Alberto, Navarro, Ruiz. 3 de noviembre de 1972."],["c","¿INE? Me la robaron la semana pasada, estoy en el trámite de reposición. Tengo pasaporte mexicano."]],
+      noine:[["a","(Lees el texto de la pantalla tal cual.)"],["c","Entiendo. Les marco cuando tenga la INE nueva."]],
+      pfae:[["c","No, Grupo Industrial CN es una S.A. de C.V. Yo solo soy el director; la cuenta es de la empresa."]]
+    },
+    expect:{ type:"PM", rfc:"GIC120627PQ5", auth:"si", names:["Carlos Alberto","Navarro","Ruiz"], dob:"03/11/1972", doc:"none", result:10, resultNote:"[por confirmar con el equipo]", commentHint:"«Sin INE (robo), en trámite de reposición; tiene pasaporte mexicano. Volver a llamar cuando tenga la INE»" }
+  }
+];
+
+/* ---------- Estado ---------- */
+let S = null;           // escenario
+let step = "link";      // pantalla actual
+let log = {};           // lo que hizo el agente
+let timerId = null, seconds = 0, cdId = null, closed = false, hung = false;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const sel = $('result');
+RESULTS.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r;sel.appendChild(o);});
+function syncClose(){ const has=sel.value!==''; $('closeTask').disabled=!has||closed; $('closeTask').classList.toggle('primary',has&&!closed); }
+sel.addEventListener('change',()=>{sel.classList.toggle('empty',sel.value==='');syncClose();});
+
+/* ---------- Barra de escenarios ---------- */
+const progress = {};
+function renderMenu(){
+  const bar=$('toolbar'); bar.innerHTML='';
+  const mk=(sc,cls)=>{const b=document.createElement('button'); b.className='tb '+cls+(S&&S.id===sc.id?' active':'');
+    const st=progress[sc.id]; b.innerHTML=esc(sc.title)+(st&&st.ok?'<span class="st">✓</span>':''); b.onclick=()=>start(sc); return b;};
+  bar.appendChild(mk(FREE,'free'));
+  const sep=document.createElement('div'); sep.className='sep'; bar.appendChild(sep);
+  SCENARIOS.forEach(sc=>bar.appendChild(mk(sc,'')));
+  const r=document.createElement('button'); r.className='tb reset'; r.textContent='Reiniciar'; r.onclick=()=>start(S||FREE); bar.appendChild(r);
+}
+function start(sc){
+  S=sc; step="link"; log={}; seconds=0; closed=false; hung=false; clearInterval(cdId); restoreForm(); $('hang').disabled=false;
+  $('feedback').classList.add('hidden');
+  $('clientName').textContent=sc.client;
+  sel.value=''; sel.classList.add('empty'); $('comment').value=''; sel.disabled=false; $('comment').disabled=false; syncClose();
+  document.querySelector('.call').classList.toggle('hidden', sc.id==='free');
+  clearInterval(timerId); timerId=setInterval(()=>{seconds++; $('timer').textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;},1000);
+  $('timer').textContent='0:00';
+  renderMenu(); render();
+}
+
+/* ---------- Transcripción ---------- */
+const STEP_NAMES={link:"Inicio",type:"Tipo de empresa",phone:"Cambiar teléfono",consent:"Consentimiento",company:"Datos de la empresa",noauth:"No autorizado",person:"Datos del representante",noine:"Sin identificación",success:"Solicitud creada",pfae:"Rama PFAE"};
+function transcript(key){
+  const box=$('transcript'); box.innerHTML='';
+  if(!S.expect) return;
+  $('stepLabel').textContent=STEP_NAMES[key]||'';
+  const lines=(S.say&&S.say[key])||[];
+  if(!lines.length){box.innerHTML='<div class="bubble" style="color:var(--muted)">—</div>';return;}
+  lines.forEach(([who,txt])=>{
+    const d=document.createElement('div'); d.className='bubble '+(who==='a'?'agent':'');
+    d.innerHTML=`<div class="who">${who==='a'?'Tú':'Cliente'}</div>${esc(txt)}`;
+    box.appendChild(d);
+  });
+}
+
+/* ---------- Pantallas ---------- */
+const taskBlock = () => `<div class="task"><b>${esc(S.task)}</b>${esc(S.taskDesc)}</div>`;
+
+function render(){
+  const sc=$('screen');
+  transcript(step);
+  if(step==="link"){
+    sc.innerHTML = taskBlock()+`
+      <h2>¿Quieres vincular la tarjeta al número de teléfono … ${S.phone}?</h2>
+      <div class="row2" style="margin-top:16px">
+        <button class="btn primary" id="yes">Sí, continuar</button>
+        <button class="btn" id="no">No, cambiar teléfono</button>
+      </div>`;
+    $('yes').onclick=()=>{step="type";render();};
+    $('no').onclick=()=>{step="phone";render();};
+  }
+  else if(step==="phone"){
+    sc.innerHTML = taskBlock()+`
+      <h2>¿Qué número de teléfono debería estar vinculado a la tarjeta?</h2>
+      <div class="field" id="fPhone" style="margin-top:16px"><input class="txt" id="phone" placeholder="+52 XX XXXX XXXX"><div class="err" id="ePhone">Completa el campo para continuar</div></div>
+      <button class="btn primary" id="call">Llamar al nuevo número de teléfono</button>
+      <p style="text-align:center;margin-top:16px"><a href="#" id="cancel" style="color:var(--ink)">Cancelar</a></p>`;
+    $('call').onclick=()=>{
+      const v=$('phone').value.replace(/\D/g,'');
+      if(v.length<10){$('fPhone').classList.add('invalid');$('ePhone').textContent=v.length?'Ingresa un número de teléfono válido':'Completa el campo para continuar';return;}
+      log.phoneChanged=true; step="type"; render();
+    };
+    $('cancel').onclick=e=>{e.preventDefault();step="link";render();};
+  }
+  else if(step==="type"){
+    sc.innerHTML = taskBlock()+`
+      <h2>Tipo de empresa</h2>
+      <div class="informer plain"><b>Info</b>Si el cliente no sabe cómo está registrado su negocio, explícale las diferencias:
+        <ul><li>PFAE — Trabaja por su cuenta y su negocio está registrado a su nombre.</li><li>PM — Su negocio está registrado como una empresa legalmente constituida.</li></ul>
+        Si aún tiene dudas, pregúntale si se registró ante el SAT como persona física o como una empresa con razón social propia.</div>
+      <div class="row2"><button class="btn" id="pfae">PFAE</button><button class="btn" id="pm">PM</button></div>`;
+    $('pfae').onclick=()=>{log.type="PFAE";step="pfae";render();};
+    $('pm').onclick=()=>{log.type="PM";step="consent";render();};
+  }
+  else if(step==="pfae"){
+    sc.innerHTML = taskBlock()+`
+      <div class="center"><div class="informer" style="width:100%"><b>Rama PFAE</b>Elegiste PFAE. A partir de aquí sigues con el guion PFAE: Golden o Non-Golden, según lo que diga la descripción de la tarea. Este simulador cubre solo la rama PM.</div>
+      <button class="btn primary" id="finishPfae" style="max-width:320px">${S.expect?'Terminar el escenario':'Volver al inicio'}</button></div>`;
+    $('finishPfae').onclick=()=>S.expect?finish():start(FREE);
+  }
+  else if(step==="consent"){
+    sc.innerHTML = taskBlock()+`
+      <h2>Obtener consentimiento del cliente</h2>
+      <div class="informer"><b>Menciónalo al cliente</b>Al continuar con este proceso autorizas a Banco Plata, S.A., Institución de Banca Múltiple para tratar tus datos personales de conformidad con el Aviso de Privacidad disponible en <u>bancoplata.mx</u></div>
+      <div class="field" id="fConsent"><label class="check"><input type="checkbox" id="consent"> Recibí autorización del cliente</label><div class="err">Confirma tener el consentimiento del cliente</div></div>
+      <button class="btn primary" id="next">Continuar</button>`;
+    $('next').onclick=()=>{ if(!$('consent').checked){$('fConsent').classList.add('invalid');return;} log.consent=true; step="company"; render(); };
+  }
+  else if(step==="company"){
+    sc.innerHTML = taskBlock()+`
+      <div class="field" id="fRfc"><label class="title">RFC de la empresa</label><input class="txt" id="rfc" placeholder="12 dígitos" maxlength="13" style="text-transform:uppercase"><div class="err" id="eRfc">Completa el campo para continuar</div>${S.expect?'':'<div class="hint" style="margin:8px 0 0 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">Para practicar, usa este RFC de ejemplo: <code id="rfcEx" style="background:var(--field);padding:2px 8px;border-radius:6px;font-size:13px">DLU190512AB3</code><button type="button" class="btn" id="copyRfc" style="width:auto;height:28px;padding:0 10px;font-size:12px">Copiar</button></div>'}</div>
+      <div class="field" id="fInc"><label class="title">Ingresos mensuales esperados de la empresa</label><div class="hint">Esto nos ayudará a sugerir el mejor plan para el negocio</div><div class="money"><input class="txt" id="inc" inputmode="numeric"></div><div class="err">Completa el campo para continuar</div></div>
+      <div class="field" id="fAuth"><label class="title">¿Está autorizado para abrir cuentas en nombre de la empresa?</label>
+        <div class="radios"><label><input type="radio" name="auth" value="si"> Sí, están autorizados</label><label><input type="radio" name="auth" value="no"> No están autorizados</label></div>
+        <div class="err">Selecciona una opción para continuar</div>
+        <div class="informer warn hidden" id="noauthInf" style="margin-top:12px"><b>Solicita los datos de contacto del empleado autorizado para abrir una cuenta bancaria a nombre de la empresa</b>Las personas que no cuenten con autorización no pueden abrir cuentas bancarias en nombre de la empresa</div>
+      </div>
+      <button class="btn primary" id="next">Continuar</button>`;
+    if($('copyRfc')) $('copyRfc').onclick=()=>{ $('rfc').value='DLU190512AB3'; $('fRfc').classList.remove('invalid'); $('copyRfc').textContent='Pegado'; setTimeout(()=>$('copyRfc').textContent='Copiar',1200); };
+    document.querySelectorAll('input[name=auth]').forEach(r=>r.addEventListener('change',()=>{
+      $('noauthInf').classList.toggle('hidden',r.value!=='no'||!r.checked); $('fAuth').classList.remove('invalid');
+      $('next').classList.toggle('hidden', document.querySelector('input[name=auth]:checked').value==='no');
+      if(document.querySelector('input[name=auth]:checked').value==='no'){ log.auth='no'; log.rfc=$('rfc').value.trim().toUpperCase(); step='noauth'; transcript('noauth'); }
+    }));
+    $('next').onclick=()=>{
+      let ok=true;
+      const rfc=$('rfc').value.trim().toUpperCase();
+      $('fRfc').classList.remove('invalid');
+      if(!rfc){$('eRfc').textContent='Completa el campo para continuar';$('fRfc').classList.add('invalid');ok=false;}
+      else if(rfc.length!==12){$('eRfc').textContent='El RFC de la empresa debe tener 12 dígitos';$('fRfc').classList.add('invalid');ok=false;}
+      else if(!/^[A-Z&Ñ]{3}\d{6}[A-Z0-9]{3}$/.test(rfc)){$('eRfc').textContent='RFC de la empresa no válido';$('fRfc').classList.add('invalid');ok=false;}
+      const inc=$('inc').value.replace(/\D/g,''); $('fInc').classList.toggle('invalid',!inc); if(!inc) ok=false;
+      const auth=document.querySelector('input[name=auth]:checked'); $('fAuth').classList.toggle('invalid',!auth); if(!auth) ok=false;
+      if(!ok) return;
+      log.rfc=rfc; log.inc=inc; log.auth=auth.value; step="person"; render();
+    };
+  }
+  else if(step==="person"){
+    sc.innerHTML = taskBlock()+`
+      <div class="field stack" id="fName"><label class="title">Nombre completo</label><div class="hint">Pide al cliente que confirme su nombre completo tal como aparece en su identificación oficial.</div>
+        <input class="txt" id="n1" placeholder="Nombre(s)"><input class="txt" id="n2" placeholder="Primer apellido"><input class="txt" id="n3" placeholder="Segundo apellido"><div class="err">Completa el campo para continuar</div></div>
+      <div class="field" id="fDob"><label class="title">Fecha de nacimiento</label><input class="txt" id="dob" placeholder="DD/MM/AAAA" maxlength="10"><div class="err" id="eDob">Completa el campo para continuar</div></div>
+      <div class="field" id="fDoc"><label class="title">Documento para verificación de identidad</label>
+        <div class="informer"><b>Pregúntale al cliente</b>¿Cuentas con tu INE física y vigente? La necesitarás para mostrársela al embajador cuando recibas tu tarjeta. Asegúrate de que esté en buen estado y con tus datos actualizados.</div>
+        <div class="radios"><label><input type="radio" name="doc" value="INE"> INE</label><label><input type="radio" name="doc" value="PR"> Permiso de residencia</label><label><input type="radio" name="doc" value="none"> Ninguna de las anteriores</label></div>
+        <div class="err">Selecciona una opción para continuar</div>
+        <div class="informer warn hidden" id="noineInf" style="margin-top:12px"><b>Menciónalo al cliente</b>Lo sentimos, pero no podemos abrir una cuenta para tu empresa sin una INE o tarjeta de residencia. Puedes volver a solicitarla en cuanto tengas alguno de estos documentos.</div>
+      </div>
+      <button class="btn primary" id="next">Continuar</button>`;
+    $('dob').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>4) v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4); else if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2); e.target.value=v;});
+    document.querySelectorAll('input[name=doc]').forEach(r=>r.addEventListener('change',()=>{
+      const none=r.value==='none'&&r.checked; $('noineInf').classList.toggle('hidden',!none); $('fDoc').classList.remove('invalid'); $('next').classList.toggle('hidden',none);
+      if(none){ saveName(); log.doc='none'; step='noine'; transcript('noine'); }
+    }));
+    function saveName(){ log.names=[$('n1').value.trim(),$('n2').value.trim(),$('n3').value.trim()]; log.dob=$('dob').value.trim(); }
+    $('next').onclick=()=>{
+      let ok=true;
+      const names=[$('n1').value.trim(),$('n2').value.trim(),$('n3').value.trim()];
+      $('fName').classList.toggle('invalid',names.some(n=>!n)); if(names.some(n=>!n)) ok=false;
+      const dob=$('dob').value.trim(); $('fDob').classList.remove('invalid');
+      if(!dob){$('eDob').textContent='Completa el campo para continuar';$('fDob').classList.add('invalid');ok=false;}
+      else if(!/^\d{2}\/\d{2}\/\d{4}$/.test(dob)){$('eDob').textContent='Ingresa la fecha en formato DD/MM/AAAA';$('fDob').classList.add('invalid');ok=false;}
+      const doc=document.querySelector('input[name=doc]:checked'); $('fDoc').classList.toggle('invalid',!doc); if(!doc) ok=false;
+      if(!ok) return;
+      saveName(); log.doc=doc.value; step="success"; render();
+    };
+  }
+  else if(step==="success"){
+    sc.innerHTML = `
+      <div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="informer" style="width:100%"><b>Menciónalo al cliente</b>Tu solicitud se creó correctamente. Sube los documentos desde la app para que podamos revisar y aprobar tu solicitud.</div></div>`;
+  }
+}
+
+/* ---------- Colgar: la tarea se cierra sola en 10 s ---------- */
+$('hang').addEventListener('click',()=>{
+  if(!S||hung||closed) return;
+  hung=true; clearInterval(timerId); $('hang').disabled=true;
+  let left=10;
+  const ov=document.createElement('div'); ov.className='hangover'; ov.id='hangover';
+  ov.innerHTML=`<div class="big" id="cdNum">${left}</div><div class="sub">La tarea se cierra automáticamente</div><div class="card" id="hangCard"></div>`;
+  document.body.appendChild(ov);
+  $('hangCard').appendChild($('resultForm'));
+  cdId=setInterval(()=>{
+    left--; if($('cdNum')) $('cdNum').textContent=left;
+    if(left<=0){ clearInterval(cdId); autoClose(); }
+  },1000);
+});
+function restoreForm(){ const ov=$('hangover'); if(ov){ document.querySelector('.result').prepend($('resultForm')); ov.remove(); } }
+function autoClose(){
+  if(closed) return; closed=true; restoreForm();
+  log.closedAt=step; log.autoClosed=true;
+  sel.disabled=true; $('comment').disabled=true; $('closeTask').disabled=true; $('closeTask').classList.remove('primary');
+  if(!S.expect){ $('screen').innerHTML=`<div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><h2>Tarea cerrada automáticamente</h2><p style="color:var(--muted);margin:0 0 20px">Sin resultado registrado</p><button class="btn primary" id="again" style="max-width:320px">Volver al inicio</button></div>`; $('again').onclick=()=>start(FREE); return; }
+  finish();
+}
+
+/* ---------- Cerrar tarea ---------- */
+$('closeTask').addEventListener('click',()=>{
+  if(!S) return;
+  if(sel.value===''||closed) return;
+  closed=true; clearInterval(cdId); clearInterval(timerId); $('hang').disabled=true; restoreForm();
+  log.result=Number(sel.value); log.comment=$('comment').value.trim(); log.closedAt=step;
+  if(!S.expect){ clearInterval(timerId); $('screen').innerHTML=`<div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><h2>Tarea cerrada</h2><p style="color:var(--muted);margin:0 0 20px">Resultado: ${esc(RESULTS[log.result])}</p><button class="btn primary" id="again" style="max-width:320px">Volver al inicio</button></div>`; sel.disabled=true; $('comment').disabled=true; $('closeTask').disabled=true; $('again').onclick=()=>start(FREE); return; }
+  finish();
+});
+
+function finish(){
+  clearInterval(timerId);
+  const E=S.expect, checks=[];
+  const add=(ok,title,why)=>checks.push({ok,title,why});
+  // Rama
+  if(E.type==="PFAE"){
+    add(log.type==="PFAE","Elegir la rama","El cliente tiene su negocio a su nombre y su RFC tiene 13 caracteres: es PFAE. En «Tipo de empresa» va PFAE y sigues con el guion PFAE: en la tarea dice «Tibio», así que usas el guion Non-Golden."+(log.type==="PM"?" Elegiste PM: el CRM te habría pedido un RFC de 12 dígitos que no existe.":""));
+  } else {
+    add(log.type==="PM","Elegir la rama","Es una sociedad con siglas y RFC de 12 caracteres: rama PM.");
+    if(log.type==="PM"){
+      // Consentimiento
+      add(!!log.consent,"Aviso de privacidad","Primero la frase de entrada, después el aviso completo, tal cual, y la pregunta «¿Estás de acuerdo en continuar con el proceso?». Solo con un «sí» explícito marcas «Recibí autorización del cliente».");
+      // RFC
+      if(E.rfc) add((log.rfc||"")===E.rfc,"RFC de la empresa",`El RFC correcto es ${E.rfc}: 12 caracteres, el de la empresa.`+(log.rfc&&log.rfc!==E.rfc?` Capturaste «${log.rfc}».`:"")+(S.id==="rfctrap"?" El primero que dictó (13 caracteres) era su RFC personal.":""));
+      // Autorización
+      if(E.auth) add(log.auth===E.auth,"¿Está autorizado?",E.auth==="no"?"El cliente dijo que no firma por la empresa: «No están autorizados», pides el contacto del autorizado y cierras la tarea.":"El cliente tiene facultades según el acta: «Sí, están autorizados».");
+      // Nombre
+      if(E.names && log.auth==="si"){
+        const got=(log.names||[]).map(n=>n.toLowerCase()), want=E.names.map(n=>n.toLowerCase());
+        add(got.length===3&&got.every((n,i)=>n===want[i]),"Nombre como en la INE",`Letra por letra como en la identificación: ${E.names.join(" · ")}.`+(S.id==="name"?" «Pepe» no es lo que dice la INE.":"")+(log.names&&log.names.some(n=>n)?` Capturaste: ${log.names.join(" · ")}.`:""));
+        add((log.dob||"")===E.dob,"Fecha de nacimiento",`${E.dob}, en formato DD/MM/AAAA.`+(log.dob&&log.dob!==E.dob?` Capturaste «${log.dob}».`:""));
+      }
+      // Documento
+      if(E.doc && log.auth==="si") add(log.doc===E.doc,"Documento de identidad",E.doc==="none"?"No tiene INE ni permiso de residencia; el pasaporte mexicano no sirve. «Ninguna de las anteriores», lees el texto de la pantalla y cierras la tarea.":"Tiene INE vigente: INE.");
+    }
+  }
+  // Resultado
+  if(E.noResult){
+    add(log.result===undefined,"Cierre de la tarea","Con la solicitud creada no registras resultado: cuelgas y la tarea se cierra sola a los 10 segundos. Lo que sí haces antes de colgar: le dices los documentos y dónde subirlos, le ofreces quedarte en la línea para subirlos juntos y, si no puede ahora, le pides que suba todo él mismo en los próximos dos días; y le explicas qué sigue.");
+  } else if(E.result!==undefined){
+    const ok=log.result===E.result;
+    add(ok,"Resultado de la tarea",`El resultado correcto: «${RESULTS[E.result]}»${E.resultNote?" "+E.resultNote:""}.`+(log.result!==undefined&&!ok?` Elegiste «${RESULTS[log.result]}».`:"")+(log.result===undefined?" Dejaste que la tarea se cerrara sola, sin resultado: el siguiente agente no sabrá qué pasó.":""));
+    if(E.commentMust){
+      const c=(log.comment||"").toLowerCase(); const has=E.commentMust.every(m=>c.includes(m.toLowerCase()));
+      add(has,"Comentario del resultado",`En el comentario va ${E.commentHint}.`+(has?"":" Sin ese dato, el siguiente agente no puede contactar al autorizado."));
+    } else if(E.commentHint){
+      add((log.comment||"").length>=10,"Comentario del resultado",`El resultado habla de la llamada; el comentario, del cliente. Aquí va ${E.commentHint}.`);
+    }
+  } else if(log.result!==undefined){
+    add(false,"Resultado de la tarea","En la rama PFAE el resultado se registra según tu proceso de PFAE; este simulador no lo evalúa.");
+  }
+  const hits=checks.filter(c=>c.ok).length, total=checks.length;
+  progress[S.id]={hits,total,ok:hits===total};
+  $('fbTitle').textContent = hits===total ? "✓ Escenario completo" : `${hits} de ${total} correctos`;
+  $('fbIntro').textContent = hits===total ? "Hiciste todo como en una llamada bien cerrada." : "Revisa los puntos marcados en rojo y repite el escenario.";
+  const ul=$('fbChecks'); ul.innerHTML='';
+  checks.forEach(c=>{const li=document.createElement('li'); li.className=c.ok?'':'bad'; li.innerHTML=`<span class="dot"></span><span><b>${esc(c.title)}</b>${esc(c.why)}</span>`; ul.appendChild(li);});
+  $('feedback').classList.remove('hidden');
+}
+$('fbRetry').onclick=()=>start(S);
+$('fbMenu').onclick=()=>{ $('feedback').classList.add('hidden'); start(FREE); };
+
+start(FREE);
+</script>
+</body>
+</html>
