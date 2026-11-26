@@ -678,23 +678,24 @@ var CURSO = {
         {
           titulo: 'Con qué clientes vas a trabajar',
           bloques: [
-            { t:'parrafo', texto:'A las llamadas de empresas llegan dos tipos de clientes.' },
-            { t:'tabla', encabezados:['Tipo','Quién es','Qué significa para ti'], filas:[
-              ['Golden','Ya tiene algún producto de Plata: tarjeta de crédito, de débito o la cuenta de negocios para PFAE','Nos conoce y entra a la app. Pero el producto pudo haberlo contratado como persona: eso no te dice si tiene una empresa ni si él es su representante'],
-              ['Warm','Empezó una solicitud de un producto de Plata y no la terminó','Nos conoce, pero todavía no es cliente. El proceso empieza desde cero: con él es especialmente importante dejar claro qué hacer después de la llamada']
+            { t:'parrafo', texto:'A las llamadas de empresas llega un solo tipo de cliente: el de una base fría. Es un contacto de una base externa: Plata no lo conoce, él no ha iniciado ninguna solicitud y no tiene la app. En general, es la primera vez que oye de Plata.' },
+            { t:'tabla', encabezados:['Qué sabes del cliente','Qué significa para ti'], filas:[
+              ['No conoce Plata','Los primeros segundos deciden la llamada: quién eres, de dónde llamas y para qué. Explicas quién es Plata en una frase, sin dar por hecho que la conoce'],
+              ['No ha iniciado ninguna solicitud ni tiene la app','El proceso empieza desde cero. Al final de la llamada tiene que quedarle claro qué hacer después y dónde'],
+              ['No sabes nada de su negocio ni de su puesto','No sabes si tiene empresa, cuál es ni si él puede firmar por ella. Lo preguntas, no lo supones']
             ] },
-            { t:'aviso', tono:'alerta', texto:'Que el cliente conozca Plata no te dice que tenga una empresa ni que él sea su representante. No supongas nada: pregunta.' }
+            { t:'aviso', tono:'alerta', texto:'Que el cliente conteste la llamada, o que conozca Plata de oídas, no te dice que tenga una empresa ni que él sea su representante. No supongas nada: pregunta.' }
           ],
           reto: {
             id:'m1-r3', tema:'clientes', tipo:'unica',
-            texto:'Cliente Golden: «Sí, soy cliente de Plata desde hace dos años, tengo la tarjeta de crédito». ¿Qué te dice eso de su negocio?',
+            texto:'Llamada en frío. El cliente: «Sí, mi hermano tiene tarjeta de ustedes». ¿Qué te dice eso de su negocio?',
             opciones:[
               {id:'a', texto:'Que es PM'},
               {id:'b', texto:'Que es PFAE'},
               {id:'c', texto:'Nada: si tiene negocio y cuál es, lo averiguas igual que con cualquier cliente'}
             ],
             correcta:'c',
-            explicacion:'Pudo contratar ese producto como persona. Ser Golden habla de su relación con Plata, no de su negocio.'
+            explicacion:'Lo que el cliente cuenta de sí mismo o de su familia habla de cómo conoce Plata, no de su negocio ni de su puesto en una empresa. Si tiene negocio y cuál es, lo preguntas.'
           }
         },
         {
@@ -765,7 +766,7 @@ var CURSO = {
           bloques: [
             { t:'tarjetas', items:[
               { titulo:'PM es una empresa; PFAE, una persona con negocio', texto:'La cuenta es de la empresa, por ella actúa su representante legal, y el banco la revisa por sus documentos: hasta 3 días en lugar de 5 minutos.' },
-              { titulo:'Golden y Warm no te dicen nada de su negocio', texto:'Pregunta, no supongas.' },
+              { titulo:'Es una base fría', texto:'El cliente no conoce Plata y no sabes nada de su negocio. Pregunta, no supongas.' },
               { titulo:'Tu parte es la llamada', texto:'Quién está del otro lado → solicitud en el CRM → qué documentos y dónde → subirlos juntos o él solo en dos días → qué sigue. Éxito: todos los documentos subidos en 48 horas.' }
             ] }
           ]
@@ -786,12 +787,12 @@ var CURSO = {
           { id:'m1-q2', tema:'clientes', tipo:'multiple',
             texto:'¿Qué clientes llegan a las llamadas de empresas? Elige todas las correctas.',
             opciones:[
-              {id:'a', texto:'Clientes que ya conocen Plata', correcta:true},
-              {id:'b', texto:'Clientes que nunca han oído de Plata', correcta:false},
-              {id:'c', texto:'Clientes que ya tienen tarjeta de crédito u otro producto de Plata', correcta:true},
-              {id:'d', texto:'No podemos suponer nada de los clientes que nos van a tocar', correcta:false}
+              {id:'a', texto:'Clientes de una base fría que, en general, no conocen Plata', correcta:true},
+              {id:'b', texto:'Clientes que ya tienen tarjeta de Plata', correcta:false},
+              {id:'c', texto:'No sabes si tienen empresa ni quién contesta: lo preguntas en la llamada', correcta:true},
+              {id:'d', texto:'Clientes que dejaron una solicitud a medias', correcta:false}
             ],
-            explicacion:'Llegan Golden y Warm: los dos ya conocen Plata. Lo que no sabes es si tienen una empresa y si quien contesta la representa.' },
+            explicacion:'Es una base fría: el cliente no conoce Plata, no ha iniciado ninguna solicitud y no tiene la app. Tampoco sabes si tiene una empresa ni si quien contesta la representa: lo preguntas.' },
           { id:'m1-q3', tema:'proceso', tipo:'unica',
             texto:'El cliente aceptó abrir la cuenta y la solicitud ya quedó creada en el CRM. ¿Qué haces ahora?',
             opciones:[
@@ -929,12 +930,33 @@ var CURSO = {
             ] },
             { t:'pasos', items:[
               { titulo:'El cliente te dice el régimen en lugar de contestar', texto:'«Estoy en el 601» es una empresa; «estoy en RESICO» no se sabe: confirma con el RFC.' },
-              { titulo:'Hay regímenes con los que no se abre la cuenta', texto:'Por ejemplo el de consolidación (609) o los de empresas petroleras y multinacionales. No tienes que memorizar la lista: el sistema revisa el régimen durante la solicitud. Tu tarea es no prometerle la cuenta a una empresa a la que no se la van a abrir.' },
-              { titulo:'El régimen es compatible, pero la forma no', texto:'Una Asociación Civil (A.C.) tiene régimen 603 compatible, pero hoy no se abren cuentas para A.C. Si el cliente mismo te lo dice, contestas con la frase de la base de conocimiento.' }
+              { titulo:'Hay regímenes con los que no se abre la cuenta', texto:'Por ejemplo el de consolidación (609) o los de empresas petroleras y multinacionales. La lista completa está abajo, en esta misma pantalla. No tienes que memorizarla: el sistema revisa el régimen durante la solicitud y, si no es compatible, muestra un rechazo. Tu tarea es no prometerle la cuenta a una empresa a la que no se la van a abrir.' },
+              { titulo:'El régimen es compatible, pero la forma no', texto:'Una Asociación Civil (A.C.) tiene régimen 603 compatible, pero hoy no se abren cuentas para A.C. Si el cliente mismo te lo dice, contestas con esta frase.' }
             ] },
             { t:'guion', texto:'En este momento no podemos abrir Cuentas Empresa para empresas constituidas como Asociación Civil (A.C.). Por ahora, el producto no está disponible para este tipo de entidad' },
-            { t:'aviso', tono:'info', texto:'La lista completa de regímenes compatibles está en la base de conocimiento, artículo «Descripción general del PyME + preguntas».' },
-            { t:'imagen', src:'llamadas-persona-moral/img/d1-m2-6-1-kb-pyme-regimenes-fiscales-compatibles.png', alt:'Base de conocimiento PyME: secciones sobre los regímenes fiscales compatibles y no compatibles con PM', pie:'Base de conocimiento: lista de regímenes fiscales compatibles y no compatibles con PM' },
+            { t:'parrafo', texto:'La lista completa de regímenes, para que no tengas que buscarla en otro lado. Si el cliente no sabe su régimen, lo ve en su CSF.' },
+            { t:'parrafo', texto:'Compatibles con Cuenta Empresa PM:' },
+            { t:'tabla', encabezados:['Clave','Régimen','Nota'], filas:[
+              ['601','General de Ley Personas Morales','Régimen general para empresas comerciales; aquí está la mayoría de tus clientes empresa'],
+              ['626','RESICO (Régimen Simplificado de Confianza)','Empresas con ingresos de hasta 35 millones de pesos al año. La misma clave existe para personas: no te dice si es empresa'],
+              ['602','Régimen Simplificado de Ley Personas Morales','Régimen simplificado para personas morales'],
+              ['603','Personas Morales con Fines no Lucrativos','Organizaciones sin fines de lucro. Compatible por régimen, pero no para cualquier tipo de sociedad: las A.C. hoy no se admiten (es una restricción por tipo de sociedad, no por régimen; la frase está arriba)'],
+              ['610','Residentes en el Extranjero sin Establecimiento Permanente en México','—'],
+              ['620','Sociedades Cooperativas de Producción que optan por diferir sus ingresos','—'],
+              ['622','Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras (AGAPES)','—'],
+              ['623','Opcional para Grupos de Sociedades','Consolidación fiscal para grupos de sociedades'],
+              ['624','Coordinados','Transporte de pasajeros y carga']
+            ] },
+            { t:'parrafo', texto:'No compatibles con PM:' },
+            { t:'tabla', encabezados:['Clave','Régimen'], filas:[
+              ['609','Régimen de Consolidación'],
+              ['617','PEMEX'],
+              ['619','Ingresos por la Obtención de Préstamos'],
+              ['628','Hidrocarburos'],
+              ['629','De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales'],
+              ['630','Enajenación de acciones en bolsa de valores']
+            ] },
+            { t:'aviso', tono:'info', texto:'Si el régimen no es compatible, el sistema lo verifica solo durante la solicitud y muestra un rechazo. Tú no decides por el régimen: solo evitas prometer la cuenta.' }
           ]
         },
         {
@@ -974,10 +996,10 @@ var CURSO = {
             { t:'tabla', encabezados:['Situación','Cómo lo sabes'], filas:[
               ['La persona no tiene un negocio registrado','A la pregunta directa y a las de confirmación contesta «no»; trabaja como empleado o de manera informal.'],
               ['Quien contesta no tiene facultades para abrir la cuenta','Ver la pantalla «Quién tiene derecho a abrir la cuenta»'],
-              ['La empresa es A.C. o está en un régimen no compatible','El cliente mismo menciona la forma o el régimen; lo revisas en la base de conocimiento'],
+              ['La empresa es A.C. o está en un régimen no compatible','El cliente mismo menciona la forma o el régimen; lo revisas en la lista de este curso (pantalla «El régimen fiscal»)'],
               ['El representante no tiene ni INE ni permiso de residencia','Se detecta en la solicitud; sin uno de esos documentos no se abre la cuenta']
             ] },
-            { t:'aviso', tono:'ok', texto:'PFAE no es «cliente que no es nuestro». Si del otro lado hay una persona con negocio, eliges PFAE y llevas la solicitud por la rama PFAE, con el guion Golden o Non-Golden según la tarea.' }
+            { t:'aviso', tono:'ok', texto:'PFAE no es «cliente que no es nuestro». Si del otro lado hay una persona con negocio, eliges PFAE y llevas la solicitud por la rama PFAE, con tu guion PFAE de siempre.' }
           ]
         },
         {
@@ -1007,7 +1029,7 @@ var CURSO = {
             { t:'lista', items:[
               'Primero la pregunta directa: cómo está registrado en el SAT. Si no está seguro, cualquiera de las tres de confirmación. Si no lo sabe, lo mandas a la CSF, primer bloque.',
               '«Mi negocio», RESICO, el contador, las ventas no son señales. La forma de la empresa, los socios y el representante legal son motivo para preguntar, no para elegir.',
-              'Régimen fiscal: 601 es empresa; RESICO no se sabe. Un régimen raro: revísalo en la base de conocimiento antes de la solicitud.',
+              'Régimen fiscal: 601 es empresa; RESICO no se sabe. Un régimen raro: revísalo en la lista de este curso (pantalla «El régimen fiscal») antes de la solicitud.',
               'La cuenta solo la puede abrir el representante legal con facultades para abrir cuentas bancarias.',
               'No es nuestro cliente: sin negocio registrado, sin facultades, A.C. o régimen no compatible, sin INE ni permiso de residencia. PFAE sí es nuestro, solo que por otra rama.',
               'A qué se dedica la empresa lo averiguas en el primer minuto, y eliges el ángulo: control, tiempo o dinero.'
@@ -1102,8 +1124,10 @@ var CURSO = {
         {
           titulo: 'Paso 1: el saludo',
           bloques: [
-            { t:'parrafo', texto:'Te presentas, dices que llamas de Banco Plata, en una frase explicas para qué le sirve la cuenta a su empresa y pasas de inmediato a calificar. Tono pausado, seguro y profesional, sin muletillas informales.' },
+            { t:'parrafo', texto:'Es una llamada en frío: el cliente, en general, no ha oído de Plata, así que los primeros segundos deciden la llamada: quién eres, de dónde llamas y para qué. Te presentas, dices que llamas de Banco Plata, en una frase explicas para qué le sirve la cuenta a su empresa y pasas de inmediato a calificar. Tono pausado, seguro y profesional, sin muletillas informales.' },
             { t:'guion', texto:'Hola, ¿qué tal, [nombre del cliente]? Muy buenos días. Mucho gusto, te saluda [tu nombre] de Banco Plata.' },
+            { t:'parrafo', texto:'Si el cliente no conoce Plata o pregunta quién eres, una frase y sigues:' },
+            { t:'guion', texto:'Somos Banco Plata, un banco digital mexicano: cuentas para personas y para empresas, todo desde la app y sin ir a sucursal.' },
             { t:'guion', texto:'Te contacto porque estamos apoyando a empresas como la tuya a optimizar su tesorería y simplificar su operación diaria. A través de una plataforma digital muy ágil, puedes generar hasta un 15 % de rendimiento anual en el saldo de tu cuenta, operar transferencias SPEI y pagos sin comisiones extra, y gestionar tu facturación e impuestos directamente desde la web.' },
             { t:'guion', texto:'Por cierto, para darte una asesoría precisa: actualmente tu empresa opera bajo el régimen de Persona Moral, ¿cierto?' },
             { t:'parrafo', texto:'Tres beneficios en una sola frase y de inmediato la pregunta sobre Persona Moral. Si contesta «no» o «no sé», haces las tres preguntas del módulo anterior.' },
@@ -1177,7 +1201,7 @@ var CURSO = {
         {
           titulo: 'Paso 3: la rama y el consentimiento',
           bloques: [
-            { t:'parrafo', texto:'Pantalla «Tipo de empresa»: eliges PM y la solicitud queda en la rama PM. Si resulta que es PFAE, eliges PFAE y sigues con el guion Golden o Non-Golden según la tarea.' },
+            { t:'parrafo', texto:'Pantalla «Tipo de empresa»: eliges PM y la solicitud queda en la rama PM. Si resulta que es PFAE, eliges PFAE y sigues con tu guion PFAE de siempre.' },
             { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-6-1-crm-tipo-de-empresa-pfae-pm.png', alt:'Pantalla «Tipo de empresa» del CRM con la pregunta al cliente y los botones PFAE y PM', pie:'CRM, pantalla «Tipo de empresa»: la rama PM o PFAE' },
             { t:'guion', texto:'Excelente, [nombre del cliente]. Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal.' },
             { t:'parrafo', texto:'En la pantalla «Obtener consentimiento del cliente» lees el aviso tal cual, palabra por palabra y de manera pausada:' },
@@ -1342,12 +1366,13 @@ var CURSO = {
         {
           titulo: 'Dónde buscar la respuesta',
           bloques: [
-            { t:'parrafo', texto:'Todo lo que necesitas en la llamada con una empresa está en cuatro lugares. Si no lo recuerdas: «lo confirmo» y buscas.' },
+            { t:'parrafo', texto:'Todo lo que necesitas en la llamada con una empresa está en tres lugares: este curso, los documentos de la empresa y tu supervisor. Si no lo recuerdas: «lo confirmo» y buscas; no inventas.' },
             { t:'tabla', encabezados:['Pregunta del cliente','Dónde está la respuesta'], filas:[
-              ['Beneficios, PFAE o PM, regímenes fiscales, A.C., promoción de rendimiento','«Descripción general del PyME + preguntas»'],
-              ['Documentos, cómo descargar la CSF, qué pasa después de enviar la solicitud','«Solicitud del producto PM»'],
-              ['Planes, precios, qué incluye cada uno, cambio de plan','«Planes PM: guía de consultas»'],
-              ['Si el embajador llega a la ciudad del cliente','«Cobertura de entrega de la tarjeta física»']
+              ['Beneficios, PFAE o PM, regímenes fiscales, A.C., promoción de rendimiento','Este curso, módulos 1 y 2: pantallas «Qué le vendes a una empresa», «El régimen fiscal» y «Cuándo el cliente no es nuestro». Entras por el botón «Contenido»'],
+              ['Planes, precios, qué incluye cada uno','Este curso: pantalla «Los planes» de este módulo'],
+              ['Documentos, cómo descargar la CSF, qué pasa después de enviar la solicitud','Este curso: módulo 4 y la pantalla «Preguntas frecuentes y objeciones» de este módulo'],
+              ['Quién puede firmar por la empresa, cómo está constituida, en qué régimen está','Los documentos de la empresa: la CSF y el acta constitutiva. El cliente los tiene a la mano o los consigue'],
+              ['Lo que el curso no cubre: si el embajador llega a la ciudad del cliente, un caso raro, una duda sobre el CRM','Tu supervisor. Le dices al cliente «lo confirmo y te lo digo», anotas la pregunta y no inventas']
             ] }
           ]
         },
@@ -2230,11 +2255,11 @@ var CERTIFICACION = {
       ] },
 
     { id:'c19', tema:'calificacion',
-      texto:'En la llamada resulta que el cliente es PFAE; en la descripción de la tarea dice «Golden». ¿Qué haces?',
+      texto:'En la llamada resulta que el cliente es PFAE: tiene negocio, pero no una empresa con razón social. ¿Qué haces?',
       opciones:[
         {id:'a', texto:'Le pregunto si tiene otros productos de Plata y según su respuesta elijo el guion', correcta:false},
-        {id:'b', texto:'Cierro la tarea: en esta línea no atendemos PFAE', correcta:false},
-        {id:'c', texto:'Elijo PFAE y sigo con el guion Golden: lo veo en la descripción de la tarea', correcta:true}
+        {id:'b', texto:'Termino la llamada: en esta línea no atendemos PFAE', correcta:false},
+        {id:'c', texto:'Elijo PFAE y sigo con mi guion PFAE de siempre', correcta:true}
       ] },
 
     { id:'c20', tema:'llamada',

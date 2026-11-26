@@ -160,7 +160,7 @@ const SUCCESS_A1 = "(Le dices los documentos y dónde subirlos, y le ofreces que
 const SCENARIOS = [
   {
     id:"happy", title:"1 · Laura, Distribuidora Luma", desc:"Llamada completa: todo en orden",
-    client:"Laura Méndez Ortega", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Distribuidora Luma, S.A. de C.V. · Laura Méndez · Golden",
+    client:"Laura Méndez Ortega", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Distribuidora Luma, S.A. de C.V. · Laura Méndez",
     otp:"4821",
     say:{
       link:[["c","Sí, es este: 55 4821 9930. Es mi celular personal."]],
@@ -176,7 +176,7 @@ const SCENARIOS = [
   },
   {
     id:"pfae", title:"2 · Ricardo, Abarrotes López", desc:"¿PM o PFAE?",
-    client:"Ricardo López", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Abarrotes López · Ricardo López · Tibio",
+    client:"Ricardo López", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Abarrotes López · Ricardo López",
     otp:"3306",
     say:{
       link:[["c","Sí, ese es: 81 2255 8812."]],
@@ -189,7 +189,7 @@ const SCENARIOS = [
   },
   {
     id:"noauth", title:"3 · Jorge, Taller Mecánico del Valle", desc:"Quien contesta no está autorizado",
-    client:"Jorge Ramírez", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Taller Mecánico del Valle, S. de R.L. de C.V. · Jorge Ramírez · Tibio",
+    client:"Jorge Ramírez", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Taller Mecánico del Valle, S. de R.L. de C.V. · Jorge Ramírez",
     otp:"7745",
     say:{
       link:[["c","Sí, es mi celular: 33 1904 4471."]],
@@ -204,7 +204,7 @@ const SCENARIOS = [
   },
   {
     id:"rfctrap", title:"4 · Mariana, Consultores MS", desc:"El RFC que dicta no es el de la empresa",
-    client:"Mariana Soto", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Consultores MS, S.C. · Mariana Soto · Golden",
+    client:"Mariana Soto", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Consultores MS, S.C. · Mariana Soto",
     otp:"2093",
     say:{
       link:[["c","Sí, ese número: 55 6018 3390."]],
@@ -220,7 +220,7 @@ const SCENARIOS = [
   },
   {
     id:"name", title:"5 · José Luis, Transportes Hernández", desc:"El nombre como viene en la INE",
-    client:"Pepe Hernández", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Transportes Hernández, S.A. de C.V. · Pepe Hernández · Tibio",
+    client:"Pepe Hernández", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Transportes Hernández, S.A. de C.V. · Pepe Hernández",
     otp:"6158",
     say:{
       link:[["c","Sí, es ese: 55 2390 7705."]],
@@ -236,7 +236,7 @@ const SCENARIOS = [
   },
   {
     id:"noine", title:"6 · Carlos, Grupo Industrial CN", desc:"Sin INE ni permiso de residencia",
-    client:"Carlos Navarro", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Grupo Industrial CN, S.A. de C.V. · Carlos Navarro · Golden",
+    client:"Carlos Navarro", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Grupo Industrial CN, S.A. de C.V. · Carlos Navarro",
     otp:"9407",
     say:{
       link:[["c","Sí: 55 8140 2218."]],
@@ -252,7 +252,7 @@ const SCENARIOS = [
   },
   {
     id:"otro", title:"7 · Daniela, Ríos y Asociados", desc:"Quiere vincular otro número",
-    client:"Daniela Ríos", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ríos y Asociados, S.C. · Daniela Ríos · Golden",
+    client:"Daniela Ríos", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ríos y Asociados, S.C. · Daniela Ríos",
     otp:"5519",
     say:{
       link:[["c","No, ese es el de la oficina. Vincúlalo a mi celular: 55 7301 2264."]],
@@ -268,7 +268,7 @@ const SCENARIOS = [
   },
   {
     id:"agotado", title:"8 · Fernando, Ferretería Castillo", desc:"Código agotado",
-    client:"Fernando Castillo", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ferretería Castillo, S.A. de C.V. · Fernando Castillo · Tibio",
+    client:"Fernando Castillo", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ferretería Castillo, S.A. de C.V. · Fernando Castillo",
     otp:"3478",
     say:{
       link:[["c","Sí, es mi celular: 55 9034 1187."]],
@@ -426,7 +426,7 @@ function render(){
   }
   else if(step==="pfae"){
     sc.innerHTML = taskBlock()+`
-      <div class="center"><div class="informer" style="width:100%"><b>Rama PFAE</b>Elegiste PFAE. A partir de aquí sigues con el guion PFAE: Golden o Non-Golden, según lo que diga la descripción de la tarea. Este simulador cubre solo la rama PM.</div>
+      <div class="center"><div class="informer" style="width:100%"><b>Rama PFAE</b>Elegiste PFAE. A partir de aquí sigues con tu guion PFAE de siempre. Este simulador cubre solo la rama PM.</div>
       <button class="btn primary" id="finishPfae" style="max-width:320px">${S.expect?'Terminar el escenario':'Volver al inicio'}</button></div>`;
     $('finishPfae').onclick=()=>S.expect?finish():start(FREE);
   }
@@ -549,7 +549,7 @@ function finish(){
     if(log.otpOk){
       // Rama
       if(E.type==="PFAE"){
-        add(log.type==="PFAE","Elegir la rama","El cliente tiene su negocio a su nombre y su RFC tiene 13 caracteres: es PFAE. En «Tipo de empresa» va PFAE y sigues con el guion PFAE: en la tarea dice «Tibio», así que usas el guion Non-Golden."+(log.type==="PM"?" Elegiste PM: el CRM te habría pedido un RFC de 12 dígitos que no existe.":""));
+        add(log.type==="PFAE","Elegir la rama","El cliente tiene su negocio a su nombre y su RFC tiene 13 caracteres: es PFAE. En «Tipo de empresa» va PFAE y sigues con tu guion PFAE de siempre."+(log.type==="PM"?" Elegiste PM: el CRM te habría pedido un RFC de 12 dígitos que no existe.":""));
       } else {
         add(log.type==="PM","Elegir la rama","Es una sociedad con siglas y RFC de 12 caracteres: rama PM.");
         if(log.type==="PM"){
