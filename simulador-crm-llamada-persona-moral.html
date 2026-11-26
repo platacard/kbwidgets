@@ -9,7 +9,7 @@
 <style>
 :root{
   --bg:#F4F6FA;--card:#FFF;--field:#E6EAF2;--field-hover:#DDE2EC;--ink:#171C26;--muted:#4B5563;--placeholder:#8A94A6;
-  --accent:#FF5000;--accent-hover:#E64800;--err:#E11D2E;--ok:#1A9B5B;--ok-bg:#E8F7EF;--bad-bg:#FDECEE;
+  --accent:#FF5000;--accent-hover:#E64800;--err:#E11D2E;--ok:#1A9B5B;--ok-bg:#E8F7EF;--bad-bg:#FDECEE;--link:#2B3FEA;
   --info-bg:#E8EEFC;--info-bar:#3B6EF5;--task-bg:#FFF6E0;--task-bar:#FF8A00;--warn-bg:#FFF4E5;
 }
 *{box-sizing:border-box}
@@ -35,16 +35,13 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hang{display:flex;align-items:center;gap:14px;border:1px solid #F0888F;border-radius:10px;padding:0 14px;height:40px;color:#5B6475;background:#FFF5F5;cursor:pointer;font:inherit}
 .hang:hover{background:#FFE9EA}
 .hang:disabled{cursor:default;opacity:.6}
-.hangover{position:fixed;inset:0;background:var(--accent);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;padding:24px}
-.hangover .big{font-size:160px;line-height:1;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
-.hangover .sub{color:rgba(255,255,255,.85);font-size:16px;margin-top:-24px}
-.hangover .card{background:#fff;border-radius:20px;padding:24px;width:min(560px,100%)}
-.hangover .card h2{margin-bottom:16px}
 .hang svg{color:var(--err)}
 .body{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,32%,480px);gap:8px;min-height:680px;min-width:0}
+.body.solo{grid-template-columns:minmax(0,1fr)}
+.body.solo .side{display:none}
 .screen{background:var(--card);border-radius:16px;padding:20px 20px 40px;display:flex;justify-content:center;min-width:0;overflow:hidden}
 .col{width:100%;max-width:600px;padding:0 20px;min-width:0}
-.result{background:var(--card);border-radius:16px;padding:20px;min-width:0}
+.side{background:var(--card);border-radius:16px;padding:20px;min-width:0}
 .task{background:var(--task-bg);border-left:4px solid var(--task-bar);border-radius:8px;padding:12px 16px;margin-bottom:40px}
 .task b{display:block;margin-bottom:4px}
 h2{font-size:20px;line-height:24px;font-weight:600;margin:0 0 8px}
@@ -60,6 +57,7 @@ h2+.sub{color:var(--muted);margin:0 0 16px}
 input.txt{width:100%;height:40px;border-radius:8px;border:1px solid transparent;background:var(--field);padding:0 12px;outline:none}
 input.txt::placeholder{color:var(--placeholder);text-transform:none}
 input.txt:focus{border-color:#B9C2D3;background:#fff}
+input.txt:read-only{color:var(--muted)}
 .money{position:relative}.money input{padding-left:26px}.money::before{content:"$";position:absolute;left:12px;top:10px;color:var(--placeholder)}
 .stack input.txt{margin-bottom:8px}
 .stack .err{margin:-4px 0 12px}
@@ -75,42 +73,45 @@ input.txt:focus{border-color:#B9C2D3;background:#fff}
 .btn:hover{background:var(--field-hover)}
 .btn.primary{background:var(--accent);color:#fff}.btn.primary:hover{background:var(--accent-hover)}
 .btn:disabled{opacity:.5;cursor:default}
+.btn.primary:disabled:hover{background:var(--accent)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px}
 .badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
 .badge.ok{background:#1DB954;color:#fff}.badge.bad{background:var(--err);color:#fff}.badge.warn{background:var(--task-bar);color:#fff}
-/* result panel */
-.result h2{margin-bottom:16px}
-.rfield{background:var(--field);border-radius:8px;margin-bottom:12px;position:relative}
-.rfield select,.rfield textarea{width:100%;border:0;background:transparent;padding:12px 40px 12px 16px;outline:none;appearance:none;border-radius:8px}
-.rfield select.empty{color:var(--placeholder)}
-.rfield textarea{min-height:40px;resize:vertical;padding-right:16px}
-.rfield textarea::placeholder{color:var(--placeholder)}
-.rfield .chev{position:absolute;right:14px;top:12px;color:var(--placeholder);pointer-events:none}
+/* verificar número */
+.phonerow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.phonebox{position:relative}
+.phonebox .pre{position:absolute;left:12px;top:10px;color:var(--ink);pointer-events:none}
+.phonebox input{padding-left:44px}
+/* OTP */
+.otpstate{min-height:20px;margin-top:8px;display:flex;justify-content:center;align-items:center;gap:6px;font-weight:600}
+.otpstate.left{justify-content:flex-start;padding-left:12px;font-weight:400;font-size:13px}
+.otpstate .okmsg{color:#0E9F4E}
+.otpstate .errmsg{color:var(--err)}
+.spin{width:18px;height:18px;border:2px solid #D9DEE7;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.otplinks{display:flex;justify-content:space-between;gap:16px;padding:0 12px;margin-top:12px}
+.otplinks a{color:var(--link);text-decoration:none}
+.otplinks a:hover{text-decoration:underline}
+.otplinks .wait{color:var(--muted)}
 /* transcript */
-.call{margin-top:40px;border-top:1px solid #EEF1F6;padding-top:16px}
 .call .label{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .call .label span.step{color:var(--placeholder);font-weight:500;text-transform:none;letter-spacing:0}
 .bubble{background:var(--bg);border-radius:12px 12px 12px 4px;padding:10px 14px;margin-bottom:8px;max-width:100%}
 .bubble.agent{background:#FFF4EE;border-radius:12px 12px 4px 12px;margin-left:24px}
 .bubble .who{font-size:12px;color:var(--muted);margin-bottom:2px}
-/* intro / feedback overlay */
+/* feedback overlay */
 .overlay{position:fixed;inset:0;background:rgba(23,28,38,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
 .modal{background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:28px}
 .modal h1{font-size:24px;line-height:30px;margin:0 0 12px}
 .modal p{margin:0 0 12px;font-size:15px;line-height:22px}
-.modal .scen{display:grid;gap:10px;margin:16px 0 20px}
-.modal .scen button{text-align:left;background:var(--bg);border:1px solid #E3E8F0;border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.modal .scen button:hover{border-color:var(--accent)}
-.modal .scen button .st{font-size:12px;color:var(--muted);white-space:nowrap}
-.modal .scen button .st.done{color:var(--ok);font-weight:600}
 .checks{list-style:none;margin:16px 0;padding:0}
 .checks li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #EEF1F6;font-size:14px;line-height:20px}
 .checks li .dot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:5px;background:var(--ok)}
 .checks li.bad .dot{background:var(--err)}
 .checks li b{display:block}
 .hidden{display:none !important}
-@media (max-width:1000px){.body{grid-template-columns:1fr}.app{grid-template-columns:1fr}.rail{display:none}}
+@media (max-width:1000px){.body{grid-template-columns:1fr}.app{grid-template-columns:1fr}.rail{display:none}.phonerow{grid-template-columns:1fr}}
 html,body{overflow-x:hidden}
 </style>
 </head>
@@ -124,19 +125,9 @@ html,body{overflow-x:hidden}
       <div class="name" id="clientName">—</div>
       <button class="hang" id="hang" title="Terminar la llamada"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-3.3 0-6.3.8-8.9 2.3-.7.4-1.1 1.2-1.1 2v2.2c0 .6.5 1.1 1.1 1l3.6-.5c.5-.1.9-.5 1-1l.4-2.2c1.2-.4 2.5-.6 3.9-.6s2.7.2 3.9.6l.4 2.2c.1.5.5.9 1 1l3.6.5c.6.1 1.1-.4 1.1-1v-2.2c0-.8-.4-1.6-1.1-2C18.3 9.8 15.3 9 12 9z"/></svg><span id="timer">0:00</span></button>
     </div>
-    <div class="body">
+    <div class="body" id="body">
       <div class="screen"><div class="col" id="screen"></div></div>
-      <div class="result">
-        <div id="resultForm">
-        <h2>Resultado de la tarea</h2>
-        <div class="rfield">
-          <select id="result" class="empty"><option value="" disabled selected>Seleccionar resultado</option></select>
-          <svg class="chev" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <div class="rfield"><textarea id="comment" placeholder="Comentario del resultado"></textarea></div>
-        <button class="btn" id="closeTask">Cerrar tarea</button>
-        </div>
-
+      <div class="side">
         <div class="call">
           <div class="label"><span>En la llamada</span><span class="step" id="stepLabel"></span></div>
           <div id="transcript"></div>
@@ -145,8 +136,6 @@ html,body{overflow-x:hidden}
     </div>
   </div>
 </div>
-
-
 
 <div class="overlay hidden" id="feedback">
   <div class="modal">
@@ -162,103 +151,132 @@ html,body{overflow-x:hidden}
 
 <script>
 /* ---------- Datos ---------- */
-const RESULTS = [
-  "Respuesta - Otra persona autorizada","Respuesta - Documentos de otra persona",
-  "Respuesta - El cliente no es una empresa","Respuesta - No está formalizado ante SAT","Respuesta - No cuenta con CSF",
-  "Respuesta - No está de acuerdo","Respuesta - Reacción de forma negativa / Solicita que no le vuelvan a llamar",
-  "Respuesta - Que le vuelvan a llamar","Respuesta - Contesto otra persona","Respuesta - Problema técnico","Respuesta - Otro",
-  "Sin respuesta - Buzón de voz","Sin respuesta - Llamada no disponible / Número incorrecto","Sin respuesta - Otro"
-];
+/* Cada escenario: datos del cliente, el código OTP que le llega, lo que dice en cada pantalla y lo que se espera del agente */
+const FREE = { id:"free", title:"Modo libre", client:"Santa Maria de Santa cruz de la Seros", task:"Título de la tarea", taskDesc:"Descripción de la tarea", say:{}, expect:null };
 
-/* Cada escenario: datos del cliente, lo que dice en cada pantalla y lo que se espera del agente */
-const FREE = { id:"free", title:"Modo libre", client:"Santa Maria de Santa cruz de la Seros", task:"Título de la tarea", taskDesc:"Descripción de la tarea", phone:"0624", say:{}, expect:null };
+const CONSENT_A = "«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»";
+const SUCCESS_A1 = "(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)";
 
 const SCENARIOS = [
   {
     id:"happy", title:"1 · Laura, Distribuidora Luma", desc:"Llamada completa: todo en orden",
     client:"Laura Méndez Ortega", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Distribuidora Luma, S.A. de C.V. · Laura Méndez · Golden",
-    phone:"0624",
+    otp:"4821",
     say:{
-      link:[["c","Sí, ese es mi número, el que termina en 0624."]],
+      link:[["c","Sí, es este: 55 4821 9930. Es mi celular personal."]],
+      otp:[["c","Me llegó el código: 4-8-2-1."]],
       type:[["c","Somos una S.A. de C.V., Distribuidora Luma. Yo soy la administradora única."]],
-      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, de acuerdo."]],
+      consent:[["a",CONSENT_A],["c","Sí, de acuerdo."]],
       company:[["c","El RFC de la empresa es DLU190512AB3."],["c","Facturamos como unos 350 mil al mes."],["c","Sí, yo firmo por la empresa, está en el acta."]],
       person:[["c","Como viene en mi INE: Laura Patricia, Méndez, Ortega. Nací el 14 de marzo de 1985."],["c","Sí, tengo mi INE vigente, aquí la traigo."]],
-      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","Ahorita no los tengo, los tiene la contadora."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Perfecto, mañana me siento con la contadora y subimos todo."]],
+      success:[["a",SUCCESS_A1],["c","Ahorita no los tengo, los tiene la contadora."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Perfecto, mañana me siento con la contadora y subimos todo."]],
       pfae:[["c","¿Persona física? No, no: Distribuidora Luma es una S.A. de C.V., con acta constitutiva y todo. La cuenta tiene que ser de la empresa."]]
     },
-    expect:{ type:"PM", rfc:"DLU190512AB3", auth:"si", names:["Laura Patricia","Méndez","Ortega"], dob:"14/03/1985", doc:"INE", noResult:true }
+    expect:{ phone:"5548219930", type:"PM", rfc:"DLU190512AB3", auth:"si", names:["Laura Patricia","Méndez","Ortega"], dob:"14/03/1985", doc:"INE" }
   },
   {
     id:"pfae", title:"2 · Ricardo, Abarrotes López", desc:"¿PM o PFAE?",
     client:"Ricardo López", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Abarrotes López · Ricardo López · Tibio",
-    phone:"8812",
+    otp:"3306",
     say:{
-      link:[["c","Sí, ese es."]],
+      link:[["c","Sí, ese es: 81 2255 8812."]],
+      otp:[["c","Me llegó el código: 3-3-0-6."]],
       type:[["c","Pues tengo mi tienda, estoy en RESICO. Todo está a mi nombre, yo soy el dueño."],["a","¿Tu RFC tiene 12 o 13 caracteres?"],["c","Déjame ver… LOGR800315HT7. Trece."]],
       pfae:[["c","Sí, exacto, todo a mi nombre. ¿Entonces qué sigue?"]],
       consent:[["c","Oye, pero yo no tengo ninguna empresa, la tienda está a mi nombre…"]]
     },
-    expect:{ type:"PFAE" }
+    expect:{ phone:"8122558812", type:"PFAE" }
   },
   {
     id:"noauth", title:"3 · Jorge, Taller Mecánico del Valle", desc:"Quien contesta no está autorizado",
     client:"Jorge Ramírez", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Taller Mecánico del Valle, S. de R.L. de C.V. · Jorge Ramírez · Tibio",
-    phone:"4471",
+    otp:"7745",
     say:{
-      link:[["c","Sí, es mi celular."]],
+      link:[["c","Sí, es mi celular: 33 1904 4471."]],
+      otp:[["c","Me llegó el código: 7-7-4-5."]],
       type:[["c","Es una S. de R.L. de C.V. Yo soy el gerente de la sucursal; el director me pidió ver lo de la cuenta."]],
-      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, está bien."]],
+      consent:[["a",CONSENT_A],["c","Sí, está bien."]],
       company:[["c","El RFC de la empresa es TMV200115KL8."],["c","Facturamos como 180 mil al mes."],["c","¿Autorizado yo? No, yo no firmo nada por la empresa. El que firma es don Arturo, el director."]],
-      noauth:[["a","(Le explicas que la cuenta solo la puede abrir quien tiene facultades y le pides el contacto.)"],["c","Claro: Arturo Pérez, director. Su celular es 55 1234 5678."]],
+      noauth:[["a","(Le explicas que la cuenta solo la puede abrir quien tiene facultades y le pides el contacto.)"],["c","Claro: Arturo Pérez, director. Su celular es 55 1234 5678."],["a","(Lo anotas como lo indique tu supervisor, agradeces y terminas la llamada.)"]],
       pfae:[["c","¿Cómo que a mi nombre? No, el taller es una S. de R.L. de C.V., tiene su acta y su RFC de empresa."]]
     },
-    expect:{ type:"PM", rfc:"TMV200115KL8", auth:"no", result:0, commentMust:["Arturo","1234"], commentHint:"el nombre y el teléfono del autorizado: «Arturo Pérez, director, 55 1234 5678»" }
+    expect:{ phone:"3319044471", type:"PM", rfc:"TMV200115KL8", auth:"no" }
   },
   {
     id:"rfctrap", title:"4 · Mariana, Consultores MS", desc:"El RFC que dicta no es el de la empresa",
     client:"Mariana Soto", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Consultores MS, S.C. · Mariana Soto · Golden",
-    phone:"3390",
+    otp:"2093",
     say:{
-      link:[["c","Sí, ese número."]],
+      link:[["c","Sí, ese número: 55 6018 3390."]],
+      otp:[["c","Me llegó el código: 2-0-9-3."]],
       type:[["c","Somos una Sociedad Civil, Consultores MS. Yo soy la socia administradora."]],
-      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, adelante."]],
+      consent:[["a",CONSENT_A],["c","Sí, adelante."]],
       company:[["c","Mi RFC es SOMM850920QR4."],["a","Ese es el tuyo personal, tiene 13. Necesito el de la empresa, el de 12 caracteres: viene en la CSF de la empresa o en cualquier factura."],["c","Ah, cierto. El de la empresa es CMS150303JK9."],["c","Facturamos como 90 mil al mes."],["c","Sí, yo tengo facultades, está en el acta."]],
       person:[["c","Mariana, Soto, Delgado. 20 de septiembre de 1985."],["c","Sí, INE vigente."]],
-      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","Ahora no puedo, estoy con un cliente."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Va, los subo mañana."]],
+      success:[["a",SUCCESS_A1],["c","Ahora no puedo, estoy con un cliente."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Va, los subo mañana."]],
       pfae:[["c","No, somos una Sociedad Civil con acta ante notario; la cuenta es para la empresa, no para mí."]]
     },
-    expect:{ type:"PM", rfc:"CMS150303JK9", auth:"si", names:["Mariana","Soto","Delgado"], dob:"20/09/1985", doc:"INE", noResult:true }
+    expect:{ phone:"5560183390", type:"PM", rfc:"CMS150303JK9", auth:"si", names:["Mariana","Soto","Delgado"], dob:"20/09/1985", doc:"INE" }
   },
   {
     id:"name", title:"5 · José Luis, Transportes Hernández", desc:"El nombre como viene en la INE",
     client:"Pepe Hernández", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Transportes Hernández, S.A. de C.V. · Pepe Hernández · Tibio",
-    phone:"7705",
+    otp:"6158",
     say:{
-      link:[["c","Sí, es ese."]],
+      link:[["c","Sí, es ese: 55 2390 7705."]],
+      otp:[["c","Me llegó el código: 6-1-5-8."]],
       type:[["c","Es una S.A. de C.V., somos tres socios. Yo soy el administrador único."]],
-      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","Sí, sí."]],
+      consent:[["a",CONSENT_A],["c","Sí, sí."]],
       company:[["c","RFC de la empresa: THE170808MN2."],["c","Como 600 mil al mes."],["c","Sí, yo estoy autorizado."]],
       person:[["c","Pepe Hernández."],["a","Necesito tu nombre completo tal como aparece en tu INE, letra por letra."],["c","Ah. José Luis, Hernández, García. 22 de julio de 1979."],["c","INE sí tengo, vigente."]],
-      success:[["a","(Le dices los documentos y dónde subirlos, y le ofreces quedarte en la línea para subirlos juntos ahora.)"],["c","No, los papeles los tiene mi contador."],["a","(Le pides que suba todo él mismo en los próximos dos días.)"],["c","Va, mañana lo vemos con mi contador y los subimos."]],
+      success:[["a",SUCCESS_A1],["c","No, los papeles los tiene mi contador."],["a","(Le pides que suba todo él mismo en los próximos dos días.)"],["c","Va, mañana lo vemos con mi contador y los subimos."]],
       pfae:[["c","¿A mi nombre? No, la cuenta es para Transportes Hernández, S.A. de C.V. Somos tres socios."]]
     },
-    expect:{ type:"PM", rfc:"THE170808MN2", auth:"si", names:["José Luis","Hernández","García"], dob:"22/07/1979", doc:"INE", noResult:true }
+    expect:{ phone:"5523907705", type:"PM", rfc:"THE170808MN2", auth:"si", names:["José Luis","Hernández","García"], dob:"22/07/1979", doc:"INE" }
   },
   {
     id:"noine", title:"6 · Carlos, Grupo Industrial CN", desc:"Sin INE ni permiso de residencia",
     client:"Carlos Navarro", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Grupo Industrial CN, S.A. de C.V. · Carlos Navarro · Golden",
-    phone:"2218",
+    otp:"9407",
     say:{
-      link:[["c","Sí."]],
+      link:[["c","Sí: 55 8140 2218."]],
+      otp:[["c","Me llegó el código: 9-4-0-7."]],
       type:[["c","S.A. de C.V., yo soy el director general y represento a la empresa."]],
-      consent:[["a","«Antes de revisar los detalles de tu perfil operativo, por normatividad bancaria es necesario hacer una breve lectura legal». (Lees el aviso de privacidad tal cual.) «¿Estás de acuerdo en continuar con el proceso?»"],["c","De acuerdo."]],
+      consent:[["a",CONSENT_A],["c","De acuerdo."]],
       company:[["c","RFC de la empresa: GIC120627PQ5."],["c","Unos 2 millones al mes."],["c","Sí, estoy autorizado."]],
       person:[["c","Carlos Alberto, Navarro, Ruiz. 3 de noviembre de 1972."],["c","¿INE? Me la robaron la semana pasada, estoy en el trámite de reposición. Tengo pasaporte mexicano."]],
-      noine:[["a","(Lees el texto de la pantalla tal cual.)"],["c","Entiendo. Les marco cuando tenga la INE nueva."]],
+      noine:[["a","(Lees el texto de la pantalla tal cual y terminas la llamada con cortesía.)"],["c","Entiendo. Les marco cuando tenga la INE nueva."]],
       pfae:[["c","No, Grupo Industrial CN es una S.A. de C.V. Yo solo soy el director; la cuenta es de la empresa."]]
     },
-    expect:{ type:"PM", rfc:"GIC120627PQ5", auth:"si", names:["Carlos Alberto","Navarro","Ruiz"], dob:"03/11/1972", doc:"none", result:10, resultNote:"[por confirmar con el equipo]", commentHint:"«Sin INE (robo), en trámite de reposición; tiene pasaporte mexicano. Volver a llamar cuando tenga la INE»" }
+    expect:{ phone:"5581402218", type:"PM", rfc:"GIC120627PQ5", auth:"si", names:["Carlos Alberto","Navarro","Ruiz"], dob:"03/11/1972", doc:"none" }
+  },
+  {
+    id:"otro", title:"7 · Daniela, Ríos y Asociados", desc:"Quiere vincular otro número",
+    client:"Daniela Ríos", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ríos y Asociados, S.C. · Daniela Ríos · Golden",
+    otp:"5519",
+    say:{
+      link:[["c","No, ese es el de la oficina. Vincúlalo a mi celular: 55 7301 2264."]],
+      otp:[["c","Ya me llegó al celular: 5-5-1-9."]],
+      type:[["c","Somos una Sociedad Civil, Ríos y Asociados. Yo soy la socia administradora."]],
+      consent:[["a",CONSENT_A],["c","Sí, de acuerdo."]],
+      company:[["c","El RFC de la empresa es RAS160921HJ4."],["c","Facturamos como 120 mil al mes."],["c","Sí, yo firmo por la empresa, está en el acta."]],
+      person:[["c","Como viene en mi INE: Daniela, Ríos, Campos. Nací el 9 de junio de 1988."],["c","Sí, tengo mi INE vigente."]],
+      success:[["a",SUCCESS_A1],["c","Ahorita no los tengo a la mano."],["a","(Le pides que suba todo ella misma en los próximos dos días.)"],["c","Perfecto, mañana los subo."]],
+      pfae:[["c","No, somos una Sociedad Civil con acta ante notario; la cuenta es para la empresa."]]
+    },
+    expect:{ phone:"5573012264", type:"PM", rfc:"RAS160921HJ4", auth:"si", names:["Daniela","Ríos","Campos"], dob:"09/06/1988", doc:"INE" }
+  },
+  {
+    id:"agotado", title:"8 · Fernando, Ferretería Castillo", desc:"Código agotado",
+    client:"Fernando Castillo", task:"Llamada a cliente · Cuenta Empresa", taskDesc:"Ferretería Castillo, S.A. de C.V. · Fernando Castillo · Tibio",
+    otp:"3478",
+    say:{
+      link:[["c","Sí, es mi celular: 55 9034 1187."]],
+      otp:[["c","Me llegó… 1-1-2-2."],["c","Ah, perdón, era 1-2-2-1."],["c","No sé, probemos 2-1-1-2."]],
+      otpAgotado:[["a","(Lees el texto de la pantalla tal cual y terminas la llamada con cortesía.)"],["c","Ni modo. Gracias, que tengan buen día."]],
+      pfae:[["c","No, Ferretería Castillo es una S.A. de C.V."]]
+    },
+    expect:{ phone:"5590341187", otpExhausted:true }
   }
 ];
 
@@ -266,44 +284,43 @@ const SCENARIOS = [
 let S = null;           // escenario
 let step = "link";      // pantalla actual
 let log = {};           // lo que hizo el agente
-let timerId = null, seconds = 0, cdId = null, closed = false, hung = false;
+let timerId = null, seconds = 0, hung = false;
+let otpTimers = [], resendId = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-const sel = $('result');
-RESULTS.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r;sel.appendChild(o);});
-function syncClose(){ const has=sel.value!==''; $('closeTask').disabled=!has||closed; $('closeTask').classList.toggle('primary',has&&!closed); }
-sel.addEventListener('change',()=>{sel.classList.toggle('empty',sel.value==='');syncClose();});
+const fmtPhone = d => d.length>6 ? d.slice(0,2)+' '+d.slice(2,6)+' '+d.slice(6) : d.length>2 ? d.slice(0,2)+' '+d.slice(2) : d;
+function otpT(fn,ms){ otpTimers.push(setTimeout(fn,ms)); }
+function clearOtp(){ otpTimers.forEach(clearTimeout); otpTimers=[]; clearInterval(resendId); resendId=null; }
 
 /* ---------- Barra de escenarios ---------- */
 const progress = {};
 function renderMenu(){
   const bar=$('toolbar'); bar.innerHTML='';
   const mk=(sc,cls)=>{const b=document.createElement('button'); b.className='tb '+cls+(S&&S.id===sc.id?' active':'');
-    const st=progress[sc.id]; b.innerHTML=esc(sc.title)+(st&&st.ok?'<span class="st">✓</span>':''); b.onclick=()=>start(sc); return b;};
+    const st=progress[sc.id]; b.innerHTML=esc(sc.title)+(st&&st.ok?'<span class="st">✓</span>':''); b.title=sc.desc||''; b.onclick=()=>start(sc); return b;};
   bar.appendChild(mk(FREE,'free'));
   const sep=document.createElement('div'); sep.className='sep'; bar.appendChild(sep);
   SCENARIOS.forEach(sc=>bar.appendChild(mk(sc,'')));
   const r=document.createElement('button'); r.className='tb reset'; r.textContent='Reiniciar'; r.onclick=()=>start(S||FREE); bar.appendChild(r);
 }
 function start(sc){
-  S=sc; step="link"; log={}; seconds=0; closed=false; hung=false; clearInterval(cdId); restoreForm(); $('hang').disabled=false;
+  S=sc; step="link"; log={}; seconds=0; hung=false; clearOtp(); $('hang').disabled=false;
   $('feedback').classList.add('hidden');
   $('clientName').textContent=sc.client;
-  sel.value=''; sel.classList.add('empty'); $('comment').value=''; sel.disabled=false; $('comment').disabled=false; syncClose();
-  document.querySelector('.call').classList.toggle('hidden', sc.id==='free');
+  $('body').classList.toggle('solo', sc.id==='free');
   clearInterval(timerId); timerId=setInterval(()=>{seconds++; $('timer').textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;},1000);
   $('timer').textContent='0:00';
   renderMenu(); render();
 }
 
 /* ---------- Transcripción ---------- */
-const STEP_NAMES={link:"Inicio",type:"Tipo de empresa",phone:"Cambiar teléfono",consent:"Consentimiento",company:"Datos de la empresa",noauth:"No autorizado",person:"Datos del representante",noine:"Sin identificación",success:"Solicitud creada",pfae:"Rama PFAE"};
+const STEP_NAMES={link:"Inicio",otp:"Código",otpAgotado:"Intentos agotados",type:"Tipo de empresa",consent:"Consentimiento",company:"Datos de la empresa",noauth:"No autorizado",person:"Datos del representante",noine:"Sin identificación",success:"Solicitud creada",pfae:"Rama PFAE"};
 function transcript(key){
   const box=$('transcript'); box.innerHTML='';
   if(!S.expect) return;
   $('stepLabel').textContent=STEP_NAMES[key]||'';
-  const lines=(S.say&&S.say[key])||[];
+  let lines=(S.say&&S.say[key])||[];
+  if(key==='otp' && lines.length>1) lines=lines.slice(0,(log.otpAttempts||0)+1); // el cliente dicta un código por intento
   if(!lines.length){box.innerHTML='<div class="bubble" style="color:var(--muted)">—</div>';return;}
   lines.forEach(([who,txt])=>{
     const d=document.createElement('div'); d.className='bubble '+(who==='a'?'agent':'');
@@ -317,29 +334,85 @@ const taskBlock = () => `<div class="task"><b>${esc(S.task)}</b>${esc(S.taskDesc
 
 function render(){
   const sc=$('screen');
+  clearOtp();
   transcript(step);
   if(step==="link"){
     sc.innerHTML = taskBlock()+`
-      <h2>¿Quieres vincular la tarjeta al número de teléfono … ${S.phone}?</h2>
-      <div class="row2" style="margin-top:16px">
-        <button class="btn primary" id="yes">Sí, continuar</button>
-        <button class="btn" id="no">No, cambiar teléfono</button>
+      <h2>¿El número al que me estoy comunicando es tu número celular y personal? ¿Quieres vincular la tarjeta al número de teléfono… (menciona de nuevo el número de teléfono)?</h2>
+      <div class="phonerow">
+        <div class="phonebox"><span class="pre">+52</span><input class="txt" id="phone" placeholder="XX XXXX XXXX" inputmode="numeric" maxlength="12" aria-label="Número de teléfono"></div>
+        <button class="btn primary" id="verify" disabled>Verificar número telefónico</button>
       </div>`;
-    $('yes').onclick=()=>{step="type";render();};
-    $('no').onclick=()=>{step="phone";render();};
-  }
-  else if(step==="phone"){
-    sc.innerHTML = taskBlock()+`
-      <h2>¿Qué número de teléfono debería estar vinculado a la tarjeta?</h2>
-      <div class="field" id="fPhone" style="margin-top:16px"><input class="txt" id="phone" placeholder="+52 XX XXXX XXXX"><div class="err" id="ePhone">Completa el campo para continuar</div></div>
-      <button class="btn primary" id="call">Llamar al nuevo número de teléfono</button>
-      <p style="text-align:center;margin-top:16px"><a href="#" id="cancel" style="color:var(--ink)">Cancelar</a></p>`;
-    $('call').onclick=()=>{
-      const v=$('phone').value.replace(/\D/g,'');
-      if(v.length<10){$('fPhone').classList.add('invalid');$('ePhone').textContent=v.length?'Ingresa un número de teléfono válido':'Completa el campo para continuar';return;}
-      log.phoneChanged=true; step="type"; render();
+    const pi=$('phone');
+    const sync=()=>{ const d=pi.value.replace(/\D/g,'').slice(0,10); pi.value=fmtPhone(d); $('verify').disabled=d.length!==10; };
+    if(log.phone) pi.value=fmtPhone(log.phone);
+    pi.addEventListener('input',sync); sync(); pi.focus();
+    pi.addEventListener('keydown',e=>{ if(e.key==='Enter' && !$('verify').disabled) $('verify').click(); });
+    $('verify').onclick=()=>{
+      const d=pi.value.replace(/\D/g,''); if(d.length!==10) return;
+      if(log.phone && log.phone!==d) log.phoneChanged=(log.phoneChanged||0)+1;
+      log.phone=d; log.otpWrong=0; step="otp"; render();
     };
-    $('cancel').onclick=e=>{e.preventDefault();step="link";render();};
+  }
+  else if(step==="otp"){
+    const last4=(log.phone||'').slice(-4);
+    sc.innerHTML = taskBlock()+`
+      <h2>Ingresa el código</h2>
+      <p class="sub">Lo enviamos al … ${esc(last4)} vía SMS y WhatsApp</p>
+      <div class="field" id="fOtp" style="margin-bottom:0"><input class="txt" id="otp" placeholder="Código" inputmode="numeric" maxlength="4" autocomplete="one-time-code" aria-label="Código"><div class="otpstate" id="otpState"></div></div>
+      <div class="otplinks"><a href="#" id="changeNum">Cambiar número</a><span id="resend" class="wait">Reenviar código en <span id="resendN">25</span> seg</span></div>
+      ${S.expect?'':'<div class="hint" style="margin:20px 0 0 12px">Para practicar: cualquier código de 4 dígitos es correcto, menos <code style="background:var(--field);padding:2px 8px;border-radius:6px;font-size:13px">0000</code> — úsalo para practicar el código incorrecto (tres veces agota los intentos).</div>'}`;
+    const inp=$('otp'); let busy=false;
+    inp.focus();
+    inp.addEventListener('input',()=>{
+      inp.value=inp.value.replace(/\D/g,'').slice(0,4);
+      $('fOtp').classList.remove('invalid'); $('otpState').className='otpstate'; $('otpState').innerHTML='';
+      if(inp.value.length===4 && !busy) check();
+    });
+    function check(){
+      busy=true; inp.readOnly=true;
+      $('otpState').innerHTML='<span class="spin"></span>';
+      otpT(()=>{
+        const code=inp.value, ok = S.expect ? code===S.otp : code!=='0000';
+        log.otpAttempts=(log.otpAttempts||0)+1;
+        if(ok){
+          log.otpOk=true;
+          $('otpState').innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E9F4E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="#0E9F4E" stroke="none"/><path d="M7 12l3.5 3.5L17 9" stroke="#fff"/></svg><span class="okmsg">El código es correcto</span>';
+          otpT(()=>{ step="type"; render(); },1000);
+          return;
+        }
+        log.otpWrong=(log.otpWrong||0)+1;
+        $('fOtp').classList.add('invalid');
+        if(log.otpWrong>=3){
+          log.otpExhausted=true;
+          $('otpState').className='otpstate left'; $('otpState').innerHTML='<span class="errmsg">All attempts to validate the code have been exhausted</span>';
+          otpT(()=>{ step="otpAgotado"; render(); },1500);
+          return;
+        }
+        $('otpState').innerHTML='';
+        busy=false; inp.readOnly=false; inp.focus(); inp.select();
+        transcript('otp');
+      },800);
+    }
+    $('changeNum').onclick=e=>{ e.preventDefault(); if(busy) return; log.changeNumber=(log.changeNumber||0)+1; step="link"; render(); };
+    const startResend=()=>{
+      clearInterval(resendId);
+      let left=25; const box=$('resend'); box.className='wait'; box.innerHTML=`Reenviar código en <span id="resendN">${left}</span> seg`;
+      resendId=setInterval(()=>{
+        left--;
+        if(left<=0){
+          clearInterval(resendId); resendId=null;
+          box.className=''; box.innerHTML='<a href="#" id="resendLink">Reenviar código</a>';
+          $('resendLink').onclick=ev=>{ ev.preventDefault(); log.resent=(log.resent||0)+1; startResend(); };
+        } else if($('resendN')) $('resendN').textContent=left;
+      },1000);
+    };
+    startResend();
+  }
+  else if(step==="otpAgotado"){
+    sc.innerHTML = taskBlock()+`
+      <div class="center"><div class="badge bad"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+      <div class="informer" style="width:100%"><b>Menciónalo al cliente</b>Lamentablemente no podemos continuar con tu solicitud en este momento. Te ofrecemos una disculpa por cualquier inconveniente. Agradecemos mucho tu tiempo y te deseamos un excelente día.</div></div>`;
   }
   else if(step==="type"){
     sc.innerHTML = taskBlock()+`
@@ -375,11 +448,13 @@ function render(){
         <div class="informer warn hidden" id="noauthInf" style="margin-top:12px"><b>Solicita los datos de contacto del empleado autorizado para abrir una cuenta bancaria a nombre de la empresa</b>Las personas que no cuenten con autorización no pueden abrir cuentas bancarias en nombre de la empresa</div>
       </div>
       <button class="btn primary" id="next">Continuar</button>`;
-    if($('copyRfc')) $('copyRfc').onclick=()=>{ $('rfc').value='DLU190512AB3'; $('fRfc').classList.remove('invalid'); $('copyRfc').textContent='Pegado'; setTimeout(()=>$('copyRfc').textContent='Copiar',1200); };
+    if($('copyRfc')) $('copyRfc').onclick=()=>{ $('rfc').value='DLU190512AB3'; $('fRfc').classList.remove('invalid'); $('copyRfc').textContent='Pegado'; setTimeout(()=>{ const b=$('copyRfc'); if(b) b.textContent='Copiar'; },1200); };
     document.querySelectorAll('input[name=auth]').forEach(r=>r.addEventListener('change',()=>{
-      $('noauthInf').classList.toggle('hidden',r.value!=='no'||!r.checked); $('fAuth').classList.remove('invalid');
-      $('next').classList.toggle('hidden', document.querySelector('input[name=auth]:checked').value==='no');
-      if(document.querySelector('input[name=auth]:checked').value==='no'){ log.auth='no'; log.rfc=$('rfc').value.trim().toUpperCase(); step='noauth'; transcript('noauth'); }
+      const no=document.querySelector('input[name=auth]:checked').value==='no';
+      $('noauthInf').classList.toggle('hidden',!no); $('fAuth').classList.remove('invalid');
+      $('next').classList.toggle('hidden', no);
+      if(no){ log.auth='no'; log.rfc=$('rfc').value.trim().toUpperCase(); step='noauth'; transcript('noauth'); }
+      else { step='company'; transcript('company'); }
     }));
     $('next').onclick=()=>{
       let ok=true;
@@ -407,11 +482,13 @@ function render(){
       </div>
       <button class="btn primary" id="next">Continuar</button>`;
     $('dob').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>4) v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4); else if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2); e.target.value=v;});
-    document.querySelectorAll('input[name=doc]').forEach(r=>r.addEventListener('change',()=>{
-      const none=r.value==='none'&&r.checked; $('noineInf').classList.toggle('hidden',!none); $('fDoc').classList.remove('invalid'); $('next').classList.toggle('hidden',none);
-      if(none){ saveName(); log.doc='none'; step='noine'; transcript('noine'); }
-    }));
     function saveName(){ log.names=[$('n1').value.trim(),$('n2').value.trim(),$('n3').value.trim()]; log.dob=$('dob').value.trim(); }
+    document.querySelectorAll('input[name=doc]').forEach(r=>r.addEventListener('change',()=>{
+      const none=document.querySelector('input[name=doc]:checked').value==='none';
+      $('noineInf').classList.toggle('hidden',!none); $('fDoc').classList.remove('invalid'); $('next').classList.toggle('hidden',none);
+      if(none){ saveName(); log.doc='none'; step='noine'; transcript('noine'); }
+      else { step='person'; transcript('person'); }
+    }));
     $('next').onclick=()=>{
       let ok=true;
       const names=[$('n1').value.trim(),$('n2').value.trim(),$('n3').value.trim()];
@@ -431,79 +508,77 @@ function render(){
   }
 }
 
-/* ---------- Colgar: la tarea se cierra sola en 10 s ---------- */
+/* ---------- Colgar: la llamada termina y ya ---------- */
 $('hang').addEventListener('click',()=>{
-  if(!S||hung||closed) return;
-  hung=true; clearInterval(timerId); $('hang').disabled=true;
-  let left=10;
-  const ov=document.createElement('div'); ov.className='hangover'; ov.id='hangover';
-  ov.innerHTML=`<div class="big" id="cdNum">${left}</div><div class="sub">La tarea se cierra automáticamente</div><div class="card" id="hangCard"></div>`;
-  document.body.appendChild(ov);
-  $('hangCard').appendChild($('resultForm'));
-  cdId=setInterval(()=>{
-    left--; if($('cdNum')) $('cdNum').textContent=left;
-    if(left<=0){ clearInterval(cdId); autoClose(); }
-  },1000);
-});
-function restoreForm(){ const ov=$('hangover'); if(ov){ document.querySelector('.result').prepend($('resultForm')); ov.remove(); } }
-function autoClose(){
-  if(closed) return; closed=true; restoreForm();
-  log.closedAt=step; log.autoClosed=true;
-  sel.disabled=true; $('comment').disabled=true; $('closeTask').disabled=true; $('closeTask').classList.remove('primary');
-  if(!S.expect){ $('screen').innerHTML=`<div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><h2>Tarea cerrada automáticamente</h2><p style="color:var(--muted);margin:0 0 20px">Sin resultado registrado</p><button class="btn primary" id="again" style="max-width:320px">Volver al inicio</button></div>`; $('again').onclick=()=>start(FREE); return; }
-  finish();
-}
-
-/* ---------- Cerrar tarea ---------- */
-$('closeTask').addEventListener('click',()=>{
-  if(!S) return;
-  if(sel.value===''||closed) return;
-  closed=true; clearInterval(cdId); clearInterval(timerId); $('hang').disabled=true; restoreForm();
-  log.result=Number(sel.value); log.comment=$('comment').value.trim(); log.closedAt=step;
-  if(!S.expect){ clearInterval(timerId); $('screen').innerHTML=`<div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><h2>Tarea cerrada</h2><p style="color:var(--muted);margin:0 0 20px">Resultado: ${esc(RESULTS[log.result])}</p><button class="btn primary" id="again" style="max-width:320px">Volver al inicio</button></div>`; sel.disabled=true; $('comment').disabled=true; $('closeTask').disabled=true; $('again').onclick=()=>start(FREE); return; }
+  if(!S||hung) return;
+  hung=true; clearInterval(timerId); clearOtp(); $('hang').disabled=true;
+  log.closedAt=step;
+  if(!S.expect){
+    $('screen').innerHTML=`<div class="center"><div class="badge ok"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><h2>Llamada terminada</h2><p style="color:var(--muted);margin:0 0 20px;text-align:center">En el CRM de CPA no se registra ningún resultado.</p><button class="btn primary" id="again" style="max-width:320px">Volver al inicio</button></div>`;
+    $('again').onclick=()=>start(FREE); return;
+  }
   finish();
 });
 
+/* ---------- Evaluación ---------- */
 function finish(){
-  clearInterval(timerId);
+  clearInterval(timerId); clearOtp();
   const E=S.expect, checks=[];
   const add=(ok,title,why)=>checks.push({ok,title,why});
-  // Rama
-  if(E.type==="PFAE"){
-    add(log.type==="PFAE","Elegir la rama","El cliente tiene su negocio a su nombre y su RFC tiene 13 caracteres: es PFAE. En «Tipo de empresa» va PFAE y sigues con el guion PFAE: en la tarea dice «Tibio», así que usas el guion Non-Golden."+(log.type==="PM"?" Elegiste PM: el CRM te habría pedido un RFC de 12 dígitos que no existe.":""));
+  const where=()=>log.closedAt?` Colgaste en «${STEP_NAMES[log.closedAt]||log.closedAt}».`:" No colgaste: terminaste el escenario sin cerrar la llamada.";
+  // Número de teléfono
+  add(log.phone===E.phone,"Número de teléfono",
+    (S.id==="otro"
+      ? `El cliente pidió vincular otro número: escribes el que dictó, ${fmtPhone(E.phone)}, no el de la oficina al que marcaste. El código llega a ese número.`
+      : `Escribes el número que el cliente confirma: ${fmtPhone(E.phone)}. El CRM y el marcador son plataformas separadas, así que el número siempre lo capturas a mano.`)
+    +(log.phone&&log.phone!==E.phone?` Capturaste ${fmtPhone(log.phone)}.`:"")+(log.phone===undefined?" No verificaste ningún número.":""));
+  if(E.otpExhausted){
+    // Código agotado
+    add(!!log.otpExhausted,"Código",
+      "Ninguno de los tres códigos que dicta el cliente es válido. Capturas cada uno tal como lo dicta; al tercer intento fallido el CRM muestra «All attempts to validate the code have been exhausted» y pasa solo a la pantalla con ✕."
+      +(log.otpOk?" Llegaste a «Tipo de empresa»: capturaste un código que el cliente no dictó.":"")
+      +(!log.otpOk&&!log.otpExhausted?` Solo hiciste ${log.otpAttempts||0} intento(s).`:""));
+    add(log.closedAt==="otpAgotado","Cierre de la llamada",
+      "Lees el texto de la pantalla tal cual y terminas la llamada con cortesía. En el CRM de CPA no se registra ningún resultado."+(log.closedAt==="otpAgotado"?"":where()));
   } else {
-    add(log.type==="PM","Elegir la rama","Es una sociedad con siglas y RFC de 12 caracteres: rama PM.");
-    if(log.type==="PM"){
-      // Consentimiento
-      add(!!log.consent,"Aviso de privacidad","Primero la frase de entrada, después el aviso completo, tal cual, y la pregunta «¿Estás de acuerdo en continuar con el proceso?». Solo con un «sí» explícito marcas «Recibí autorización del cliente».");
-      // RFC
-      if(E.rfc) add((log.rfc||"")===E.rfc,"RFC de la empresa",`El RFC correcto es ${E.rfc}: 12 caracteres, el de la empresa.`+(log.rfc&&log.rfc!==E.rfc?` Capturaste «${log.rfc}».`:"")+(S.id==="rfctrap"?" El primero que dictó (13 caracteres) era su RFC personal.":""));
-      // Autorización
-      if(E.auth) add(log.auth===E.auth,"¿Está autorizado?",E.auth==="no"?"El cliente dijo que no firma por la empresa: «No están autorizados», pides el contacto del autorizado y cierras la tarea.":"El cliente tiene facultades según el acta: «Sí, están autorizados».");
-      // Nombre
-      if(E.names && log.auth==="si"){
-        const got=(log.names||[]).map(n=>n.toLowerCase()), want=E.names.map(n=>n.toLowerCase());
-        add(got.length===3&&got.every((n,i)=>n===want[i]),"Nombre como en la INE",`Letra por letra como en la identificación: ${E.names.join(" · ")}.`+(S.id==="name"?" «Pepe» no es lo que dice la INE.":"")+(log.names&&log.names.some(n=>n)?` Capturaste: ${log.names.join(" · ")}.`:""));
-        add((log.dob||"")===E.dob,"Fecha de nacimiento",`${E.dob}, en formato DD/MM/AAAA.`+(log.dob&&log.dob!==E.dob?` Capturaste «${log.dob}».`:""));
+    // Código
+    add(!!log.otpOk,"Código",
+      `El cliente dicta el código ${S.otp.split('').join('-')}: lo escribes y, cuando el CRM muestra «El código es correcto», pasa solo a «Tipo de empresa».`
+      +(log.otpOk&&log.otpAttempts>1?` Lo lograste al intento ${log.otpAttempts}; el código lo dicta el cliente, no hay que adivinarlo.`:"")
+      +(!log.otpOk&&log.otpExhausted?" Agotaste los tres intentos.":"")+(!log.otpOk&&!log.otpExhausted?" No llegaste a «Tipo de empresa».":""));
+    if(log.otpOk){
+      // Rama
+      if(E.type==="PFAE"){
+        add(log.type==="PFAE","Elegir la rama","El cliente tiene su negocio a su nombre y su RFC tiene 13 caracteres: es PFAE. En «Tipo de empresa» va PFAE y sigues con el guion PFAE: en la tarea dice «Tibio», así que usas el guion Non-Golden."+(log.type==="PM"?" Elegiste PM: el CRM te habría pedido un RFC de 12 dígitos que no existe.":""));
+      } else {
+        add(log.type==="PM","Elegir la rama","Es una sociedad con siglas y RFC de 12 caracteres: rama PM.");
+        if(log.type==="PM"){
+          // Consentimiento
+          add(!!log.consent,"Aviso de privacidad","Primero la frase de entrada, después el aviso completo, tal cual, y la pregunta «¿Estás de acuerdo en continuar con el proceso?». Solo con un «sí» explícito marcas «Recibí autorización del cliente».");
+          // RFC
+          if(E.rfc) add((log.rfc||"")===E.rfc,"RFC de la empresa",`El RFC correcto es ${E.rfc}: 12 caracteres, el de la empresa.`+(log.rfc&&log.rfc!==E.rfc?` Capturaste «${log.rfc}».`:"")+(S.id==="rfctrap"?" El primero que dictó (13 caracteres) era su RFC personal.":""));
+          // Autorización
+          if(E.auth) add(log.auth===E.auth,"¿Está autorizado?",E.auth==="no"?"El cliente dijo que no firma por la empresa: «No están autorizados». El CRM muestra el aviso naranja y ahí termina el flujo.":"El cliente tiene facultades según el acta: «Sí, están autorizados».");
+          if(E.auth==="no"){
+            add(log.closedAt==="noauth","Cierre de la llamada","Pides el contacto del autorizado (Arturo Pérez, 55 1234 5678), lo anotas como lo indique tu supervisor, agradeces y terminas la llamada. En el CRM de CPA no se registra ningún resultado."+(log.closedAt==="noauth"?"":where()));
+          }
+          // Nombre
+          if(E.names && log.auth==="si"){
+            const got=(log.names||[]).map(n=>n.toLowerCase()), want=E.names.map(n=>n.toLowerCase());
+            add(got.length===3&&got.every((n,i)=>n===want[i]),"Nombre como en la INE",`Letra por letra como en la identificación: ${E.names.join(" · ")}.`+(S.id==="name"?" «Pepe» no es lo que dice la INE.":"")+(log.names&&log.names.some(n=>n)?` Capturaste: ${log.names.join(" · ")}.`:""));
+            add((log.dob||"")===E.dob,"Fecha de nacimiento",`${E.dob}, en formato DD/MM/AAAA.`+(log.dob&&log.dob!==E.dob?` Capturaste «${log.dob}».`:""));
+          }
+          // Documento
+          if(E.doc && log.auth==="si") add(log.doc===E.doc,"Documento de identidad",E.doc==="none"?"No tiene INE ni permiso de residencia; el pasaporte mexicano no sirve. «Ninguna de las anteriores»: el CRM muestra el aviso y ahí termina el flujo.":"Tiene INE vigente: INE.");
+          // Cierre
+          if(E.doc==="none"){
+            add(log.closedAt==="noine","Cierre de la llamada","Lees el aviso de la pantalla tal cual («Lo sentimos, pero no podemos abrir una cuenta para tu empresa sin una INE o tarjeta de residencia…»), le dices que puede volver a solicitarla cuando tenga uno de esos documentos y terminas la llamada con cortesía. En el CRM de CPA no se registra ningún resultado."+(log.closedAt==="noine"?"":where()));
+          } else if(E.auth==="si"){
+            add(log.closedAt==="success","Cierre de la llamada","Con la solicitud creada: le dices los documentos y dónde subirlos, le ofreces quedarte en la línea para subirlos juntos y, si no puede ahora, le pides que suba todo en los próximos dos días; le explicas qué sigue y cuelgas. En el CRM de CPA no hay botón de cierre ni resultado que registrar: la llamada simplemente termina."+(log.closedAt==="success"?"":where()));
+          }
+        }
       }
-      // Documento
-      if(E.doc && log.auth==="si") add(log.doc===E.doc,"Documento de identidad",E.doc==="none"?"No tiene INE ni permiso de residencia; el pasaporte mexicano no sirve. «Ninguna de las anteriores», lees el texto de la pantalla y cierras la tarea.":"Tiene INE vigente: INE.");
     }
-  }
-  // Resultado
-  if(E.noResult){
-    add(log.result===undefined,"Cierre de la tarea","Con la solicitud creada no registras resultado: cuelgas y la tarea se cierra sola a los 10 segundos. Lo que sí haces antes de colgar: le dices los documentos y dónde subirlos, le ofreces quedarte en la línea para subirlos juntos y, si no puede ahora, le pides que suba todo él mismo en los próximos dos días; y le explicas qué sigue.");
-  } else if(E.result!==undefined){
-    const ok=log.result===E.result;
-    add(ok,"Resultado de la tarea",`El resultado correcto: «${RESULTS[E.result]}»${E.resultNote?" "+E.resultNote:""}.`+(log.result!==undefined&&!ok?` Elegiste «${RESULTS[log.result]}».`:"")+(log.result===undefined?" Dejaste que la tarea se cerrara sola, sin resultado: el siguiente agente no sabrá qué pasó.":""));
-    if(E.commentMust){
-      const c=(log.comment||"").toLowerCase(); const has=E.commentMust.every(m=>c.includes(m.toLowerCase()));
-      add(has,"Comentario del resultado",`En el comentario va ${E.commentHint}.`+(has?"":" Sin ese dato, el siguiente agente no puede contactar al autorizado."));
-    } else if(E.commentHint){
-      add((log.comment||"").length>=10,"Comentario del resultado",`El resultado habla de la llamada; el comentario, del cliente. Aquí va ${E.commentHint}.`);
-    }
-  } else if(log.result!==undefined){
-    add(false,"Resultado de la tarea","En la rama PFAE el resultado se registra según tu proceso de PFAE; este simulador no lo evalúa.");
   }
   const hits=checks.filter(c=>c.ok).length, total=checks.length;
   progress[S.id]={hits,total,ok:hits===total};

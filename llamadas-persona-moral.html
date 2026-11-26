@@ -716,7 +716,7 @@ var CURSO = {
               { titulo:'Explicas y respondes objeciones', texto:'Le explicas para qué le sirve la cuenta a ese negocio en particular.' },
               { titulo:'Llenas la solicitud en el CRM', texto:'Datos de la empresa y del representante.' },
               { titulo:'Dices los documentos y dónde subirlos', texto:'Le ofreces quedarte en la línea mientras los sube. Si no puede ahora, lo impulsas a subirlos él mismo en los próximos dos días.' },
-              { titulo:'Explicas qué sigue y registras el resultado', texto:'El detalle de cada paso está en los siguientes módulos.' }
+              { titulo:'Explicas qué sigue y te despides', texto:'El detalle de cada paso está en los siguientes módulos.' }
             ] },
             { t:'esquema', tipo:'carriles',
               carriles:[
@@ -1075,26 +1075,26 @@ var CURSO = {
     {
       id: 'm3',
       titulo: 'La llamada con una empresa de principio a fin',
-      resumen: 'Ocho pasos, las pantallas del CRM, los guiones, los planes y las objeciones',
+      resumen: 'Siete pasos, las pantallas del CRM, los guiones, los planes y las objeciones',
       duracion: '70 min',
       pantallas: [
         {
           titulo: 'La llamada de un vistazo',
           bloques: [
-            { t:'parrafo', texto:'En la llamada con una empresa hay ocho pasos y tres puntos donde tomas una decisión en el CRM.' },
+            { t:'parrafo', texto:'En la llamada con una empresa hay siete pasos y cuatro puntos donde tomas una decisión en el CRM.' },
             { t:'esquema', tipo:'flujo-ramas',
               nodos:[
-                { tipo:'paso', n:1, titulo:'Saludo:', texto:'quién eres, por qué llamas y ¿Persona Moral, cierto?' },
+                { tipo:'paso', n:1, titulo:'Saludo:', texto:'quién eres, por qué llamas y ¿Persona Moral, cierto?; confirmas el número y lo verificas con el código' },
+                { tipo:'decision', pregunta:'¿El cliente dicta el código correcto?', sigue:'Sí', rama:{ etiqueta:'No', titulo:'Intentos agotados:', texto:'lees el texto de la pantalla y terminas la llamada con cortesía' } },
                 { tipo:'paso', n:2, titulo:'Pitch:', texto:'preguntas sobre el negocio, 2–3 beneficios, objeciones' },
                 { tipo:'decision', pregunta:'¿PFAE o PM?', sigue:'PM', rama:{ etiqueta:'PFAE', titulo:'Rama PFAE:', texto:'sigues con tu proceso de siempre' } },
                 { tipo:'paso', n:3, titulo:'Aviso de privacidad,', texto:'tal cual, desde la pantalla' },
                 { tipo:'paso', n:4, titulo:'Datos de la empresa:', texto:'RFC, ingresos mensuales' },
-                { tipo:'decision', pregunta:'¿Está autorizado para abrir cuentas?', sigue:'Sí', rama:{ etiqueta:'No', titulo:'No:', texto:'pides el contacto del autorizado y cierras la tarea' } },
+                { tipo:'decision', pregunta:'¿Está autorizado para abrir cuentas?', sigue:'Sí', rama:{ etiqueta:'No', titulo:'No:', texto:'pides el contacto del autorizado, lo anotas como indique tu supervisor y terminas la llamada con cortesía' } },
                 { tipo:'paso', n:5, titulo:'Datos del representante:', texto:'nombre como en la INE, fecha de nacimiento' },
-                { tipo:'decision', pregunta:'¿Tiene INE o permiso de residencia?', sigue:'Sí', rama:{ etiqueta:'No', titulo:'No:', texto:'lees el texto de la pantalla y cierras la tarea' } },
+                { tipo:'decision', pregunta:'¿Tiene INE o permiso de residencia?', sigue:'Sí', rama:{ etiqueta:'No', titulo:'No:', texto:'lees el texto de la pantalla y terminas la llamada con cortesía' } },
                 { tipo:'paso', n:6, titulo:'Solicitud creada:', texto:'lista completa de documentos y dónde subirlos', destacado:true },
-                { tipo:'paso', n:7, titulo:'Qué sigue:', texto:'revisión → cita → revisión final → cuenta' },
-                { tipo:'paso', n:8, titulo:'Resultado', texto:'y Cerrar tarea' }
+                { tipo:'paso', n:7, titulo:'Qué sigue:', texto:'revisión → cita → revisión final → cuenta' }
               ] },
             { t:'aviso', tono:'info', texto:'El orden de las pantallas lo marca el CRM: mientras no completes la actual, la siguiente no se abre. Pero el pitch va antes del CRM: el cliente primero tiene que querer la cuenta y después contestar preguntas sobre el RFC.' }
           ]
@@ -1134,8 +1134,17 @@ var CURSO = {
               ['Le preocupa el costo','«El plan Empieza cuesta 199 MXN al mes y no pagas la mensualidad si el saldo al cierre de cada día del mes es de 30,000 MXN o más. Además, los primeros dos meses no pagas mensualidad»']
             ] },
             { t:'guion', texto:'Perfecto, [nombre del cliente]. Vamos a avanzar de una vez con la apertura: te acompaño paso a paso y nos toma solo unos minutos.' },
-            { t:'guion', texto:'¿Quieres vincular la tarjeta al número de teléfono que termina en […]?' },
-            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-4-2-crm-vincular-tarjeta-telefono.png', alt:'Pantalla del CRM: «¿Quieres vincular la tarjeta al número de teléfono…?» con las opciones Sí, continuar y No, cambiar teléfono', pie:'CRM, primera pantalla de la tarea: vincular la tarjeta al teléfono. Si confirma, «Sí, continuar»; si quiere otro número, «No, cambiar teléfono»' }
+            { t:'parrafo', texto:'Primera pantalla del CRM: el campo «Número de teléfono» está vacío, solo con «+52». Tú escribes el número del cliente al que estás llamando (el CRM y el marcador son plataformas separadas) y le preguntas si es ese el número que quiere vincular. Si quiere otro, escribes ese otro: el código va a llegar al número que tú escribas.' },
+            { t:'guion', texto:'¿El número al que me estoy comunicando es tu número celular y personal? ¿Quieres vincular la tarjeta al número de teléfono que termina en […]?' },
+            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-4-2-crm-cpa-verificar-numero.png', alt:'Pantalla del CRM: «¿El número al que me estoy comunicando es tu número celular y personal? ¿Quieres vincular la tarjeta al número de teléfono…?», campo Número de teléfono con +52 y botón Verificar número telefónico', pie:'CRM, primera pantalla: escribes el número del cliente y pulsas «Verificar número telefónico». El botón se activa cuando el número tiene 10 dígitos' },
+            { t:'parrafo', texto:'Pulsas «Verificar número telefónico»: el CRM envía un código por SMS y WhatsApp al número que escribiste y abre la pantalla «Ingresa el código». Le pides al cliente que te lo dicte y lo escribes en el campo «Código».' },
+            { t:'guion', texto:'Te acabo de enviar un código por SMS y WhatsApp al número que termina en […]. ¿Me lo dictas, por favor?' },
+            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-4-2-crm-cpa-otp-ingresa-codigo.png', alt:'Pantalla «Ingresa el código» del CRM: «Lo enviamos al … 0624 vía SMS y WhatsApp», campo Código, enlaces Cambiar número y Reenviar código en 25 seg', pie:'CRM, pantalla «Ingresa el código». Si no le llega, «Reenviar código» (se activa a los 25 segundos); si el número está mal, «Cambiar número» te regresa a la pantalla anterior' },
+            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-4-2-crm-cpa-otp-correcto.png', alt:'Pantalla «Ingresa el código» del CRM con el código escrito y el mensaje verde «El código es correcto»', pie:'CRM: «El código es correcto». El CRM pasa solo a la siguiente pantalla' },
+            { t:'parrafo', texto:'Si el código es incorrecto, el campo se pone en rojo y el cliente te lo dicta otra vez. Si se agotan los intentos, el CRM muestra una pantalla con ✕ y un texto para el cliente: lo lees tal cual y terminas la llamada con cortesía. No hay nada que registrar.' },
+            { t:'guion', texto:'Lamentablemente no podemos continuar con tu solicitud en este momento. Te ofrecemos una disculpa por cualquier inconveniente. Agradecemos mucho tu tiempo y te deseamos un excelente día.' },
+            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-4-2-crm-cpa-otp-no-podemos-continuar.png', alt:'Pantalla del CRM con ✕ y el texto «Menciónalo al cliente: Lamentablemente no podemos continuar con tu solicitud en este momento…»', pie:'CRM, intentos agotados: lees el texto de la pantalla y terminas la llamada con cortesía' },
+            { t:'aviso', tono:'alerta', texto:'Escribe el número con cuidado: el código llega al número que tú escribiste, no al que marcó el marcador. Si el cliente dice que no le llega nada, confirma con él el número antes de reenviar.' }
           ],
           reto: {
             id:'m3-r1', tema:'producto', tipo:'unica',
@@ -1199,10 +1208,10 @@ var CURSO = {
               ['¿Está autorizado para abrir cuentas en nombre de la empresa?','«¿Tú estás autorizado para abrir cuentas a nombre de la empresa?»','Facultades en el acta o en un poder notarial vigente']
             ] },
             { t:'imagen', src:'llamadas-persona-moral/img/d1-m2-4-2-csf-pfae-vs-pm.jpg', alt:'Comparación de dos CSF: la de una PFAE y la de una PM', pie:'Dónde encuentra el cliente el RFC de la empresa: en la CSF, primer bloque. 12 caracteres (PM) frente a 13 (PFAE)' },
-            { t:'parrafo', texto:'Si elige «No están autorizados», el CRM pide el contacto del autorizado:' },
+            { t:'parrafo', texto:'Si eliges «No están autorizados», el CRM muestra un aviso para pedir el contacto del autorizado:' },
             { t:'guion', texto:'La cuenta de la empresa solo la puede abrir quien tiene facultades para hacerlo. ¿Me compartes el nombre y el teléfono de esa persona? Nos ponemos en contacto con él o ella' },
-            { t:'parrafo', texto:'Nombre y teléfono van en «Comentario del resultado», resultado «Respuesta - Otra persona autorizada», Cerrar tarea.' },
-            { t:'aviso', tono:'info', texto:'Dos pantallas que el CRM muestra solo: «El cliente ya tiene una solicitud» (no creas otra, cierras la tarea) y el rechazo en la evaluación previa (lo lees desde la pantalla, no das la razón y cierras la tarea).' }
+            { t:'parrafo', texto:'El resultado no se registra en ningún lado: anota el nombre y el teléfono del autorizado como lo indique tu supervisor, agradece al cliente y termina la llamada con cortesía.' },
+            { t:'aviso', tono:'info', texto:'Dos pantallas que el CRM muestra solo: «El cliente ya tiene una solicitud» y «Cancelled» (rechazo en la evaluación previa). Las ves al final de este módulo: en las dos no creas nada, lees el texto de la pantalla y terminas la llamada con cortesía.' }
           ],
           reto: {
             id:'m3-r3', tema:'proceso', tipo:'unica',
@@ -1243,7 +1252,7 @@ var CURSO = {
           titulo: 'Paso 6: solicitud creada y los documentos',
           bloques: [
             { t:'parrafo', texto:'El CRM muestra «Tu solicitud se creó correctamente». Le dices al cliente qué documentos va a subir y después explicas cada uno en una frase. Es la parte principal de la llamada.' },
-            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-9-1-crm-solicitud-creada-exito.png', alt:'Pantalla de éxito del CRM: «Tu solicitud se creó correctamente» y el panel Resultado de la tarea', pie:'CRM: la solicitud quedó creada. Desde aquí el cliente sube los documentos en la app' },
+            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-9-1-crm-solicitud-creada-exito.png', alt:'Pantalla de éxito del CRM: «Tu solicitud se creó correctamente. Sube los documentos desde la app para que podamos revisar y aprobar tu solicitud»', pie:'CRM: la solicitud quedó creada. Desde aquí el cliente sube los documentos en la app' },
             { t:'guion', texto:'Para la fase final de activación, el sistema te va a pedir subir de forma digital el acta constitutiva con el sello del Registro Público de Comercio, la Constancia de Situación Fiscal de la empresa, y la INE del representante legal y de los accionistas con 25 % o más. ¿Los tienes a la mano en este momento?' },
             { t:'aviso', tono:'alerta', texto:'Tú no envías ningún enlace. Los documentos los sube el cliente en su solicitud, en la app de Plata, mejor desde la computadora.' },
             { t:'guion', texto:'Si estás listo para subir todos los documentos ahora, me quedo contigo en la llamada y te ayudo en cada paso. ¿Lo hacemos ahora?' },
@@ -1295,34 +1304,12 @@ var CURSO = {
           ]
         },
         {
-          titulo: 'Paso 8: resultado de la llamada',
-          bloques: [
-            { t:'parrafo', texto:'Panel «Resultado de la tarea»: eliges el resultado y en «Comentario del resultado» escribes lo que debe saber el siguiente que abra al cliente. El resultado habla de la llamada; el comentario, del cliente.' },
-            { t:'imagen', src:'llamadas-persona-moral/img/d1-m3-11-1-crm-resultado-de-la-tarea-cerrar.png', alt:'Panel «Resultado de la tarea» del CRM: seleccionar resultado, comentario y botón Cerrar tarea', pie:'CRM, panel «Resultado de la tarea»: resultado, comentario del resultado y Cerrar tarea' },
-            { t:'aviso', tono:'alerta', texto:'Si la solicitud quedó creada, no registras resultado.' },
-            { t:'tabla', encabezados:['Resultado','Cuándo lo eliges'], filas:[
-              ['Otra persona autorizada','Quien contestó no está autorizado. Pides nombre y teléfono del autorizado'],
-              ['Documentos de otra persona','Está autorizado, pero los documentos los tiene el contador, un socio o el notario'],
-              ['El cliente no es una empresa','No tiene negocio: ni PM ni PFAE'],
-              ['No está formalizado ante SAT','El negocio no está registrado ante el SAT'],
-              ['No cuenta con CSF','El cliente no tiene CSF y no puede obtenerla'],
-              ['No está de acuerdo','Escuchó y no aceptó'],
-              ['Reacción negativa / que no le vuelvan a llamar','No se le vuelve a llamar'],
-              ['Que le vuelvan a llamar','Pide que le llamen después; cuándo, en el comentario'],
-              ['Contestó otra persona','Contestó alguien distinto de la persona de la tarea'],
-              ['Problema técnico','El CRM o la app no dejaron terminar la llamada'],
-              ['Sin respuesta: buzón / número incorrecto / otro','No se logró contactar']
-            ] }
-          ]
-        },
-        {
           titulo: 'Practica en el simulador del CRM',
           bloques: [
             { t:'parrafo', texto:'Antes de seguir, recorre la rama PM en el simulador: todas las pantallas de este módulo, en el mismo orden que en el CRM.' },
             { t:'parrafo', texto:'En la barra superior verás diferentes escenarios. Puedes elegir uno de ellos o el modo libre si quieres practicar por tu cuenta.' },
             { t:'enlaces', items:[
-              { titulo:'Simulador de ventas PM', texto:'La rama PM completa, por escenarios o en modo libre', url:'https://platacard.github.io/kbwidgets/simulador-crm-llamada-persona-moral.html' },
-              { titulo:'Cierre de la tarea', texto:'Practica cómo seleccionar el resultado de cierre', url:'https://platacard.github.io/kbwidgets/simulador-resultado-de-la-tarea.html' }
+              { titulo:'Simulador de ventas PM', texto:'La rama PM completa, por escenarios o en modo libre', url:'https://platacard.github.io/kbwidgets/simulador-crm-llamada-persona-moral.html' }
             ] }
           ]
         },
@@ -1337,7 +1324,7 @@ var CURSO = {
               ['«¿Cuánto tarda? ¿Me garantizan que la abren?»','«Normalmente hasta tres días después de que subas todos los documentos. Es un estimado, no una garantía: la apertura está sujeta a la validación de Banco Plata»','«¿Te parece si repasamos los documentos antes de enviarlos?»'],
               ['«¿Es seguro un banco sin sucursales?»','«Banco Plata es un banco con licencia, Institución de Banca Múltiple, y nos regula la CNBV igual que a cualquier otro banco en México. Un embajador va contigo a entregarte la tarjeta, y soporte responde por chat 24/7»','«¿Tu duda principal es la seguridad, el acceso o la atención ante un problema?»'],
               ['«¿Tienen crédito?»','«Por ahora no hay tarjeta de crédito para empresas. Pero tienes Crédito Respaldo: hasta 200,000 en negativo, y la deuda se paga con los siguientes ingresos»','«¿Qué tan seguido te falta dinero antes de que te paguen tus clientes?»'],
-              ['«¿Cuenta en dólares o transferencias internacionales?»','«Por ahora, lamentablemente, no». No das fechas; anotas su interés en el comentario','«¿Qué más necesitas resolver hoy con tu cuenta?»']
+              ['«¿Cuenta en dólares o transferencias internacionales?»','«Por ahora, lamentablemente, no». No das fechas; anotas su interés como lo indique tu supervisor','«¿Qué más necesitas resolver hoy con tu cuenta?»']
             ] }
           ],
           reto: {
@@ -1365,11 +1352,23 @@ var CURSO = {
           ]
         },
         {
+          titulo: 'Dos pantallas que verás pocas veces',
+          bloques: [
+            { t:'parrafo', texto:'El CRM las muestra solo, sin que elijas nada. En ninguna de las dos hay algo que registrar: lees, agradeces y terminas la llamada.' },
+            { t:'parrafo', texto:'«Cancelled». El CRM muestra una ✕ y un texto para el cliente:' },
+            { t:'cita', quien:'Menciónalo al cliente', texto:'Gracias por confirmar. Lamentablemente no podemos continuar con tu solicitud en este momento. Te ofrecemos una disculpa por cualquier inconveniente. Agradecemos mucho tu tiempo y te deseamos un excelente día.' },
+            { t:'parrafo', texto:'Qué haces: lees el texto tal cual, sin dar la razón, y terminas la llamada con cortesía.' },
+            { t:'parrafo', texto:'«El cliente ya tiene una solicitud». El CRM muestra un aviso:' },
+            { t:'aviso', tono:'info', texto:'Información: El cliente ya tiene una solicitud. Nos pondremos en contacto con él si es necesario.' },
+            { t:'parrafo', texto:'Qué haces: no creas otra solicitud; agradeces al cliente y terminas la llamada con cortesía.' }
+          ]
+        },
+        {
           titulo: 'En resumen',
           bloques: [
             { t:'lista', items:[
               'El pitch va antes del CRM: dos o tres preguntas sobre el negocio y 2–3 beneficios según la respuesta.',
-              'Ocho pasos, tres salidas: PFAE → rama PFAE; no autorizado → contacto del autorizado; sin INE ni permiso → texto de la pantalla y tarea cerrada.',
+              'Siete pasos, cuatro salidas: código no verificado → texto de la pantalla y fin de la llamada; PFAE → rama PFAE; no autorizado → contacto del autorizado; sin INE ni permiso → texto de la pantalla y fin de la llamada. El resultado no se registra en ningún lado.',
               'Aviso de privacidad, tal cual y hasta el final. El nombre del representante, letra por letra como en la INE.',
               'Documentos: la lista completa, cada uno en una frase. Solo por la solicitud, mejor desde la computadora, sin enviar enlaces.',
               'Al final, los cuatro pasos que siguen y el estimado «normalmente hasta tres días», sin promesas.'
@@ -1418,7 +1417,7 @@ var CURSO = {
             opciones:[
               {id:'a', texto:'«Sí, están autorizados», el director se lo pidió', correcta:false},
               {id:'b', texto:'Sigo con el gerente y en los datos del representante pongo al director', correcta:false},
-              {id:'c', texto:'«No están autorizados», pido el contacto del director y cierro con «Otra persona autorizada»', correcta:true}
+              {id:'c', texto:'«No están autorizados», pido el nombre y el teléfono del director, los anoto como indica mi supervisor y termino la llamada con cortesía', correcta:true}
             ],
             explicacion:'Un encargo verbal no da facultades. El CRM te lleva justo a pedir el contacto del autorizado.' },
           { id:'m3-q6', tema:'documentos', tipo:'unica',
@@ -1633,7 +1632,7 @@ var CURSO = {
               ['«No tengo poder»','«Seguro no lo necesitas: si el acta te da la facultad de abrir cuentas, omites ese paso»','Sigue'],
               ['«Un socio vive en el extranjero / no tiene INE»','«Para un dueño basta con el pasaporte»','Sigue'],
               ['«No tengo INE, solo pasaporte» (el representante mexicano)','El texto de la pantalla del CRM: sin INE ni tarjeta de residencia no se puede abrir la cuenta','Se detiene'],
-              ['«Los documentos los tiene el contador»','Su contacto en el comentario, resultado «Documentos de otra persona»','En pausa']
+              ['«Los documentos los tiene el contador»','«¿Me compartes su contacto?». Lo anotas como lo indique tu supervisor y acuerdas con el cliente cuándo retomar','En pausa']
             ] }
           ],
           reto: {
